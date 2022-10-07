@@ -67,16 +67,18 @@ class MegaPiController:
         #self.setFourMotors(speed, speed, -speed, -speed)
         # self.setFourMotors(speed*0.5, speed*2, -speed*0.5, -speed*2)
         #self.setFourMotors(speed*2, speed*0.5, -speed*2, -speed*0.5)
-        self.setFourMotors(speed*2, speed*1.5, -speed*1, -speed*0.5)
-        
-        # time.sleep(1)
-        # self.setFourMotors(speed, 0, 0, 0)
-        # time.sleep(1)
-        # self.setFourMotors(0, speed, 0, 0)
-        # time.sleep(1)
-        # self.setFourMotors(0, 0, speed, 0)
-        # time.sleep(1)
-        # self.setFourMotors(0, 0, 0, speed)
+        # self.setFourMotors(speed*2, speed*1.5, -speed*1, -speed*0.5) # didnt work
+
+        time.sleep(1)
+        self.setFourMotors(speed*2, speed*2, -speed*2, -speed*2) 
+        time.sleep(1)
+        self.setFourMotors(speed*2, speed*2, -speed*1, -speed*1) 
+        time.sleep(1)
+        self.setFourMotors(speed*2, speed*2, -speed*0.5, -speed*0.5)
+        time.sleep(1)
+        self.setFourMotors(speed*1.5, speed*1.5, -speed*0.5, -speed*0.5)
+        time.sleep(1)
+        self.setFourMotors(0,0,0,0)
 
 
 
