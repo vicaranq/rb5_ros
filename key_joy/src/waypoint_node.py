@@ -93,10 +93,16 @@ class WaypointNode:
 
         target_time = 3  # [seconds to get to a meter]
         t_start = time.time()        
-        while time.time() < t_start + target_time:
-            joy_msg.axes[0] = 1.2 # >0.1 
-            self.pub_joy.publish(joy_msg)
+        # UNCOMMENT AFTER EXPERIMENTS
+        # while time.time() < t_start + target_time:
+        #     joy_msg.axes[0] = 1.2 # >0.1 
+        #     self.pub_joy.publish(joy_msg)
+        
+        # for experiments:
+        joy_msg.axes[0] = 1.2 # >0.1 
+        self.pub_joy.publish(joy_msg)
 
+        time.sleep(1) 
         joy_msg.axes[0] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
