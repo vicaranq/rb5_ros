@@ -2,7 +2,8 @@
 import sys
 import rospy
 from sensor_msgs.msg import Joy
-from key_parser import  save_terminal_settings, restore_terminal_settings
+from key_parser import get_key, save_terminal_settings, restore_terminal_settings
+import time
 
 class WaypointNode:
     def __init__(self):
@@ -26,12 +27,21 @@ class WaypointNode:
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        if x >= 0: #key == 'w':
-            joy_msg.axes[1] = x
-        else:
-            joy_msg.axes[1] = -x
-        
-        
+
+        time_per_meter = 5   # [seconds]
+
+        t_start = time.time()
+
+        while time.time() < t_start + abs(x)*time_per_meter:
+            # key = get_key(self.settings, timeout=0.1)
+
+            joy_msg.axes[1] = x # would going forward have the same speed as moving backwards?
+            self.pub_joy.publish(joy_msg)
+
+            # if (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
+            #     break
+
+        joy_msg.axes[1] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
 
