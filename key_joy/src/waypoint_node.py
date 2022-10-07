@@ -28,11 +28,11 @@ class WaypointNode:
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        time_per_meter = 5   # [seconds]
+        target_time = 5   # [seconds]
 
         t_start = time.time()
 
-        while time.time() < t_start + abs(x)*time_per_meter:
+        while time.time() < t_start + abs(x)*target_time:
             # key = get_key(self.settings, timeout=0.1)
 
             joy_msg.axes[1] = x # would going forward have the same speed as moving backwards?
