@@ -13,7 +13,7 @@ class WaypointNode:
 
     def run(self):
 
-        self.move_front(1.5) # arg is speed
+        self.move_front(1.2) # arg is speed
         
         self.stop()
 
