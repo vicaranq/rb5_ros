@@ -1,5 +1,5 @@
 from megapi import MegaPi
-
+import time 
 
 MFR = 2     # port for motor front right
 MBL = 3     # port for motor back left
@@ -67,7 +67,17 @@ class MegaPiController:
         #self.setFourMotors(speed, speed, -speed, -speed)
         # self.setFourMotors(speed*0.5, speed*2, -speed*0.5, -speed*2)
         #self.setFourMotors(speed*2, speed*0.5, -speed*2, -speed*0.5)
-        self.setFourMotors(speed*2, speed*1.5, -speed*1, -speed*0.5)
+        #self.setFourMotors(speed*2, speed*1.5, -speed*1, -speed*0.5)
+        time.sleep(1)
+        self.setFourMotors(speed, 0, 0, 0)
+        time.sleep(1)
+        self.setFourMotors(0, speed, 0, 0)
+        time.sleep(1)
+        self.setFourMotors(0, 0, speed, 0)
+        time.sleep(1)
+        self.setFourMotors(0, 0, 0, speed)
+
+
 
 
     
