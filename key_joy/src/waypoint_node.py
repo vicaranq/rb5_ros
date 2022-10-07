@@ -29,13 +29,15 @@ class WaypointNode:
         msg = (x, y, theta)
 
         #delta_x, delta_y, delta_theta = self.get_deltas(msg, self.get_current_pos())
-        delta_x = 1 
+        #delta_x, delta_y, delta_theta  = (1, 0, 0)
+        delta_x, delta_y, delta_theta  = (0, 1, 0)  
 
         # move X axis
         if delta_x != 0:
             self.move_front(1.2) # arg is speed
         # move Y axis
-
+        if delta_y != 0:        
+            self.move_sideways(1)
         # move angle
 
         self.stop()
@@ -64,12 +66,8 @@ class WaypointNode:
         
         while time.time() < t_start + target_time:
             key = get_key(self.settings, timeout=0.1)
-
-            # joy_msg.axes[1] = 1.2 # >0.1 
-            joy_msg.axes[1] = -1.2 # move backwards 
-
+            joy_msg.axes[1] = 1.2 # >0.1 
             self.pub_joy.publish(joy_msg)
-
             if (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
                 break
 
@@ -77,6 +75,32 @@ class WaypointNode:
         self.pub_joy.publish(joy_msg)
 
         return x
+
+    def move_sideways(self, y):
+        '''
+        Args:
+        x -> int type represeting meters
+        '''
+        # calibrate 
+
+        # translate x to time needed to get to that position
+        # whats the speed? -> T m/s?  get moving forward speed
+
+        
+        joy_msg = Joy()
+        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        target_time = 3  # [seconds to get to a meter]
+        t_start = time.time()        
+        while time.time() < t_start + target_time:
+            joy_msg.axes[0] = 1 # >0.1 
+            self.pub_joy.publish(joy_msg)
+
+        joy_msg.axes[0] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
+        return y        
     '''
     def run(self):
         while True:
