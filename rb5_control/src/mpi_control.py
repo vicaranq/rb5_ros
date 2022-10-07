@@ -66,7 +66,8 @@ class MegaPiController:
             print("CAR SLIDE:")
         #self.setFourMotors(speed, speed, -speed, -speed)
         # self.setFourMotors(speed*0.5, speed*2, -speed*0.5, -speed*2)
-        self.setFourMotors(speed*2, speed*0.5, -speed*2, -speed*0.5)
+        #self.setFourMotors(speed*2, speed*0.5, -speed*2, -speed*0.5)
+        self.setFourMotors(speed*2, speed*1.5, -speed*1, -speed*0.5)
 
 
     
