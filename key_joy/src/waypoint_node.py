@@ -13,7 +13,7 @@ class WaypointNode:
 
     def run(self):
 
-        self.move_front(5) # arg is speed
+        self.move_front(2) # arg is speed
         
         self.stop()
 
@@ -28,11 +28,11 @@ class WaypointNode:
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        target_time = 5   # [seconds]
+        target_time = 3   # [seconds]
 
         t_start = time.time()
 
-        while time.time() < t_start + abs(x)*target_time:
+        while time.time() < t_start + target_time:
             key = get_key(self.settings, timeout=0.1)
 
             joy_msg.axes[1] = x # would going forward have the same speed as moving backwards?
