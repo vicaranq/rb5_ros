@@ -65,7 +65,7 @@ class WaypointNode:
         while time.time() < t_start + target_time:
             key = get_key(self.settings, timeout=0.1)
 
-            joy_msg.axes[1] = 1.2 # would going forward have the same speed as moving backwards?
+            joy_msg.axes[1] = 0.8 # >0.1  would going forward have the same speed as moving backwards?
             self.pub_joy.publish(joy_msg)
 
             if (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
@@ -73,7 +73,7 @@ class WaypointNode:
 
         joy_msg.axes[1] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        
+
         return x
     '''
     def run(self):
