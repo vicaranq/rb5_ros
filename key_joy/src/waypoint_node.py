@@ -101,8 +101,7 @@ class WaypointNode:
         # for experiments:
         joy_msg.axes[0] = 1.2 # >0.1 
         self.pub_joy.publish(joy_msg)
-
-        time.sleep(1) 
+        time.sleep(14)
         joy_msg.axes[0] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
