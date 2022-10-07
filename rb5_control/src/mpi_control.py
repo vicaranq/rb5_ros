@@ -81,21 +81,14 @@ class MegaPiController:
         # self.setFourMotors(0,0,0,0)
 
         time.sleep(1)
-        self.setFourMotors(speed*0.5, speed*2, -speed*0.5, -speed*2)
+        self.setFourMotors(speed*1, speed*2.5, -speed*0.5, -speed*0.5)
         time.sleep(1)
         self.setFourMotors(0,0,0,0)  
         time.sleep(1)
-        self.setFourMotors(speed*0.8, speed*2, -speed*0.8, -speed*2) 
+        self.setFourMotors(speed*1.5, speed*3, -speed*0.4, -speed*0.5) 
         time.sleep(1)
         self.setFourMotors(0,0,0,0)  
-        time.sleep(1)
-        self.setFourMotors(speed*0.8, speed*2, -speed*0.8, -speed*1) 
-        time.sleep(1)
-        self.setFourMotors(speed*0.8, speed*2, -speed*0.5, -speed*2)
-        time.sleep(1)
-        self.setFourMotors(speed*0.8, speed*2, -speed*0.5, -speed*1)
-        time.sleep(1)
-        self.setFourMotors(0,0,0,0)  
+
 
 
 
