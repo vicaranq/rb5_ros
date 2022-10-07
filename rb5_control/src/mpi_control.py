@@ -64,7 +64,8 @@ class MegaPiController:
     def carSlide(self, speed):
         if self.verbose:
             print("CAR SLIDE:")
-        self.setFourMotors(speed, speed, -speed, -speed)
+        #self.setFourMotors(speed, speed, -speed, -speed)
+        self.setFourMotors(speed*0.5, speed*2, -speed*0.5, -speed*2)
 
     
     def carMixed(self, v_straight, v_rotate, v_slide):
