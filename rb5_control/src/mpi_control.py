@@ -51,7 +51,7 @@ class MegaPiController:
     def carStraight(self, speed):
         if self.verbose:
             print("CAR STRAIGHT:")
-        self.setFourMotors(-speed*0.6, speed, -speed*0.6, speed)
+        self.setFourMotors(-speed*0.8, speed*1.2, -speed*0.8, speed*1.2)
 
 
     def carRotate(self, speed):
