@@ -10,11 +10,34 @@ class WaypointNode:
         self.pub_joy = rospy.Publisher("/joy", Joy, queue_size=1)
         self.settings = save_terminal_settings()
 
+        # Initialize position of robot 
+        # (assuming -x to front, +y to the left, theta opening from -x towards y axis)
+        self.x_pos = 0
+        self.y_pos = 0
+        self.theta_pos = 0
+
+    def get_current_pos(self):
+        return (self.x_pos, self.y_pos, self.theta_pos)
+
+    def get_deltas(self, curr_pos):
+        pass
 
     def run(self):
+        #testing msg
+        x, y, theta =  (1, 0, 0)
 
-        self.move_front(1.2) # arg is speed
-        
+        msg = (x, y, theta)
+
+        #delta_x, delta_y, delta_theta = self.get_deltas(msg, self.get_current_pos())
+        delta_x = 1 
+
+        # move X axis
+        if delta_x != 0:
+            self.move_front(1.2) # arg is speed
+        # move Y axis
+
+        # move angle
+
         self.stop()
 
     def move_front(self, x):
@@ -24,18 +47,25 @@ class WaypointNode:
         '''
         # calibrate 
 
+        # translate x to time needed to get to that position
+        # whats the speed? -> T m/s?  get moving forward speed
+
+        
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
 
         target_time = 3   # [seconds]
 
-        t_start = time.time()
+        # ideal: target_time = x / (speed [m/s])
 
+        t_start = time.time()
+        
+        
         while time.time() < t_start + target_time:
             key = get_key(self.settings, timeout=0.1)
 
-            joy_msg.axes[1] = x # would going forward have the same speed as moving backwards?
+            joy_msg.axes[1] = 1.2 # would going forward have the same speed as moving backwards?
             self.pub_joy.publish(joy_msg)
 
             if (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
@@ -43,8 +73,7 @@ class WaypointNode:
 
         joy_msg.axes[1] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-
-
+        
         return x
     '''
     def run(self):
