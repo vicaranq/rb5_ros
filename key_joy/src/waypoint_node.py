@@ -43,11 +43,10 @@ class WaypointNode:
         t_start = time.time()
 
         joy_msg.axes[X] = 1.2 # >0.1
-        self.pub_joy.publish(joy_msg)
-        # do I need to publis every cycle, or should I do only once and wait for some time?
-        #         
+        
         while time.time() < t_start + target_time:
-            pass # just wait for target_time          
+            self.pub_joy.publish(joy_msg)
+            # just wait for target_time          
 
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
