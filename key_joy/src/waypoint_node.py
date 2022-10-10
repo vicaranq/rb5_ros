@@ -55,23 +55,18 @@ class WaypointNode:
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-
         target_time = 2   # [seconds to get to a meter]
         # ideal: target_time = x / (speed [m/s])
-
         t_start = time.time()
-
         joy_msg.axes[THETA] = 1 # >0.1
-        self.pub_joy.publish(joy_msg)
-        # do I need to publis every cycle, or should I do only once and wait for some time?
-        #         
         while time.time() < t_start + target_time:
-            pass # just wait for target_time          
+            self.pub_joy.publish(joy_msg)
+            # just wait for target_time          
 
-        joy_msg.axes[2] = 0 # reset 
+        joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
-        return target_time
+        self.stop()
     
 
     def run(self):
@@ -249,6 +244,8 @@ if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
     # waypoint_node.run()
-    # waypoint_node.run_rotation_calibration()
-    waypoint_node.run_straight_calibration()
+    # 
+    # waypoint_node.run_straight_calibration()
+
+    waypoint_node.run_rotation_calibration()
     
