@@ -54,7 +54,7 @@ class MegaPiController:
         # self.setFourMotors(-speed, speed, -speed, speed)
         # On carpet
         # self.setFourMotors(-speed*0.5, speed*2, -speed*0.5, speed*2)
-        self.setFourMotors(-speed, speed, -speed, speed)
+        self.setFourMotors(-speed, speed*1.2, -speed, speed*1.2)
 
 
     def carRotate(self, speed):
@@ -132,10 +132,6 @@ class MegaPiController:
         # time.sleep(1)
         # self.setFourMotors(0,0,0,0)  
 
-
-
-
-    
     def carMixed(self, v_straight, v_rotate, v_slide):
         if self.verbose:
             print("CAR MIXED")
