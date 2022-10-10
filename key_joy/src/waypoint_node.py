@@ -83,7 +83,9 @@ class WaypointNode:
         '''
         #testing msg
         # x, y, theta =  (1, 0, 0) good
-        x, y, theta =  (1, 1, 0) 
+        # x, y, theta =  (1, 1, 0)  good
+        x, y, theta =  (0, 0, 1.57)  
+
         target_postion = (y, x, theta)
         joy_msg = self.get_joy_msg()
         delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_postion)
@@ -94,15 +96,16 @@ class WaypointNode:
         # move X axis
         if abs(delta_x) > 0.1:
             self.move_front(delta_x, joy_msg) # arg is speed
-        time.sleep(1)
+            time.sleep(1)
         # move Y axis
         if abs(delta_y) > 0.1:        
             # self.move_sideways(1)
             self.move_sideways_no_slide(delta_y, joy_msg)
-        time.sleep(1)
+            time.sleep(1)
         # move angle
         if abs(delta_theta)  > 0.1:
             self.turn(delta_theta, joy_msg)
+            time.sleep(1)
         self.stop()
 
     def move_sideways_no_slide(self, y, joy_msg):
@@ -171,21 +174,15 @@ class WaypointNode:
         '''
         theta: angle in radiants to where we want to turn 
         '''
-        target_time = 1.94   # [seconds to get to 90 degree angle ]
-        ''' Note: Need to experiment to find out how much time it takes to take a 90degrees turn'''
-        # ideal: target_time = (theta/(pi/2)) / (speed [90degrees/s])
-        target_time = 2.5 # [sec/rad]time to get to pi/2
+        #calibration_time = 2.5 # [sec/rad]time to get to pi/2
         time_per_rad = 2.5/ (math.pi/2)
-        # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
         joy_msg.axes[THETA] = 1 # >0.1
         while time.time() < t_start + time_per_rad*theta:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
-
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-
         self.stop()
 
     def stop(self):
