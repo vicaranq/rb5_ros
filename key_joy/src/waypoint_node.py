@@ -105,7 +105,7 @@ class WaypointNode:
 
     def move_sideways_no_slide(self, y, joy_msg):
         ''' function to move robot on the y-axis using rotation instead of sliding'''
-        print("[move_sideways_no_slide] Movign sideways for {y}m".format(y))
+        print("[move_sideways_no_slide] Movign sideways for {}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
             print("Turning 90deg")
