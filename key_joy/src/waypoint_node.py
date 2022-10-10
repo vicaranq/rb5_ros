@@ -37,7 +37,8 @@ class WaypointNode:
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        target_time = 2   # [seconds to get to a meter]
+        # target_time = 2   # [seconds to get to a meter]
+        target_time = 1.94  
         # ideal: target_time = x / (speed [m/s])
 
         t_start = time.time()
