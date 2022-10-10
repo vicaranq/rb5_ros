@@ -21,10 +21,13 @@ class WaypointNode:
         self.theta_pos = 0
 
     def get_current_pos(self):
-        return (self.x_pos, self.y_pos, self.theta_pos)
+        return ( self.y_pos, self.x_pos, self.theta_pos)
 
-    def get_deltas(self, curr_pos):
-        pass
+    def get_deltas(self, curr_pos, target_pos):
+        delta_x = target_pos[X] - curr_pos[X]
+        delta_y = target_pos[Y] - curr_pos[Y]
+        delta_theta = target_pos[THETA] - curr_pos[THETA]
+        return (delta_x, delta_y, delta_theta)
     
     def get_joy_msg(self):
         joy_msg = Joy()
@@ -68,74 +71,61 @@ class WaypointNode:
 
         self.stop()
     
-
     def run(self):
+        '''
+        0,0,0
+        -1,0,0
+        -1,1,1.57
+        -2,1,0
+        -2,2,-1.57
+        -1,1,-0.78
+        0,0,0
+        '''
         #testing msg
-        x, y, theta =  (1, 0, 0)
-
-        target_postion = (x, y, theta)
-
+        x, y, theta =  (-1, 0, 0)
+        target_postion = (y, x, theta)
         joy_msg = self.get_joy_msg()
-
-        #delta_x, delta_y, delta_theta = self.get_deltas(msg, self.get_current_pos())
-        #delta_x, delta_y, delta_theta  = (1, 0, 0)
-        delta_x, delta_y, delta_theta  = (0, 1, 0)  
-
+        delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_postion)
+        
+        print("Navigating from {} --> {}".format(self.get_current_pos(), target_postion))
+        print("delta_x: ", delta_x," | delta_y = ",delta_y, " | delta_theta: ", delta_theta)
+        # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
-        if delta_x != 0:
-            self.move_front(1.2) # arg is speed
+        if abs(delta_x) > 0.1:
+            self.move_front(delta_x, joy_msg) # arg is speed
         # move Y axis
-        if delta_y != 0:        
+        if abs(delta_y) > 0.1:        
             # self.move_sideways(1)
             self.move_sideways_no_slide(delta_y, joy_msg)
         # move angle
-
+        if abs(delta_theta)  > 0.1:
+            self.turn(delta_theta, joy_msg)
         self.stop()
 
     def move_sideways_no_slide(self, y, joy_msg):
         ''' function to move robot on the y-axis using rotation instead of sliding'''
-
+        print("[move_sideways_no_slide] Movign sideways for {y}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
             self.turn(math.pi/2, joy_msg) # turn left 90deg
         elif y < 0:
             self.turn(-math.pi/2, joy_msg) # turn right 90 deg
-            
         self.move_front(abs(y))
-
         self.stop()
 
-    def move_front(self, x):
+    def move_front(self, x, joy_msg):
         '''
         Args:
         x -> int type represeting meters
         '''
-        # calibrate 
-
-        # translate x to time needed to get to that position
-        # whats the speed? -> T m/s?  get moving forward speed
-
-        
-        joy_msg = Joy()
-        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
-        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-
-        target_time = 1.94   # [seconds to get to a meter]
-        # ideal: target_time = x / (speed [m/s])
-
+        print("[move_front] Moving forward for {}m".format(x))
+        time_per_m = 1.94   # [seconds to get to a meter]
         t_start = time.time()
-        
-        
-        while time.time() < t_start + target_time:
-            key = get_key(self.settings, timeout=0.1)
-            joy_msg.axes[1] = 1.2 # >0.1 
+        joy_msg.axes[X] = 1.2 if x >=0 else -1.2 # >0.1         
+        while time.time() < t_start + time_per_m*abs(x):
             self.pub_joy.publish(joy_msg)
-            if (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
-                break
-
-        joy_msg.axes[1] = 0 # reset 
+        joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-
         return x
 
     def move_sideways(self, y):
@@ -172,80 +162,34 @@ class WaypointNode:
         return y        
     
     def turn(self, theta, joy_msg):
-        # joy_msg[THETA] = 1
-
-        # joy_msg = Joy()
-        # joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
-        # joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-
+        '''
+        theta: angle in radiants to where we want to turn 
+        '''
         target_time = 1.94   # [seconds to get to 90 degree angle ]
         ''' Note: Need to experiment to find out how much time it takes to take a 90degrees turn'''
         # ideal: target_time = (theta/(pi/2)) / (speed [90degrees/s])
-
+        target_time = 2.5 # [sec/rad]time to get to pi/2
+        time_per_rad = 2.5/ (math.pi/2)
+        # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
-        
         joy_msg.axes[THETA] = 1 # >0.1
-        self.pub_joy.publish(joy_msg)
-        # do I need to publis every cycle, or should I do only once and wait for some time?
-        #         
-        while time.time() < t_start + target_time:
-            pass # just wait for target_time          
-
-        joy_msg.axes[2] = 0 # reset 
-        self.pub_joy.publish(joy_msg)
-
-        return theta
-
-        pass 
-    '''
-    def run(self):
-        while True:
-            # parse keyboard control
-            key = get_key(self.settings, timeout=0.1)
-
-            # interpret keyboard control as joy
-            joy_msg, flag = self.key_to_joy(key)
-            if flag is False:
-                break
-
-            # publish joy
+        while time.time() < t_start + time_per_rad*theta:
             self.pub_joy.publish(joy_msg)
-    
+            # just wait for target_time          
+
+        joy_msg.axes[THETA] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
         self.stop()
-    
-    def key_to_joy(self, key):
-        flag = True
-        joy_msg = Joy()
-        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
-        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        if key == 'w':
-            joy_msg.axes[1] = 1.0
-        elif key == 's':
-            joy_msg.axes[1] = -1.0
-        elif key == 'a':
-            joy_msg.axes[0] = -1.0
-        elif key == 'd':
-            joy_msg.axes[0] = 1.0
-        elif key == 'q':
-            joy_msg.axes[2] = -1.0
-        elif key == 'e':
-            joy_msg.axes[2] = 1.0
-        elif (len(key) > 0 and ord(key) == 27) or (key == '\x03'):
-            flag = False
-        return joy_msg, flag
-    '''
-    
 
     def stop(self):
         restore_terminal_settings(self.settings)
 
-
 if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
-    # waypoint_node.run()
+    waypoint_node.run()
     # 
     # waypoint_node.run_straight_calibration()
-
-    waypoint_node.run_rotation_calibration()
+    # waypoint_node.run_rotation_calibration()
     
