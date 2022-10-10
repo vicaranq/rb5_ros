@@ -84,7 +84,7 @@ class WaypointNode:
         #testing msg
         # x, y, theta =  (1, 0, 0) good
         # x, y, theta =  (1, 1, 0)  good
-        x, y, theta =  (0, 0, 1.57)  
+        x, y, theta =  (1, 1, 1.57)  
 
         target_postion = (y, x, theta)
         joy_msg = self.get_joy_msg()
