@@ -54,7 +54,8 @@ class MegaPiController:
         # self.setFourMotors(-speed, speed, -speed, speed)
         # On carpet
         # self.setFourMotors(-speed*0.5, speed*2, -speed*0.5, speed*2)
-        self.setFourMotors(-speed, speed*1.2, -speed, speed*1.2)
+        # On ceramic
+        self.setFourMotors(-speed, speed*1.1, -speed, speed*1.1)
 
 
     def carRotate(self, speed):
