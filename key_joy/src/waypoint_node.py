@@ -3,7 +3,11 @@ import sys
 import rospy
 from sensor_msgs.msg import Joy
 from key_parser import get_key, save_terminal_settings, restore_terminal_settings
-import time
+import time, math
+
+X = 1
+Y = 0 
+THETA = 2
 
 class WaypointNode:
     def __init__(self):
@@ -21,12 +25,65 @@ class WaypointNode:
 
     def get_deltas(self, curr_pos):
         pass
+    
+    def get_joy_msg(self):
+        joy_msg = Joy()
+        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+        return  joy_msg
+
+    def run_straight_calibration(self):
+        joy_msg = Joy()
+        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        target_time = 1.94   # [seconds to get to a meter]
+        # ideal: target_time = x / (speed [m/s])
+
+        t_start = time.time()
+
+        joy_msg.axes[X] = 1.2 # >0.1
+        self.pub_joy.publish(joy_msg)
+        # do I need to publis every cycle, or should I do only once and wait for some time?
+        #         
+        while time.time() < t_start + target_time:
+            pass # just wait for target_time          
+
+        joy_msg.axes[X] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
+        self.stop()
+
+    def run_rotation_calibration(self):
+        joy_msg = Joy()
+        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        target_time = 2   # [seconds to get to a meter]
+        # ideal: target_time = x / (speed [m/s])
+
+        t_start = time.time()
+
+        joy_msg.axes[THETA] = 1 # >0.1
+        self.pub_joy.publish(joy_msg)
+        # do I need to publis every cycle, or should I do only once and wait for some time?
+        #         
+        while time.time() < t_start + target_time:
+            pass # just wait for target_time          
+
+        joy_msg.axes[2] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
+        return target_time
+    
 
     def run(self):
         #testing msg
         x, y, theta =  (1, 0, 0)
 
-        msg = (x, y, theta)
+        target_postion = (x, y, theta)
+
+        joy_msg = self.get_joy_msg()
 
         #delta_x, delta_y, delta_theta = self.get_deltas(msg, self.get_current_pos())
         #delta_x, delta_y, delta_theta  = (1, 0, 0)
@@ -37,8 +94,22 @@ class WaypointNode:
             self.move_front(1.2) # arg is speed
         # move Y axis
         if delta_y != 0:        
-            self.move_sideways(1)
+            # self.move_sideways(1)
+            self.move_sideways_no_slide(delta_y, joy_msg)
         # move angle
+
+        self.stop()
+
+    def move_sideways_no_slide(self, y, joy_msg):
+        ''' function to move robot on the y-axis using rotation instead of sliding'''
+
+        # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
+        if y > 0:
+            self.turn(math.pi/2, joy_msg) # turn left 90deg
+        elif y < 0:
+            self.turn(-math.pi/2, joy_msg) # turn right 90 deg
+            
+        self.move_front(abs(y))
 
         self.stop()
 
@@ -58,7 +129,6 @@ class WaypointNode:
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
 
         target_time = 1.94   # [seconds to get to a meter]
-
         # ideal: target_time = x / (speed [m/s])
 
         t_start = time.time()
@@ -80,6 +150,8 @@ class WaypointNode:
         '''
         Args:
         x -> int type represeting meters
+
+        NOTE: Sliding not woeking as expected, it may be due to wheel setup basedon TA's input
         '''
         # calibrate 
 
@@ -106,6 +178,33 @@ class WaypointNode:
         self.pub_joy.publish(joy_msg)
 
         return y        
+    
+    def turn(self, theta, joy_msg):
+        # joy_msg[THETA] = 1
+
+        # joy_msg = Joy()
+        # joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        # joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        target_time = 1.94   # [seconds to get to 90 degree angle ]
+        ''' Note: Need to experiment to find out how much time it takes to take a 90degrees turn'''
+        # ideal: target_time = (theta/(pi/2)) / (speed [90degrees/s])
+
+        t_start = time.time()
+        
+        joy_msg.axes[THETA] = 1 # >0.1
+        self.pub_joy.publish(joy_msg)
+        # do I need to publis every cycle, or should I do only once and wait for some time?
+        #         
+        while time.time() < t_start + target_time:
+            pass # just wait for target_time          
+
+        joy_msg.axes[2] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
+        return theta
+
+        pass 
     '''
     def run(self):
         while True:
@@ -152,5 +251,7 @@ class WaypointNode:
 if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
-    waypoint_node.run()
+    # waypoint_node.run()
+    # waypoint_node.run_rotation_calibration()
+    waypoint_node.run_straight_calibration()
     
