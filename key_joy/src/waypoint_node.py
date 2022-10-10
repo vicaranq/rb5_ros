@@ -73,16 +73,17 @@ class WaypointNode:
     
     def run(self):
         '''
-        0,0,0
-        -1,0,0
-        -1,1,1.57
-        -2,1,0
-        -2,2,-1.57
-        -1,1,-0.78
+        0,0,0 -> 0,0,0
+        -1,0,0 -> 1,0,0
+        -1,1,1.57 -> 1,1,1.57
+        -2,1,0 -> 2, 1, 0 
+        -2,2,-1.57 -> 2, 2, -1.57 
+        -1,1,-0.78 -> 1,1,-0.78
         0,0,0
         '''
         #testing msg
-        x, y, theta =  (-1, 0, 0)
+        # x, y, theta =  (1, 0, 0) good
+        x, y, theta =  (1, 1, 0)
         target_postion = (y, x, theta)
         joy_msg = self.get_joy_msg()
         delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_postion)
@@ -107,9 +108,12 @@ class WaypointNode:
         print("[move_sideways_no_slide] Movign sideways for {y}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
+            print("Turning 90deg")
             self.turn(math.pi/2, joy_msg) # turn left 90deg
         elif y < 0:
+            print("Turning -90deg")
             self.turn(-math.pi/2, joy_msg) # turn right 90 deg
+        print("Move front for {}m".format(abs(y)))            
         self.move_front(abs(y))
         self.stop()
 
