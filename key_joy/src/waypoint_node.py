@@ -104,7 +104,7 @@ class WaypointNode:
         print("delta_theta: ", delta_theta)
         # move angle
         if abs(delta_theta)  > 0.1:
-            self.turn(delta_theta, joy_msg)
+            self.turn(target_position[2], joy_msg)
             time.sleep(1)
         print("State: ", (self.x_pos, self.y_pos, self.theta_pos))
         self.stop()
