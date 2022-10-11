@@ -130,7 +130,8 @@ class WaypointNode:
         d -> int type represeting meters
         '''
         print("[move_front] Moving forward for {}m".format(d))
-        time_per_m = 2.0408   # [seconds to get to a meter]
+        # time_per_m = 2.0408   # [seconds to get to a meter]
+        time_per_m = 2.7027   # [seconds to get to a meter]
         t_start = time.time()
         joy_msg.axes[X] = 1.2 if d >=0 else -1.2 # >0.1         
         while time.time() < t_start + time_per_m*abs(d):
@@ -204,7 +205,7 @@ if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
     # 
-    waypoint_node.run_straight_calibration()
+    # waypoint_node.run_straight_calibration()
     # waypoint_node.run_rotation_calibration()
 
     '''
@@ -216,7 +217,7 @@ if __name__ == "__main__":
     -1,1,-0.78 -> 1,1,-0.78
     0,0,0
     '''
-    # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
-    # for p in points[:-1]:
-    #     waypoint_node.run(p)
+    points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
+    for p in points[:4]:
+        waypoint_node.run(p)
     
