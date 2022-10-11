@@ -60,7 +60,7 @@ class MegaPiController:
 
         # new calibration
         # self.setFourMotors(-speed*0.8, speed*0.9, -speed*0.8, speed*0.9) # need more power on left side or less in right side
-        self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.8) # need more power on left wheels
+        # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.8) # need more power on left wheels
         self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.9, speed*0.8)
 
 
