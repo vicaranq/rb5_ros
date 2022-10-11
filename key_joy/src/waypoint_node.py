@@ -82,7 +82,7 @@ class WaypointNode:
         joy_msg = self.get_joy_msg()
         delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_position)
         
-        print("Navigating from {} --> {}".format(self.get_current_pos(), target_position))
+        print("Navigating from {} --> {}".format((self.x_pos,self.y_pos, self.theta_pos), target_position))
         print("delta_x: ", delta_x," | delta_y = ",delta_y, " | delta_theta: ", delta_theta)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
@@ -114,24 +114,27 @@ class WaypointNode:
             self.turn(-math.pi/2 - self.theta_pos, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
         self.move_front(abs(y), joy_msg)
+
         self.stop()
 
-    def move_front(self, x, joy_msg):
+    def move_front(self, d, joy_msg, y_axis=False):
         '''
         Args:
-        x -> int type represeting meters
+        d -> int type represeting meters
         '''
         print("[move_front] Moving forward for {}m".format(x))
         time_per_m = 1.94   # [seconds to get to a meter]
         t_start = time.time()
-        joy_msg.axes[X] = 1.2 if x >=0 else -1.2 # >0.1         
-        while time.time() < t_start + time_per_m*abs(x):
+        joy_msg.axes[X] = 1.2 if d >=0 else -1.2 # >0.1         
+        while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
         #update
-        self.x_pos += x
-        return x
+        if not y_axis:
+            self.x_pos += d
+        else:
+            self.y_pos += d
 
     def move_sideways(self, y):
         '''
