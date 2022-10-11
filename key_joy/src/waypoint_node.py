@@ -122,7 +122,7 @@ class WaypointNode:
         Args:
         d -> int type represeting meters
         '''
-        print("[move_front] Moving forward for {}m".format(x))
+        print("[move_front] Moving forward for {}m".format(d))
         time_per_m = 1.94   # [seconds to get to a meter]
         t_start = time.time()
         joy_msg.axes[X] = 1.2 if d >=0 else -1.2 # >0.1         
