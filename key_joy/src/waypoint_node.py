@@ -120,7 +120,7 @@ class WaypointNode:
             print("Turning -90deg")
             self.turn(-math.pi/2, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
-        self.move_front(abs(y), joy_msg, y_axis=True)
+        self.move_front(y, joy_msg, y_axis=True)
 
         self.stop()
 
@@ -133,7 +133,8 @@ class WaypointNode:
         # time_per_m = 2.0408   # [seconds to get to a meter]
         time_per_m = 2.7027   # [seconds to get to a meter]
         t_start = time.time()
-        joy_msg.axes[X] = 1.2 if d >=0 else -1.2 # >0.1         
+
+        joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
         joy_msg.axes[X] = 0 # reset 
