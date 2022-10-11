@@ -63,7 +63,8 @@ class MegaPiController:
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.8) # need more power on left wheels
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.9, speed*0.8) # need more power on the rigt 
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.9) # need more power on the left
-        self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.85, speed*0.9)
+        # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.85, speed*0.9) # need more left
+        self.setFourMotors(-speed*0.8, speed*0.8, -speed*1, speed*0.9)
 
 
     def carRotate(self, speed):
