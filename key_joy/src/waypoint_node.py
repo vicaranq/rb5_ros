@@ -113,7 +113,7 @@ class WaypointNode:
             print("Turning -90deg")
             self.turn(-math.pi/2 - self.theta_pos, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
-        self.move_front(abs(y), joy_msg)
+        self.move_front(abs(y), joy_msg, y_axis=True)
 
         self.stop()
 
