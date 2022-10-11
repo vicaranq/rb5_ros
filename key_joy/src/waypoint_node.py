@@ -184,9 +184,9 @@ class WaypointNode:
         #calibration_time = 2.5 # [sec/rad]time to get to pi/2
         time_per_rad = 2.5/ (math.pi/2)
         t_start = time.time()
-        joy_msg.axes[THETA] = 1 # >0.1
         rads_to_turn = self.get_rads(theta)
-        while time.time() < t_start + time_per_rad*rads_to_turn:
+        joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
+        while time.time() < t_start + time_per_rad*abs(rads_to_turn):
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
@@ -215,6 +215,6 @@ if __name__ == "__main__":
     0,0,0
     '''
     points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
-    for p in points[:4]:
+    for p in points[:]:
         waypoint_node.run(p)
     
