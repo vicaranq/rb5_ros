@@ -24,9 +24,10 @@ class WaypointNode:
         return ( self.y_pos, self.x_pos, self.theta_pos)
 
     def get_deltas(self, curr_pos, target_pos):
-        delta_x = target_pos[X] - curr_pos[X]
-        delta_y = target_pos[Y] - curr_pos[Y]
-        delta_theta = target_pos[THETA] - curr_pos[THETA]
+        ''' curr_pos=(y,x,theta) , target_pos=(x,y,theta)'''
+        delta_x = target_pos[0] - curr_pos[X]
+        delta_y = target_pos[1] - curr_pos[Y]
+        delta_theta = target_pos[2] - curr_pos[THETA]
         return (delta_x, delta_y, delta_theta)
     
     def get_joy_msg(self):
