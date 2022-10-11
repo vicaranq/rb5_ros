@@ -112,11 +112,11 @@ class WaypointNode:
         print("[move_sideways_no_slide] Movign sideways for {}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
-            print("Turning 90deg")
-            self.turn(math.pi/2 - self.theta_pos, joy_msg) # turn left 90deg
+            print("Turning 90deg -> {}rads".format(math.pi/2 - self.theta_pos))
+            self.turn(math.pi/2, joy_msg) # turn left 90deg
         elif y < 0:
             print("Turning -90deg")
-            self.turn(-math.pi/2 - self.theta_pos, joy_msg) # turn right 90 deg
+            self.turn(-math.pi/2, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
         self.move_front(abs(y), joy_msg, y_axis=True)
 
