@@ -82,9 +82,8 @@ class WaypointNode:
 
         joy_msg = self.get_joy_msg()
         delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position)
-        
         print("Navigating from {} --> {}".format((self.x_pos,self.y_pos, self.theta_pos), target_position))
-        print("delta_x: ", delta_x," | delta_y = ",delta_y, " | delta_theta: ", delta_theta)
+        print("delta_x: ", delta_x)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
         if abs(delta_x) > 0.1:
@@ -95,10 +94,12 @@ class WaypointNode:
             time.sleep(1)
         # move Y axis
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position)
+        print("delta_y: ", delta_y)
         if abs(delta_y) > 0.1:        
             self.move_sideways_no_slide(delta_y, joy_msg)
             time.sleep(1)
         _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position)
+        print("delta_theta: ", delta_theta)
         # move angle
         if abs(delta_theta)  > 0.1:
             self.turn(delta_theta, joy_msg)
