@@ -214,6 +214,6 @@ if __name__ == "__main__":
     0,0,0
     '''
     points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
-    for p in points[:2]:
+    for p in points[:3]:
         waypoint_node.run(p)
     
