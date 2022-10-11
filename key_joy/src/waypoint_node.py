@@ -202,7 +202,7 @@ if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
     # 
-    # waypoint_node.run_straight_calibration()
+    waypoint_node.run_straight_calibration()
     # waypoint_node.run_rotation_calibration()
 
     '''
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     -1,1,-0.78 -> 1,1,-0.78
     0,0,0
     '''
-    points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
-    for p in points[:-1]:
-        waypoint_node.run(p)
+    # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
+    # for p in points[:-1]:
+    #     waypoint_node.run(p)
     
