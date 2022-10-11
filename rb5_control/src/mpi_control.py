@@ -57,7 +57,11 @@ class MegaPiController:
         # On ceramic
         # self.setFourMotors(-speed, speed*1.07, -speed, speed*1.07)
         # self.setFourMotors(-speed, speed*1.08, -speed, speed*1.08)
-        self.setFourMotors(-speed*0.8, speed*0.9, -speed*0.8, speed*0.9)
+        
+        # new calibration
+        # self.setFourMotors(-speed*0.8, speed*0.9, -speed*0.8, speed*0.9) # need more power on left side or less in right side
+        self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.8)
+
 
 
     def carRotate(self, speed):
