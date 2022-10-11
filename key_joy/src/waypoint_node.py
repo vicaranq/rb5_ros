@@ -204,9 +204,9 @@ def get_points_from_file(fname="waypoints.txt"):
     f = open(fname, "r")
     points = []
     for line in f:
-        temp = line.split(",")
+        temp = line.strip().split(",")
         if len(temp) == 3: 
-            points.append((temp[0], temp[1], temp[2]))
+            points.append((int(temp[0]), int(temp[1]), int(temp[2])))
     print("[file]{} points loaded".format(len(points)))
     return points
 
