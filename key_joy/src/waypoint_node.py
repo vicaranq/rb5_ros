@@ -175,7 +175,7 @@ class WaypointNode:
         self.y_pos += y
         return y        
     def get_rads(self, theta):
-        return self.theta_pos - theta
+        return theta - self.theta_pos
 
     def turn(self, theta, joy_msg):
         '''
@@ -191,8 +191,9 @@ class WaypointNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        self.stop()
         self.theta_pos = theta
+        print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+        self.stop()
 
     def stop(self):
         restore_terminal_settings(self.settings)
