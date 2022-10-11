@@ -200,16 +200,16 @@ class WaypointNode:
 
     def stop(self):
         restore_terminal_settings(self.settings)
+
 def get_points_from_file(fname="waypoints.txt"):
     f = open(fname, "r")
     points = []
     for line in f:
         temp = line.strip().split(",")
         if len(temp) == 3: 
-            points.append((float(temp[0]), float(temp[1]), float(temp[2])))
+            points.append((float(temp[0])*-0.8, float(temp[1])*0.8, float(temp[2])))
     print("[file]{} points loaded".format(len(points)))
     return points
-
 
 if __name__ == "__main__":
     waypoint_node = WaypointNode()
@@ -228,8 +228,8 @@ if __name__ == "__main__":
     0,0,0
     '''
     points = get_points_from_file()
-    print(points)
+    # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
-    # for p in points[:]:
-    #     waypoint_node.run(p)
+    for p in points[:]:
+        waypoint_node.run(p)
     
