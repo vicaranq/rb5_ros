@@ -89,6 +89,7 @@ class WaypointNode:
         # move X axis
         if abs(delta_x) > 0.1:
             # if the robot is not at zero degrees, then rotate to make it zero
+            print("Turning to zero degrees...")
             self.turn(0,joy_msg)
             self.move_front(delta_x, joy_msg) # front in direction of x axis (world coordinate)
             time.sleep(1)
