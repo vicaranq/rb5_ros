@@ -71,35 +71,28 @@ class WaypointNode:
 
         self.stop()
     
-    def run(self):
-        '''
-        0,0,0 -> 0,0,0
-        -1,0,0 -> 1,0,0
-        -1,1,1.57 -> 1,1,1.57
-        -2,1,0 -> 2, 1, 0 
-        -2,2,-1.57 -> 2, 2, -1.57 
-        -1,1,-0.78 -> 1,1,-0.78
-        0,0,0
-        '''
+    def run(self, target_position=(1, 1, 0) ):
+
         #testing msg
         # x, y, theta =  (1, 0, 0) good
         # x, y, theta =  (1, 1, 0)  good
-        x, y, theta =  (1, 1, 1.57)  
+        # x, y, theta =  (1, 1, 1.57)  
+        # target_postion = (y, x, theta)
 
-        target_postion = (y, x, theta)
         joy_msg = self.get_joy_msg()
-        delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_postion)
+        delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_position)
         
-        print("Navigating from {} --> {}".format(self.get_current_pos(), target_postion))
+        print("Navigating from {} --> {}".format(self.get_current_pos(), target_position))
         print("delta_x: ", delta_x," | delta_y = ",delta_y, " | delta_theta: ", delta_theta)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
         if abs(delta_x) > 0.1:
-            self.move_front(delta_x, joy_msg) # arg is speed
+            # if the robot is not at zero degrees, then rotate to make it zero
+            self.turn(0,joy_msg)
+            self.move_front(delta_x, joy_msg) # front in direction of x axis (world coordinate)
             time.sleep(1)
         # move Y axis
         if abs(delta_y) > 0.1:        
-            # self.move_sideways(1)
             self.move_sideways_no_slide(delta_y, joy_msg)
             time.sleep(1)
         # move angle
@@ -114,10 +107,10 @@ class WaypointNode:
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
             print("Turning 90deg")
-            self.turn(math.pi/2, joy_msg) # turn left 90deg
+            self.turn(math.pi/2 - self.theta_pos, joy_msg) # turn left 90deg
         elif y < 0:
             print("Turning -90deg")
-            self.turn(-math.pi/2, joy_msg) # turn right 90 deg
+            self.turn(-math.pi/2 - self.theta_pos, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
         self.move_front(abs(y), joy_msg)
         self.stop()
@@ -135,6 +128,8 @@ class WaypointNode:
             self.pub_joy.publish(joy_msg)
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
+        #update
+        self.x_pos += x
         return x
 
     def move_sideways(self, y):
@@ -167,9 +162,12 @@ class WaypointNode:
         time.sleep(14)
         joy_msg.axes[0] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-
+        #update 
+        self.y_pos += y
         return y        
-    
+    def get_rads(self, theta):
+        return self.theta_pos - theta
+
     def turn(self, theta, joy_msg):
         '''
         theta: angle in radiants to where we want to turn 
@@ -178,12 +176,14 @@ class WaypointNode:
         time_per_rad = 2.5/ (math.pi/2)
         t_start = time.time()
         joy_msg.axes[THETA] = 1 # >0.1
-        while time.time() < t_start + time_per_rad*theta:
+        rads_to_turn = self.get_rads(theta)
+        while time.time() < t_start + time_per_rad*rads_to_turn:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
         self.stop()
+        self.theta_pos = theta
 
     def stop(self):
         restore_terminal_settings(self.settings)
@@ -191,8 +191,20 @@ class WaypointNode:
 if __name__ == "__main__":
     waypoint_node = WaypointNode()
     rospy.init_node("waypoint")
-    waypoint_node.run()
     # 
     # waypoint_node.run_straight_calibration()
     # waypoint_node.run_rotation_calibration()
+
+    '''
+    0,0,0 -> 0,0,0
+    -1,0,0 -> 1,0,0
+    -1,1,1.57 -> 1,1,1.57
+    -2,1,0 -> 2, 1, 0 
+    -2,2,-1.57 -> 2, 2, -1.57 
+    -1,1,-0.78 -> 1,1,-0.78
+    0,0,0
+    '''
+    points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78)]
+    for p in points[:4]:
+        waypoint_node.run(p)
     
