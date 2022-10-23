@@ -60,7 +60,7 @@ class FeedbackNode:
                 message.tranforms[0].transform.rotation.w)
     
     def tag_information(self,  message):
-        if "tranforms" in message:
+        if message:
             # expecting message from /tf topic
             print("meesage:", message)
             tag_id = message.tranforms[0].transform.child_frame_id
