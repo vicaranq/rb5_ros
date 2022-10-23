@@ -46,13 +46,18 @@ class FeedbackNode:
         '''
         Returns tupple (x_T,y_T,z_T) from tag coordinates to TAG coordinates frame
         '''
-        return (message.tranforms[0].transform.translation.x, message.tranforms[0].transform.translation.y, message.tranforms[0].transform.translation.z)
+        return (message.tranforms[0].transform.translation.x, \
+                message.tranforms[0].transform.translation.y, \
+                message.tranforms[0].transform.translation.z)
 
     def get_rotation(self, message):
         '''
         Returns tupple (x_T,y_T,z_T) from tag coordinates to TAG coordinates frame
         '''
-        return (message.tranforms[0].transform.rotation.x, message.tranforms[0].transform.rotation.y, message.tranforms[0].transform.rotation.z, message.tranforms[0].transform.rotation.w)
+        return (message.tranforms[0].transform.rotation.x, \
+                message.tranforms[0].transform.rotation.y, \
+                message.tranforms[0].transform.rotation.z, \
+                message.tranforms[0].transform.rotation.w)
     
     def tag_information(self,  message):
         if "tranforms" in message:
@@ -60,7 +65,9 @@ class FeedbackNode:
             print("meesage:", message)
             tag_id = message.tranforms[0].transform.child_frame_id
             assert type(tag_id) == str, "Unexpected tag type"
-            self.tags[tag_id]={"id": tag_id, "translation" : self.get_translation(message), "rotation" : self.get_rotation(message)}
+            self.tags[tag_id]={"id": tag_id, \
+                "translation" : self.get_translation(message), \
+                    "rotation" : self.get_rotation(message)}
 
     def run(self, target_position_w, tag_id):
         '''
@@ -84,7 +91,8 @@ class FeedbackNode:
         
         t_start = time.time()
         while time.time() < t_start + 10:
-            print("tag info: ", self.tags)
+            if self.tags:
+                print("tag info: ", self.tags)
 
         print("closing...")
         self.stop()
