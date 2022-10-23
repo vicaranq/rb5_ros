@@ -70,6 +70,7 @@ class FeedbackNode:
                 self.tags[tag_id]={"id": tag_id, \
                     "translation" : self.get_translation(message), \
                         "rotation" : self.get_rotation(message)}
+                print("tags updated!")
             except:
                 pass                
 
