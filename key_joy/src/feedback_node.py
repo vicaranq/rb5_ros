@@ -65,7 +65,7 @@ class FeedbackNode:
             # expecting message from /tf topic
             try: 
                 # print("meesage:", message)
-                tag_id = message.tranforms[0].transform.child_frame_id
+                tag_id = "tag1" #message.tranforms[0].transform.child_frame_id
                 assert type(tag_id) == str, "Unexpected tag type"
                 self.tags[tag_id]={"id": tag_id, \
                     "translation" : self.get_translation(message), \
