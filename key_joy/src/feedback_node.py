@@ -61,7 +61,7 @@ class FeedbackNode:
     
     def tag_information(self,  message):
 
-        if message and 'tranforms' in message:
+        if message:
             # expecting message from /tf topic
             try: 
                 print("meesage:", message)
