@@ -64,7 +64,7 @@ class FeedbackNode:
         if message:
             # expecting message from /tf topic
             try: 
-                print("meesage:", message)
+                # print("meesage:", message)
                 tag_id = message.tranforms[0].transform.child_frame_id
                 assert type(tag_id) == str, "Unexpected tag type"
                 self.tags[tag_id]={"id": tag_id, \
@@ -96,7 +96,7 @@ class FeedbackNode:
         t_start = time.time()
         while time.time() < t_start + 10:
             if self.tags:
-                print("tag info: ", self.tags)
+                print("tag info: ", self.tags)                
 
         print("closing...")
         self.stop()
@@ -246,14 +246,3 @@ if __name__ == "__main__":
     p, tag_id = (points[0], tags[0])
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
     feedback_node.run(p, tag_id)
-        
-    '''
-    # for i in range(10):
-    for p in points[i]:
-        first subscibe -> initial tag location
-        while current location != initial location - point:
-            subscribe -> current tag location
-            run a bit
-    rospy.Subscriber("/tf", TFMessage, sof)
-    time.sleep(2)
-    '''
