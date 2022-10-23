@@ -229,9 +229,10 @@ if __name__ == "__main__":
     points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
     tags = [1,2,3] # tag ids associated to each position
 
-    for p,tag_id in (points[0], tags[0]):
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in (points, tags):
+    p, tag_id = (points[0], tags[0])
+    print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    feedback_node.run(p, tag_id)
         
     '''
     # for i in range(10):
