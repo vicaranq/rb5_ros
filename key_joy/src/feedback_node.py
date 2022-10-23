@@ -54,7 +54,7 @@ class FeedbackNode:
         '''
         return (message.tranforms[0].transform.rotation.x, message.tranforms[0].transform.rotation.y, message.tranforms[0].transform.rotation.z, message.tranforms[0].transform.rotation.w)
     
-    def tag_infomation(self,  message):
+    def tag_information(self,  message):
         if message:
             # expecting message from /tf topic
             tag_id = message.tranforms[0].transform.child_frame_id
