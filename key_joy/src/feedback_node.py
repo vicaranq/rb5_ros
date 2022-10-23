@@ -55,8 +55,9 @@ class FeedbackNode:
         return (message.tranforms[0].transform.rotation.x, message.tranforms[0].transform.rotation.y, message.tranforms[0].transform.rotation.z, message.tranforms[0].transform.rotation.w)
     
     def tag_information(self,  message):
-        if message:
+        if "tranforms" in message:
             # expecting message from /tf topic
+            print("meesage:", message)
             tag_id = message.tranforms[0].transform.child_frame_id
             assert type(tag_id) == str, "Unexpected tag type"
             self.tags[tag_id]={"id": tag_id, "translation" : self.get_translation(message), "rotation" : self.get_rotation(message)}
