@@ -56,6 +56,7 @@ class FeedbackNode:
     
     def tag_infomation(self,  message):
         if message:
+            # expecting message from /tf topic
             tag_id = message.tranforms[0].transform.child_frame_id
             assert type(tag_id) == str, "Unexpected tag type"
             self.tags[tag_id]={"id": tag_id, "translation" : self.get_translation(message), "rotation" : self.get_rotation(message)}
@@ -228,7 +229,7 @@ if __name__ == "__main__":
     points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
     tags = [1,2,3] # tag ids associated to each position
 
-    for p,tag_id in zip(points[0], tags[0]):
+    for p,tag_id in (points[0], tags[0]):
         print("Starting navigation to target point: ", p, " tag: ", tag_id)        
         feedback_node.run(p, tag_id)
         
