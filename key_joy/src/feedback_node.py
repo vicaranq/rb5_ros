@@ -68,10 +68,8 @@ class FeedbackNode:
                 print("message_type:\n", type(message))
                 print("message.transforms_type:\n", type(message.transforms))
 
-                print('x,y,z:', (message.tranforms[0].transform.translation.x, \
-                message.tranforms[0].transform.translation.y, \
-                message.tranforms[0].transform.translation.z))
-                
+                print('x', message.tranforms[0].transform.translation.x)
+
                 tag_id = "tag1" #message.tranforms[0].transform.child_frame_id
                 # assert type(tag_id) == str, "Unexpected tag type"
                 self.tags[tag_id]={"id": tag_id, \
@@ -79,6 +77,7 @@ class FeedbackNode:
                         "rotation" : self.get_rotation(message)}
                 print("tags updated!")
             except:
+                print("something fail")
                 pass                
 
     def run(self, target_position_w, tag_id):
