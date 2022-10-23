@@ -60,14 +60,18 @@ class FeedbackNode:
                 message.tranforms[0].transform.rotation.w)
     
     def tag_information(self,  message):
-        if message:
+
+        if message and 'tranforms' in message:
             # expecting message from /tf topic
-            print("meesage:", message)
-            tag_id = message.tranforms[0].transform.child_frame_id
-            assert type(tag_id) == str, "Unexpected tag type"
-            self.tags[tag_id]={"id": tag_id, \
-                "translation" : self.get_translation(message), \
-                    "rotation" : self.get_rotation(message)}
+            try: 
+                print("meesage:", message)
+                tag_id = message.tranforms[0].transform.child_frame_id
+                assert type(tag_id) == str, "Unexpected tag type"
+                self.tags[tag_id]={"id": tag_id, \
+                    "translation" : self.get_translation(message), \
+                        "rotation" : self.get_rotation(message)}
+            except:
+                pass                
 
     def run(self, target_position_w, tag_id):
         '''
@@ -236,7 +240,7 @@ if __name__ == "__main__":
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
 
     points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
-    tags = [1,2,3] # tag ids associated to each position
+    tags = ["marker_1",2,3] # tag ids associated to each position
 
     # for p,tag_id in (points, tags):
     p, tag_id = (points[0], tags[0])
