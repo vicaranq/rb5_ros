@@ -21,6 +21,9 @@ class FeedbackNode:
         self.y_pos = 0
         self.theta_pos = 0
 
+        self.tag = {}
+
+
     def get_current_pos(self):
         return ( self.y_pos, self.x_pos, self.theta_pos)
 
@@ -75,15 +78,25 @@ class FeedbackNode:
 
         self.stop()
     
-    def run(self, tf_message):
+    def tag_infomation(self. message):
+        id_ = message.tranforms[0].transform.child_frame_id
+        tag[id_]={"translation" : get_translation(message), "rotation" : get_rotation(message)}
+
+    def run(self, target_position, tag_id):
         
         #testing msg
         # x, y, theta =  (1, 0, 0) good
         # x, y, theta =  (1, 1, 0)  good
         # x, y, theta =  (1, 1, 1.57)  
         # target_postion = (y, x, theta)
-        target_position = (1,0,0)
+        
+        
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+        initial_tag_reading_robot = self.tags[tag_id]
+        target_tag_reading_robot = initial_tag_reading_robot-diff
 
+
+        
         joy_msg = self.get_joy_msg()
         delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position)
         print("Navigating from {} --> {}".format((self.x_pos,self.y_pos, self.theta_pos), target_position))
@@ -110,6 +123,7 @@ class FeedbackNode:
             time.sleep(1)
         print("State: ", (self.x_pos, self.y_pos, self.theta_pos))
         self.stop()
+        # update world coordinate for robot
         
 
     def get_translation(message):
@@ -211,8 +225,17 @@ if __name__ == "__main__":
     # points = get_points_from_file()
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
-    #for p in points[:]:
-    #feedback_node.run()
-    for i in range(10):
-        rospy.Subscriber("/tf", TFMessage, feedback_node.run)
-        time.sleep(2)
+    
+    tags = [1,2,3]
+    for p,tag_id in zip(points[:], tags):
+        feedback_node.run(p, tag_id)
+    '''
+    # for i in range(10):
+    for p in points[i]:
+        first subscibe -> initial tag location
+        while current location != initial location - point:
+            subscribe -> current tag location
+            run a bit
+    rospy.Subscriber("/tf", TFMessage, sof)
+    time.sleep(2)
+    '''
