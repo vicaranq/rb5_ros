@@ -67,6 +67,11 @@ class FeedbackNode:
                 print("message:\n", message)
                 print("message_type:\n", type(message))
                 print("message.transforms_type:\n", type(message.transforms))
+
+                print('x,y,z:', (message.tranforms[0].transform.translation.x, \
+                message.tranforms[0].transform.translation.y, \
+                message.tranforms[0].transform.translation.z))
+                
                 tag_id = "tag1" #message.tranforms[0].transform.child_frame_id
                 # assert type(tag_id) == str, "Unexpected tag type"
                 self.tags[tag_id]={"id": tag_id, \
