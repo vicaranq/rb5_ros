@@ -16,13 +16,13 @@ ros::Subscriber image_sub;
 AprilDetection det;
 
 
-double distortion_coeff[] = {0.022327, 
-                             -0.019742, 
-                            -0.000961, 
-                            0.000625, 
+double distortion_coeff[] = {-0.003148, 
+                             -0.007343, 
+                            0.001946, 
+                            0.003011, 
                             0.000000};
-double intrinsics[] = {691.01615,    0.     ,  954.51,
-                       0.     ,  690.10114,  540.77467,
+double intrinsics[] = {651.527323,    0.     ,  965.489233,
+                       0.     ,  647.468226,  557.154948,
                        0.     ,    0.     ,    1.};
 
 const cv::Mat d(cv::Size(1, 5), CV_64FC1, distortion_coeff);
