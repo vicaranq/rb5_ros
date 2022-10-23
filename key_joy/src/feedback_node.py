@@ -5,7 +5,7 @@ from sensor_msgs.msg import Joy
 from tf2_msgs.msg import TFMessage
 from key_parser import get_key, save_terminal_settings, restore_terminal_settings
 import time, math
-
+import numpy as np
 X = 1
 Y = 0 
 THETA = 2
@@ -17,11 +17,13 @@ class FeedbackNode:
 
         # Initialize position of robot 
         # (assuming -x to front, +y to the left, theta opening from -x towards y axis)
-        self.x_pos = 0
-        self.y_pos = 0
+        # self.x_pos = 0
+        # self.y_pos = 0
+        self.x_w = 0
+        self.y_w = 0
         self.theta_pos = 0
 
-        self.tag = {}
+        self.tags = {}
 
 
     def get_current_pos(self):
@@ -40,63 +42,66 @@ class FeedbackNode:
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
         return  joy_msg
 
-    def run_straight_calibration(self):
-        joy_msg = Joy()
-        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
-        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        # target_time = 2.0408 # time to get to 1m is: 100cm/49cm/s = 2.0408 s 
-        # target_time = 3 # 3s -> 111cm  then speed is 111cm/3s = 37 cm/s --> 100cm/37cm/s = 2.7027
-        target_time = 2.7027
-        # ideal: target_time = x / (speed [m/s])
-        t_start = time.time()
+    def get_translation(self, message):
+        '''
+        Returns tupple (x_T,y_T,z_T) from tag coordinates to TAG coordinates frame
+        '''
+        return (message.tranforms[0].transform.translation.x, message.tranforms[0].transform.translation.y, message.tranforms[0].transform.translation.z)
 
-        joy_msg.axes[X] = 1.2 # >0.1
-        
-        while time.time() < t_start + target_time:
-            self.pub_joy.publish(joy_msg)
-            # just wait for target_time          
-
-        joy_msg.axes[X] = 0 # reset 
-        self.pub_joy.publish(joy_msg)
-
-        self.stop()
-
-    def run_rotation_calibration(self):
-        joy_msg = Joy()
-        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
-        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        target_time = 2.5   # [seconds to get to a 90 degrees angle]
-        # ideal: target_time = rad / (speed [rad/s])
-        t_start = time.time()
-        joy_msg.axes[THETA] = 1 # >0.1
-        while time.time() < t_start + target_time:
-            self.pub_joy.publish(joy_msg)
-            # just wait for target_time          
-
-        joy_msg.axes[THETA] = 0 # reset 
-        self.pub_joy.publish(joy_msg)
-
-        self.stop()
+    def get_rotation(self, message):
+        '''
+        Returns tupple (x_T,y_T,z_T) from tag coordinates to TAG coordinates frame
+        '''
+        return (message.tranforms[0].transform.rotation.x, message.tranforms[0].transform.rotation.y, message.tranforms[0].transform.rotation.z, message.tranforms[0].transform.rotation.w)
     
-    def tag_infomation(self. message):
-        id_ = message.tranforms[0].transform.child_frame_id
-        tag[id_]={"translation" : get_translation(message), "rotation" : get_rotation(message)}
+    def tag_infomation(self,  message):
+        if message:
+            tag_id = message.tranforms[0].transform.child_frame_id
+            assert type(tag_id) == str, "Unexpected tag type"
+            self.tags[tag_id]={"id": tag_id, "translation" : self.get_translation(message), "rotation" : self.get_rotation(message)}
 
-    def run(self, target_position, tag_id):
+    def run(self, target_position_w, tag_id):
+        '''
+        Args:
+        target_position_w -> Target position in world coordinates 
+        tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
+        '''
         #testing msg
         # x, y, theta =  (1, 0, 0) good
         # x, y, theta =  (1, 1, 0)  good
         # x, y, theta =  (1, 1, 1.57)  
         # target_postion = (y, x, theta)
         
-        
+        # Target in world coordinates
+        x_target, y_target, alpha_target = target_position_w
+        # Obtain Tag information
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
-        initial_tag_reading_robot = self.tags[tag_id]
-        target_tag_reading_robot = initial_tag_reading_robot-diff
 
-
+        # tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
         
+        t_start = time.time()
+        while time.time() < t_start + 10:
+            print("tag info: ", self.tags)
+
+        print("closing...")
+        self.stop()
+        #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one
+        
+        # X, Y, Z = (0,1,2)
+        # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+
+        # dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)
+
+        # print(dist_to_target_x_w, end=" ")
+
+        # initial_tag_reading_robot = self.tags[tag_id]
+        # target_tag_reading_robot = initial_tag_reading_robot-diff
+
+
+
+
+        '''
         joy_msg = self.get_joy_msg()
         delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position)
         print("Navigating from {} --> {}".format((self.x_pos,self.y_pos, self.theta_pos), target_position))
@@ -124,13 +129,9 @@ class FeedbackNode:
         print("State: ", (self.x_pos, self.y_pos, self.theta_pos))
         self.stop()
         # update world coordinate for robot
-        
 
-    def get_translation(message):
-        return (message.tranforms[0].transform.translation.x, message.tranforms[0].transform.translation.y, message.tranforms[0].transform.translation.z)
-    def get_rotation(message):
-        return (message.tranforms[0].transform.rotation.x, message.tranforms[0].transform.rotation.y, message.tranforms[0].transform.rotation.z, message.tranforms[0].transform.rotation.w)
-    
+        '''
+        
 
     def move_sideways_no_slide(self, y, joy_msg):
         ''' function to move robot on the y-axis using rotation instead of sliding'''
@@ -168,9 +169,7 @@ class FeedbackNode:
             self.x_pos += d
         else:
             self.y_pos += d
-
-
-        
+       
     def get_rads(self, theta):
         return theta - self.theta_pos
 
@@ -225,10 +224,14 @@ if __name__ == "__main__":
     # points = get_points_from_file()
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
-    
-    tags = [1,2,3]
-    for p,tag_id in zip(points[:], tags):
+
+    points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
+    tags = [1,2,3] # tag ids associated to each position
+
+    for p,tag_id in zip(points[0], tags[0]):
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
         feedback_node.run(p, tag_id)
+        
     '''
     # for i in range(10):
     for p in points[i]:
