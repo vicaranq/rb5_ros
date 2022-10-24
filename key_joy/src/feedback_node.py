@@ -68,6 +68,8 @@ class FeedbackNode:
                 print("message_type:\n", type(message))
                 print("message.transforms_type:\n", type(message.transforms))
 
+                print('msg.transforms[0]', message.tranforms[0])
+                print('msg.transforms[0].transform', message.tranforms[0].transform)
                 print('x', message.tranforms[0].transform.translation.x)
 
                 tag_id = "tag1" #message.tranforms[0].transform.child_frame_id
