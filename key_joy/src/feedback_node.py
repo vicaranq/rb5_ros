@@ -226,9 +226,9 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
         #update
         if not y_axis:
-            self.x_pos += d
+            self.x_w += d
         else:
-            self.y_pos += d
+            self.y_w += d
 
     def move_front_new(self, d, joy_msg, y_axis=False):
         '''
