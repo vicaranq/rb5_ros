@@ -89,11 +89,7 @@ class FeedbackNode:
         tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
         '''
-        #testing msg
-        # x, y, theta =  (1, 0, 0) good
-        # x, y, theta =  (1, 1, 0)  good
-        # x, y, theta =  (1, 1, 1.57)  
-        # target_postion = (y, x, theta)
+        joy_msg = self.get_joy_msg()
         
         # Target in world coordinates
         x_target, y_target, alpha_target = target_position_w
@@ -122,9 +118,17 @@ class FeedbackNode:
 
                 arrived_to_target = False
                 while not arrived_to_target and time.time() < t_start + t_experiment:
-
+                    d_x =  dist_to_target_x_w - tag_pos_x_w
                     # move forward a bit
-                    time.sleep(1)
+                    # time.sleep(1)
+                    if abs(d_x) > 0.05: # greater than 5cm
+                        # if the robot is not at zero degrees, then rotate to make it zero
+                        # print("Turning to zero degrees...")
+                        # self.turn(0,joy_msg)
+                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                        self.move_front_old(d_x/3, joy_msg) # front in direction of x axis (world coordinate)
+                        # time.sleep(1)   
+
                     # --------------  Get new position --------------
                     # print("new_tag_pos_T: " ,new_tag_pos_T)
                     new_tag_pos_T = self.tags[tag_id]
@@ -135,14 +139,12 @@ class FeedbackNode:
 
                     if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
                         arrived_to_target = True 
-                        print("ARRIVED!!!!")
+                        print("ARRIVED TO {}!!!!".format(target_position_w))
                 
                 break 
+            break
 
-                    
-                # when
-
-                
+                                                    
 
         print("closing...")
         self.stop()
@@ -208,7 +210,28 @@ class FeedbackNode:
 
         self.stop()
 
-    def move_front(self, d, joy_msg, y_axis=False):
+    def move_front_old(self, d, joy_msg, y_axis=False):
+        '''
+        Args:
+        d -> int type represeting meters
+        '''
+        print("[move_front] Moving forward for {}m".format(d))
+        time_per_m = 2.0408   # [seconds to get to a meter] on carpet
+        # time_per_m = 2.7027   # [seconds to get to a meter] on ceramic 
+        t_start = time.time()
+
+        joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
+        while time.time() < t_start + time_per_m*abs(d):
+            self.pub_joy.publish(joy_msg)
+        joy_msg.axes[X] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+        #update
+        if not y_axis:
+            self.x_pos += d
+        else:
+            self.y_pos += d
+
+    def move_front_new(self, d, joy_msg, y_axis=False):
         '''
         Args:
         d -> int type represeting meters
