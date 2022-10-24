@@ -21,13 +21,13 @@ class FeedbackNode:
         # self.y_pos = 0
         self.x_w = 0
         self.y_w = 0
-        self.theta_pos = 0
+        self.theta_w = 0
 
         self.tags = {}
 
 
     def get_current_pos(self):
-        return ( self.y_pos, self.x_pos, self.theta_pos)
+        return ( self.x_w, self.y_w, self.theta_w)
 
     def get_deltas(self, curr_pos, target_pos):
         ''' curr_pos=(y,x,theta) , target_pos=(x,y,theta)'''
@@ -81,6 +81,43 @@ class FeedbackNode:
             except:
                 print("something fail")
                 pass                
+    def readjust_angle(self, tag_pos_y_w, d_x):
+        if abs(tag_pos_y_w) > 0.05: # if more than 5cm, then readjust angle
+            
+            #get heuristic angle
+            theta = -1*math.asin(tag_pos_y_w/d_x)
+            print("adjusting by: ", theta*180/math.pi, " deg")
+
+            # if we are facing to +x then it is theta (tag #1 )
+
+            # if we are facing to +y then it is theta + 90 (tag #2 )
+
+            self.turn_old(theta)
+
+    def turn_old(self, theta):
+        '''
+        theta: angle in radiants to where we want to turn in world frame
+        '''
+        joy_msg = self.get_joy_msg()
+        #calibration_time = 2.5 # [sec/rad]time to get to pi/2 NOTE: Verify 2.5 for
+        time_per_rad = 2.5/ (math.pi/2)
+        t_start = time.time()
+        rads_to_turn = self.get_rads(theta)
+        joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
+        while time.time() < t_start + time_per_rad*abs(rads_to_turn):
+            self.pub_joy.publish(joy_msg)
+            # just wait for target_time          
+        joy_msg.axes[THETA] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+        self.theta_w = theta
+        print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+        self.stop()            
+
+    def get_w_cord_for_tag(self, tag_pos_T):
+        X, Y, Z = (0,1,2)
+        # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+        # NOTE: change this depending on the tag! 
+        return (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
 
     def run(self, target_position_w, tag_id):
         '''
@@ -88,9 +125,10 @@ class FeedbackNode:
         target_position_w -> Target position in world coordinates 
         tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
-        '''
-        joy_msg = self.get_joy_msg()
-        
+        '''              
+        print("Robot's World Position: ", self.get_current_pos())
+        print("Targer Position: ", target_position_w)
+
         # Target in world coordinates
         x_target, y_target, alpha_target = target_position_w
         # Obtain Tag information
@@ -102,40 +140,47 @@ class FeedbackNode:
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
 
-                tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
-
-                # print("tag info: ", self.tags)  
+                tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
 
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
 
-                X, Y, Z = (0,1,2)
-                tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+                # X, Y, Z = (0,1,2)
+                # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+                tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
+                
+
                 print("tag_pos_x_w: ", tag_pos_x_w)
                 # tag position minus how much we need to move
-                # NOTE: When we get to dist_to_target_x_w, we arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)
+                # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
+                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)                
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
+                dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
 
                 arrived_to_target = False
                 while not arrived_to_target and time.time() < t_start + t_experiment:
                     d_x = tag_pos_x_w -  dist_to_target_x_w 
                     # move forward a bit
                     # time.sleep(1)
+                    # if need_to_move_on_y():
+                    # elif need_to_move_on_x():
+                    # elif need_to_move_on_theta():                
+
                     if abs(d_x) > 0.05: # greater than 5cm
                         # if the robot is not at zero degrees, then rotate to make it zero
                         # print("Turning to zero degrees...")
                         # self.turn(0,joy_msg)
                         # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        self.move_front_old(d_x/4, joy_msg) # front in direction of x axis (world coordinate)
-                        # time.sleep(1)   
+                        self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
+                        # self.readjust_angle(tag_pos_y_w, d_x)
 
                     # --------------  Get new position --------------
                     # print("new_tag_pos_T: " ,new_tag_pos_T)
-                    new_tag_pos_T = self.tags[tag_id]
-                    tag_pos_x_w, tag_pos_y_w = (new_tag_pos_T['translation'][Z], -1*new_tag_pos_T['translation'][X]) # distance to x location in world coord.
+                    # new_tag_pos_T = self.tags[tag_id]
+                    # tag_pos_x_w, tag_pos_y_w = (new_tag_pos_T['translation'][Z], -1*new_tag_pos_T['translation'][X]) # distance to x location in world coord.
+                    tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                     # check how far to dist_to_target_x_w we are   
-                    print("d: ", dist_to_target_x_w - tag_pos_x_w)  
+                    print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
 
                     if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
                         arrived_to_target = True 
@@ -199,7 +244,7 @@ class FeedbackNode:
         print("[move_sideways_no_slide] Movign sideways for {}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
-            print("Turning 90deg -> {}rads".format(math.pi/2 - self.theta_pos))
+            print("Turning 90deg -> {}rads".format(math.pi/2 - self.theta_w))
             self.turn(math.pi/2, joy_msg) # turn left 90deg
         elif y < 0:
             print("Turning -90deg")
@@ -219,11 +264,12 @@ class FeedbackNode:
         return speed
             
 
-    def move_front_old(self, d, joy_msg, y_axis=False):
+    def move_front_old(self, d, y_axis=False):
         '''
         Args:
         d -> float type represeting meters
         '''
+        joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         time_per_m = 2.0408   # [seconds to get to a meter] on carpet
         # time_per_m = 2.7027   # [seconds to get to a meter] on ceramic 
@@ -267,7 +313,7 @@ class FeedbackNode:
             self.y_pos += d
        
     def get_rads(self, theta):
-        return theta - self.theta_pos
+        return theta - self.theta_w
 
     def turn(self, theta, joy_msg):
         '''
@@ -328,3 +374,12 @@ if __name__ == "__main__":
     p, tag_id = (points[0], tags[0])
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
     feedback_node.run(p, tag_id)
+
+    '''
+    Try this next
+    for p,tag_id in (points[:2], tags[:2]):        
+        print("======================================================================)
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
+
+    '''
