@@ -131,7 +131,7 @@ class FeedbackNode:
         X, Y, Z = (0,1,2)
         # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
         # NOTE: change this depending on the tag! 
-        return (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+        return (tag_pos_T['translation'][Z], tag_pos_T['translation'][X]) # distance to x location in world coord.
 
         
 
@@ -289,7 +289,7 @@ class FeedbackNode:
                         # self.turn(0,joy_msg)
                         # ---------- Move Front by 1/3 of the estimated displacement ----------------
                         self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
-                        # self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
+                        self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
 
                     # --------------  Get new position --------------
                     tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
@@ -343,12 +343,12 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_TAG_info( tags[2])
+    # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
-    # print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    # feedback_node.run(p, tag_id)
+    print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    feedback_node.run(p, tag_id)
     
     '''
     Try this next
