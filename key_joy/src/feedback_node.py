@@ -316,7 +316,9 @@ class FeedbackNode:
 
                         print("ARRIVED TO {}!!!!".format(target_position_w))
                 
-                break         
+                break  
+            else:
+                self.turn_old(45/180*math.pi)   
 
                                                     
 
