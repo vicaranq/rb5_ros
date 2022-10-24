@@ -133,118 +133,6 @@ class FeedbackNode:
         # NOTE: change this depending on the tag! 
         return (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
 
-    def run(self, target_position_w, tag_id):
-        '''
-        Args:
-        target_position_w -> Target position in world coordinates 
-        tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
-        
-        '''              
-        print("Robot's World Position: ", self.get_current_pos())
-        print("Targer Position: ", target_position_w)
-
-        # Target in world coordinates
-        x_target, y_target, alpha_target = target_position_w
-        # Obtain Tag information
-        rospy.Subscriber("/tf", TFMessage, self.tag_information)
-
-        
-        t_start = time.time()
-        t_experiment = 30 # [s]
-        while time.time() < t_start + t_experiment:
-            if tag_id in self.tags:
-
-                tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
-
-                #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
-
-                tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
-                
-                print("tag_pos_x_w: ", tag_pos_x_w)
-                # tag position minus how much we need to move
-                # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)                
-                print("dist_to_target_x_w: ", dist_to_target_x_w)
-                dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
-
-                arrived_to_target = False
-                while not arrived_to_target and time.time() < t_start + t_experiment:
-                    d_x = tag_pos_x_w -  dist_to_target_x_w 
-                    # move forward a bit
-                    # time.sleep(1)
-                    # if need_to_move_on_y():
-                    # elif need_to_move_on_x():
-                    # elif need_to_move_on_theta():                
-
-                    if abs(d_x) > 0.05: # greater than 5cm
-                        # if the robot is not at zero degrees, then rotate to make it zero
-                        # print("Turning to zero degrees...")
-                        # self.turn(0,joy_msg)
-                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
-                        self.readjust_angle(tag_pos_y_w, d_x)
-
-                    # --------------  Get new position --------------
-                    tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
-
-                    # check how far to dist_to_target_x_w we are   
-                    print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
-
-                    if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
-                        arrived_to_target = True 
-                        print("ARRIVED TO {}!!!!".format(target_position_w))
-                
-                break         
-
-                                                    
-
-        print("closing...")
-        self.stop()
-        #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one
-        
-        # X, Y, Z = (0,1,2)
-        # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
-
-        # dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)
-
-        # print(dist_to_target_x_w, end=" ")
-
-        # initial_tag_reading_robot = self.tags[tag_id]
-        # target_tag_reading_robot = initial_tag_reading_robot-diff
-
-
-
-
-        '''
-        joy_msg = self.get_joy_msg()
-        delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position)
-        print("Navigating from {} --> {}".format((self.x_pos,self.y_pos, self.theta_pos), target_position))
-        print("delta_x: ", delta_x)
-        # y_curr, x_curr, theta_curr = self.get_current_pos()
-        # move X axis
-        if abs(delta_x) > 0.1:
-            # if the robot is not at zero degrees, then rotate to make it zero
-            print("Turning to zero degrees...")
-            self.turn(0,joy_msg)
-            self.move_front(delta_x, joy_msg) # front in direction of x axis (world coordinate)
-            time.sleep(1)
-        # move Y axis
-        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position)
-        print("delta_y: ", delta_y)
-        if abs(delta_y) > 0.1:        
-            self.move_sideways_no_slide(delta_y, joy_msg)
-            time.sleep(1)
-        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position)
-        print("delta_theta: ", delta_theta)
-        # move angle
-        if abs(delta_theta)  > 0.1:
-            self.turn(target_position[2], joy_msg)
-            time.sleep(1)
-        print("State: ", (self.x_pos, self.y_pos, self.theta_pos))
-        self.stop()
-        # update world coordinate for robot
-
-        '''
         
 
     def move_sideways_no_slide(self, y, joy_msg):
@@ -342,44 +230,130 @@ class FeedbackNode:
     def stop(self):
         restore_terminal_settings(self.settings)
 
-def get_points_from_file(fname="waypoints.txt"):
-    f = open(fname, "r")
-    points = []
-    for line in f:
-        temp = line.strip().split(",")
-        if len(temp) == 3: 
-            points.append((float(temp[0])*-0.8, float(temp[1])*0.8, float(temp[2])))
-    print("[file]{} points loaded".format(len(points)))
-    return points
+    def get_points_from_file(fname="waypoints.txt"):
+        f = open(fname, "r")
+        points = []
+        for line in f:
+            temp = line.strip().split(",")
+            if len(temp) == 3: 
+                points.append((float(temp[0])*-0.8, float(temp[1])*0.8, float(temp[2])))
+        print("[file]{} points loaded".format(len(points)))
+        return points
+
+    def run(self, target_position_w, tag_id):
+        '''
+        Args:
+        target_position_w -> Target position in world coordinates 
+        tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
+        
+        '''              
+        print("Robot's World Position: ", self.get_current_pos())
+        print("Targer Position: ", target_position_w)
+
+        # Target in world coordinates
+        x_target, y_target, alpha_target = target_position_w
+        # Obtain Tag information
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+
+        
+        t_start = time.time()
+        t_experiment = 30 # [s]
+        while time.time() < t_start + t_experiment:
+            if tag_id in self.tags:
+
+                tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
+
+                #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
+
+                tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
+                
+                print("tag_pos_x_w: ", tag_pos_x_w)
+                # tag position minus how much we need to move
+                # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
+                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)                
+                print("dist_to_target_x_w: ", dist_to_target_x_w)
+                dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
+
+                arrived_to_target = False
+                while not arrived_to_target and time.time() < t_start + t_experiment:
+                    d_x = tag_pos_x_w -  dist_to_target_x_w 
+                    # move forward a bit
+                    # time.sleep(1)
+                    # if need_to_move_on_y():
+                    # elif need_to_move_on_x():
+                    # elif need_to_move_on_theta():                
+
+                    if abs(d_x) > 0.05: # greater than 5cm
+                        # if the robot is not at zero degrees, then rotate to make it zero
+                        # print("Turning to zero degrees...")
+                        # self.turn(0,joy_msg)
+                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                        self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
+                        # self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
+
+                    # --------------  Get new position --------------
+                    tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+
+                    # check how far to dist_to_target_x_w we are   
+                    print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
+
+                    if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
+                        arrived_to_target = True 
+                        print("ARRIVED TO {}!!!!".format(target_position_w))
+                
+                break         
+
+                                                    
+
+        print("closing...")
+        self.stop()
+
+    def print_TAG_info(self, target_position_w, tag_id):
+        print("Robot's World Position: ", self.get_current_pos())
+        print("Target Position: ", target_position_w)
+
+        # Target in world coordinates
+        x_target, y_target, alpha_target = target_position_w
+        # Obtain Tag information
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+
+        
+        t_start = time.time()
+        t_experiment = 30 # [s]
+        while time.time() < t_start + t_experiment:
+            if tag_id in self.tags:
+                print("Tag info: \n",self.tags[tag_id])
+                time.sleep(1)
+            elif self.tags:
+                print("Different Tags observed: ", list(self.tags.keys()) )
 
 if __name__ == "__main__":
     feedback_node = FeedbackNode()
     rospy.init_node("feedback")
-    # 
-    # waypoint_node.run_straight_calibration()
-    # waypoint_node.run_rotation_calibration()
 
     '''
-    0,0,0 -> 0,0,0
-    -1,0,0 -> 1,0,0
-    -1,1,1.57 -> 1,1,1.57
-    -2,1,0 -> 2, 1, 0 
-    -2,2,-1.57 -> 2, 2, -1.57 
-    -1,1,-0.78 -> 1,1,-0.78
-    0,0,0
+    Getting Tag info
     '''
+
+
+
     # points = get_points_from_file()
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
 
     points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
     tags = ["marker_1",2,3] # tag ids associated to each position
-
-    # for p,tag_id in (points, tags):
     p, tag_id = (points[0], tags[0])
-    print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    feedback_node.run(p, tag_id)
-
+    '''
+    Getting Tag info
+    '''
+    feedback_node.print_TAG_info(p, tag_id)
+    '''
+    Running Experiment
+    '''
+    # print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    # feedback_node.run(p, tag_id)
+    
     '''
     Try this next
     for p,tag_id in (points[:2], tags[:2]):        
