@@ -118,7 +118,7 @@ class FeedbackNode:
 
                 arrived_to_target = False
                 while not arrived_to_target and time.time() < t_start + t_experiment:
-                    d_x =  dist_to_target_x_w - tag_pos_x_w
+                    d_x = tag_pos_x_w -  dist_to_target_x_w 
                     # move forward a bit
                     # time.sleep(1)
                     if abs(d_x) > 0.05: # greater than 5cm
