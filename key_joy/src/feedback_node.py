@@ -141,8 +141,7 @@ class FeedbackNode:
                         arrived_to_target = True 
                         print("ARRIVED TO {}!!!!".format(target_position_w))
                 
-                break 
-            break
+                break         
 
                                                     
 
