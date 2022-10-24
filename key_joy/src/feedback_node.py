@@ -323,7 +323,7 @@ class FeedbackNode:
                             # self.turn(0,joy_msg)
                             # ---------- Move Front by 1/3 of the estimated displacement ----------------
                             self.move_front_old(d_y/8, y_axis = True) # front in direction of x axis (world coordinate)
-                            self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
+                            self.readjust_angle(-1.0*tag_pos_y_r, d_y) # not working as expected
 
                         # --------------  Get new position --------------
                         tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
