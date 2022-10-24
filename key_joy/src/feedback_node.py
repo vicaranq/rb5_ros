@@ -96,7 +96,7 @@ class FeedbackNode:
             self.stop_robot()
 
             #get heuristic angle
-            theta = -1*math.asin(tag_pos_y_r/abs(d_x)) # must be -1 no? 
+            theta = -1*math.asin(tag_pos_y_r/d_x) # must be -1 no? 
             print("adjusting by: {} deg (tag_pos_y_r: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_r, d_x))
 
             # if we are facing to +x then it is theta (tag #1 )
@@ -323,7 +323,7 @@ class FeedbackNode:
                             # self.turn(0,joy_msg)
                             # ---------- Move Front by 1/3 of the estimated displacement ----------------
                             self.move_front_old(d_y/8, y_axis = True) # front in direction of x axis (world coordinate)
-                            self.readjust_angle(-tag_pos_y_r, d_y) # not working as expected
+                            self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
 
                         # --------------  Get new position --------------
                         tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
