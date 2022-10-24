@@ -363,6 +363,7 @@ class FeedbackNode:
                     # just wait for target_time          
                 joy_msg.axes[THETA] = 0 # reset 
                 self.pub_joy.publish(joy_msg)
+                time.sleep(1)
                 # self.theta_pos = theta
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
