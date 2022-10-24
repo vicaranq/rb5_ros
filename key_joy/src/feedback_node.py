@@ -256,7 +256,7 @@ class FeedbackNode:
 
         
         t_start = time.time()
-        t_experiment = 30 # [s]
+        t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
 
