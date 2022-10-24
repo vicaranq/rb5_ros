@@ -264,14 +264,14 @@ class FeedbackNode:
 
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
 
-                tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
+                tag_pos_x_r, tag_pos_y_r = self.get_w_cord_for_tag(tag_pos_T)
 
 
                 ''' Move Forward? '''
-                print("tag_pos_x_w: ", tag_pos_x_w)
+                print("tag_pos_x_r: ", tag_pos_x_r)
                 # tag position minus how much we need to move
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)             
+                dist_to_target_x_w = tag_pos_x_r - (x_target - self.x_w)             
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
                 dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
 
@@ -306,15 +306,15 @@ class FeedbackNode:
                             # self.turn(0,joy_msg)
                             # ---------- Move Front by 1/3 of the estimated displacement ----------------
                             self.move_front_old(d_y/8, y_axis = True) # front in direction of x axis (world coordinate)
-                            # self.readjust_angle(tag_pos_x_w, d_y) # not working as expected
+                            self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
 
                         # --------------  Get new position --------------
-                        tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+                        tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                         # check how far to dist_to_target_x_w we are   
-                        print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
+                        print("d_y: ",  dist_to_target_y_w - tag_pos_x_r)  
 
-                        if abs(dist_to_target_y_w - tag_pos_y_w) < 0.1:
+                        if abs(dist_to_target_y_w - tag_pos_x_r) < 0.1:
                             arrived_to_target = True
                             self.x_w = x_target # we should be around here
                             self.y_w = y_target
@@ -326,7 +326,7 @@ class FeedbackNode:
                     # moving in X
                     while not arrived_to_target and time.time() < t_start + t_experiment:
                         
-                        d_x = tag_pos_x_w -  dist_to_target_x_w               
+                        d_x = tag_pos_x_r -  dist_to_target_x_w               
 
                         if abs(d_x) > 0.05: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
@@ -337,12 +337,12 @@ class FeedbackNode:
                             self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
 
                         # --------------  Get new position --------------
-                        tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+                        tag_pos_x_r, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                         # check how far to dist_to_target_x_w we are   
-                        print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
+                        print("d_x: ",  tag_pos_x_r - dist_to_target_x_w)  
 
-                        if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
+                        if abs(dist_to_target_x_w - tag_pos_x_r) < 0.1:
                             arrived_to_target = True
                             self.x_w = x_target # we should be around here
                             self.y_w = y_target
