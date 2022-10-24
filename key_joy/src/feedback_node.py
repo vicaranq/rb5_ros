@@ -318,7 +318,8 @@ class FeedbackNode:
                 
                 break  
             else:
-                self.turn_old(45/180*math.pi)   
+                self.turn_old(90/180*math.pi)   
+                break
 
                                                     
 
