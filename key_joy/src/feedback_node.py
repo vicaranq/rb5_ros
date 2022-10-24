@@ -100,12 +100,14 @@ class FeedbackNode:
         # Obtain Tag information
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
 
-        tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
         
         t_start = time.time()
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
-            if self.tags:
+            if tag_id in self.tags:
+
+                tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
+
                 # print("tag info: ", self.tags)  
 
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
