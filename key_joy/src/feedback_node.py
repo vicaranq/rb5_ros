@@ -64,13 +64,13 @@ class FeedbackNode:
         if message:
             # expecting message from /tf topic
             try: 
-                print("message:\n", message)
-                print("message_type:\n", type(message))
-                print("message.transforms_type:\n", type(message.transforms))
+                # print("message:\n", message)
+                # print("message_type:\n", type(message))
+                # print("message.transforms_type:\n", type(message.transforms))
 
-                print('msg.transforms[0]', message.transforms[0])
-                print('msg.transforms[0].transform', message.transforms[0].transform)
-                print('x', message.transforms[0].transform.translation.x)
+                # print('msg.transforms[0]', message.transforms[0])
+                # print('msg.transforms[0].transform', message.transforms[0].transform)
+                # print('x', message.transforms[0].transform.translation.x)
 
                 tag_id = "tag1" #message.tranforms[0].transform.child_frame_id
                 # assert type(tag_id) == str, "Unexpected tag type"
@@ -106,6 +106,7 @@ class FeedbackNode:
         while time.time() < t_start + 10:
             if self.tags:
                 print("tag info: ", self.tags)                
+                time.sleep(1)
 
         print("closing...")
         self.stop()
