@@ -86,7 +86,7 @@ class FeedbackNode:
             
             #get heuristic angle
             theta = -1*math.asin(tag_pos_y_w/d_x)
-            print("adjusting by: ", theta*180/math.pi, " deg")
+            print("adjusting by: {} deg (tag_pos_y_w: {})".format(theta*180/math.pi, tag_pos_y_w))
 
             # if we are facing to +x then it is theta (tag #1 )
 
@@ -144,11 +144,8 @@ class FeedbackNode:
 
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
 
-                # X, Y, Z = (0,1,2)
-                # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
                 tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
                 
-
                 print("tag_pos_x_w: ", tag_pos_x_w)
                 # tag position minus how much we need to move
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
@@ -171,12 +168,9 @@ class FeedbackNode:
                         # self.turn(0,joy_msg)
                         # ---------- Move Front by 1/3 of the estimated displacement ----------------
                         self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
-                        # self.readjust_angle(tag_pos_y_w, d_x)
+                        self.readjust_angle(tag_pos_y_w, d_x)
 
                     # --------------  Get new position --------------
-                    # print("new_tag_pos_T: " ,new_tag_pos_T)
-                    # new_tag_pos_T = self.tags[tag_id]
-                    # tag_pos_x_w, tag_pos_y_w = (new_tag_pos_T['translation'][Z], -1*new_tag_pos_T['translation'][X]) # distance to x location in world coord.
                     tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                     # check how far to dist_to_target_x_w we are   
