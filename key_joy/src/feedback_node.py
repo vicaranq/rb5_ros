@@ -273,7 +273,7 @@ class FeedbackNode:
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
                 dist_to_target_x_w = tag_pos_x_r - (x_target - self.x_w)             
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
-                dist_to_target_y_w = tag_pos_y_r - (y_target - self.y_w)
+                dist_to_target_y_w = tag_pos_x_r - (y_target - self.y_w)
 
                 # Flags
                 moving_in_y_w = True if y_target - self.y_w > 0 else False
