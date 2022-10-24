@@ -254,7 +254,7 @@ class FeedbackNode:
 
         self.stop()
     
-    def reduce_speed(d, speed):
+    def reduce_speed(self, d, speed):
         d_ = abs(d)
         if d_ <= 0.2:
             if d_ <= 0.1:                
