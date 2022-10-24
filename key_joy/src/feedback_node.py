@@ -257,10 +257,8 @@ class FeedbackNode:
     def reduce_speed(self, d, speed):
         d_ = abs(d)
         if d_ <= 0.2:
-            if d_ <= 0.1:                
-                return speed*0.4
-            else:
-                return speed*0.75
+            # REDUCING TO .5 WAS TOO MUCH
+            return speed*0.75
         return speed
             
 
