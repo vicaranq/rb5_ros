@@ -243,7 +243,7 @@ class FeedbackNode:
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        target_time = 2.2   # [seconds to get to a 90 degrees angle]
+        target_time = 2.1   # [seconds to get to a 90 degrees angle]
         # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
         joy_msg.axes[THETA] = 1 # >0.1
