@@ -338,12 +338,12 @@ if __name__ == "__main__":
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
 
     points = [(1,0,0), (1,2,np.pi), (0,0,0)]    
-    tags = ["marker_1","marker_4",3] # tag ids associated to each position
+    tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     p, tag_id = (points[0], tags[0])
     '''
     Getting Tag info
     '''
-    feedback_node.print_TAG_info( tags[1])
+    feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
