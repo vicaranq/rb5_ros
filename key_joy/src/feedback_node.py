@@ -77,7 +77,7 @@ class FeedbackNode:
                 self.tags[tag_id]={"id": tag_id, \
                     "translation" : self.get_translation(message), \
                         "rotation" : self.get_rotation(message)}
-                print("tags updated!")
+                # print("tags updated!")
             except:
                 print("something fail")
                 pass                
@@ -126,13 +126,12 @@ class FeedbackNode:
                     # move forward a bit
                     time.sleep(1)
                     # --------------  Get new position --------------
-                    # rospy.Subscriber("/tf", TFMessage, self.tag_information)
                     # print("new_tag_pos_T: " ,new_tag_pos_T)
                     new_tag_pos_T = self.tags[tag_id]
                     tag_pos_x_w, tag_pos_y_w = (new_tag_pos_T['translation'][Z], -1*new_tag_pos_T['translation'][X]) # distance to x location in world coord.
 
                     # check how far to dist_to_target_x_w we are   
-                    print("d: ", abs(dist_to_target_x_w - tag_pos_x_w))  
+                    print("d: ", dist_to_target_x_w - tag_pos_x_w)  
 
                     if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
                         arrived_to_target = True 
