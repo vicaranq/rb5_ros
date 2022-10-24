@@ -271,52 +271,85 @@ class FeedbackNode:
                 print("tag_pos_x_w: ", tag_pos_x_w)
                 # tag position minus how much we need to move
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)                
+                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)             
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
                 dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
+
+                # Flags
+                moving_in_y_w = True if y_target - self.y_w > 0 else False
+                # moving_in_x_w = True if x_target - self.x_w > 0 else False
+                
 
                 ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
                 # if x are equal -> move +/-90 deg
                 #else: theta_1 = arctan(delta_y_w, delta_x_w)
+                '''
                 if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
-                    self.turn_old(90/180*math.pi)
-                    dist_to_target_x_w = dist_to_target_y_w
+                    self.turn_old(90/180*math.pi)                    
+                    dist_to_target_x_w = -dist_to_target_y_w
                     dist_to_target_y_w=0
-                elif dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
-                    self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
-                    dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
-                    dist_to_target_y_w=0
+                el '''
+                # if dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
+                #     self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
+                #     dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
+                #     dist_to_target_y_w=0
+
                 arrived_to_target = False
-                while not arrived_to_target and time.time() < t_start + t_experiment:
-                    d_x = tag_pos_x_w -  dist_to_target_x_w 
-                    # move forward a bit
-                    # time.sleep(1)
-                    # if need_to_move_on_y():
-                    # elif need_to_move_on_x():
-                    # elif need_to_move_on_theta():                
+                if moving_in_y_w:
+                    while not arrived_to_target and time.time() < t_start + t_experiment:
+                        
+                        d_y = tag_pos_y_w -  dist_to_target_y_w               
 
-                    if abs(d_x) > 0.05: # greater than 5cm
-                        # if the robot is not at zero degrees, then rotate to make it zero
-                        # print("Turning to zero degrees...")
-                        # self.turn(0,joy_msg)
-                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
-                        self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
+                        if abs(d_y) > 0.05: # greater than 5cm
+                            # if the robot is not at zero degrees, then rotate to make it zero
+                            # print("Turning to zero degrees...")
+                            # self.turn(0,joy_msg)
+                            # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                            self.move_front_old(d_y/8, y_axis = True) # front in direction of x axis (world coordinate)
+                            self.readjust_angle(tag_pos_x_w, d_y) # not working as expected
 
-                    # --------------  Get new position --------------
-                    tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+                        # --------------  Get new position --------------
+                        tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
 
-                    # check how far to dist_to_target_x_w we are   
-                    print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
+                        # check how far to dist_to_target_x_w we are   
+                        print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
 
-                    if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
-                        arrived_to_target = True
-                        self.x_w = x_target # we should be around here
-                        self.y_w = y_target
+                        if abs(dist_to_target_y_w - tag_pos_y_w) < 0.1:
+                            arrived_to_target = True
+                            self.x_w = x_target # we should be around here
+                            self.y_w = y_target
 
-                        print("ARRIVED TO {}!!!!".format(target_position_w))
-                
-                break  
+                            print("ARRIVED TO {}!!!!".format(target_position_w))
+                    
+                    break                      
+                else:
+                    # moving in X
+                    while not arrived_to_target and time.time() < t_start + t_experiment:
+                        
+                        d_x = tag_pos_x_w -  dist_to_target_x_w               
+
+                        if abs(d_x) > 0.05: # greater than 5cm
+                            # if the robot is not at zero degrees, then rotate to make it zero
+                            # print("Turning to zero degrees...")
+                            # self.turn(0,joy_msg)
+                            # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                            self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
+                            self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
+
+                        # --------------  Get new position --------------
+                        tag_pos_x_w, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+
+                        # check how far to dist_to_target_x_w we are   
+                        print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
+
+                        if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
+                            arrived_to_target = True
+                            self.x_w = x_target # we should be around here
+                            self.y_w = y_target
+
+                            print("ARRIVED TO {}!!!!".format(target_position_w))
+                    
+                    break  
             else:
                 time_per_rad = 2.5/ (math.pi/2)
                 joy_msg = self.get_joy_msg()
