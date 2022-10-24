@@ -91,7 +91,7 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
 
     def readjust_angle(self, tag_pos_y_w, d_x):
-        if abs(tag_pos_y_w) > 0.05 and abs(tag_pos_y_w/d_x) <= 1 and d_x > 0.1: # if more than 5cm, and it's a valid value to asin(), and d is not so small, then readjust angle
+        if abs(tag_pos_y_w) > 0.05 and abs(tag_pos_y_w/d_x) <= 1 and d_x > 0.2: # if more than 5cm, and it's a valid value to asin(), and d is not so small, then readjust angle
             # stop before turning
             self.stop_robot()
 
@@ -111,7 +111,8 @@ class FeedbackNode:
         '''
         joy_msg = self.get_joy_msg()
         #calibration_time = 2.5 # [sec/rad]time to get to pi/2 NOTE: Verify 2.5 for
-        time_per_rad = 2.5/ (math.pi/2)
+        #time_per_rad = 2.5/ (math.pi/2)
+        time_per_rad = 1.5/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
