@@ -90,14 +90,14 @@ class FeedbackNode:
         joy_msg.axes[THETA] = 0 
         self.pub_joy.publish(joy_msg)
 
-    def readjust_angle(self, tag_pos_y_w, d_x):
-        if abs(tag_pos_y_w) > 0.05 and abs(tag_pos_y_w/d_x) <= 1 and d_x > 0.2: # if more than 5cm, and it's a valid value to asin(), and d is not so small, then readjust angle
+    def readjust_angle(self, tag_pos_y_r, d_x):
+        if abs(tag_pos_y_r) > 0.05 and abs(tag_pos_y_r/d_x) <= 1 and d_x > 0.2: # if more than 5cm, and it's a valid value to asin(), and d is not so small, then readjust angle
             # stop before turning
             self.stop_robot()
 
             #get heuristic angle
-            theta = -1*math.asin(tag_pos_y_w/abs(d_x)) # must be -1 no? 
-            print("adjusting by: {} deg (tag_pos_y_w: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_w, d_x))
+            theta = -1*math.asin(tag_pos_y_r/abs(d_x)) # must be -1 no? 
+            print("adjusting by: {} deg (tag_pos_y_r: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_r, d_x))
 
             # if we are facing to +x then it is theta (tag #1 )
 
@@ -130,7 +130,7 @@ class FeedbackNode:
 
     def get_w_cord_for_tag(self, tag_pos_T):
         X, Y, Z = (0,1,2)
-        # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+        # tag_pos_x_w, tag_pos_y_r = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
         # NOTE: change this depending on the tag! 
         return (tag_pos_T['translation'][Z], tag_pos_T['translation'][X]) # distance to x location in world coord.
 
@@ -273,7 +273,7 @@ class FeedbackNode:
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
                 dist_to_target_x_w = tag_pos_x_r - (x_target - self.x_w)             
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
-                dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
+                dist_to_target_y_w = tag_pos_y_r - (y_target - self.y_w)
 
                 # Flags
                 moving_in_y_w = True if y_target - self.y_w > 0 else False
@@ -298,7 +298,7 @@ class FeedbackNode:
                 if moving_in_y_w:
                     while not arrived_to_target and time.time() < t_start + t_experiment:
                         
-                        d_y = tag_pos_y_w -  dist_to_target_y_w               
+                        d_y = tag_pos_y_r -  dist_to_target_y_w               
 
                         if abs(d_y) > 0.05: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
@@ -334,10 +334,10 @@ class FeedbackNode:
                             # self.turn(0,joy_msg)
                             # ---------- Move Front by 1/3 of the estimated displacement ----------------
                             self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
-                            self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
+                            self.readjust_angle(tag_pos_y_r, d_x) # not working as expected
 
                         # --------------  Get new position --------------
-                        tag_pos_x_r, tag_pos_y_w  = self.get_w_cord_for_tag(self.tags[tag_id])
+                        tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                         # check how far to dist_to_target_x_w we are   
                         print("d_x: ",  tag_pos_x_r - dist_to_target_x_w)  
