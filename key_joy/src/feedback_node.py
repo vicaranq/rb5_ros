@@ -100,13 +100,47 @@ class FeedbackNode:
         # Obtain Tag information
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
 
-        # tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
+        tag_pos_T = self.tags[tag_id]# tag position information in world tag coordinate frame       
         
         t_start = time.time()
-        while time.time() < t_start + 10:
+        t_experiment = 10 # [s]
+        while time.time() < t_start + t_experiment:
             if self.tags:
-                print("tag info: ", self.tags)                
-                time.sleep(1)
+                # print("tag info: ", self.tags)  
+
+                #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
+
+                X, Y, Z = (0,1,2)
+                tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+                print("tag_pos_x_w: ", tag_pos_x_w)
+                # tag position minus how much we need to move
+                # NOTE: When we get to dist_to_target_x_w, we arrived to our x coordinate destination
+                dist_to_target_x_w = tag_pos_x_w - (x_target - self.x_w)
+                print("dist_to_target_x_w: ", dist_to_target_x_w)
+
+                arrived_to_target = False
+                while not arrived_to_target and time.time() < t_start + t_experiment:
+
+                    # move forward a bit
+                    time.sleep(1)
+                    # get new position
+                    # print("new_tag_pos_T: " ,new_tag_pos_T)
+                    new_tag_pos_T = self.tags[tag_id]
+                    tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+
+                    # check how far to dist_to_target_x_w we are   
+                    print("d: ", abs(dist_to_target_x_w - tag_pos_x_w))  
+
+                    if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
+                        arrived_to_target = True 
+                        print("ARRIVED!!!!")
+                
+                break 
+
+                    
+                # when
+
+                
 
         print("closing...")
         self.stop()
