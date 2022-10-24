@@ -286,7 +286,7 @@ class FeedbackNode:
                         # print("Turning to zero degrees...")
                         # self.turn(0,joy_msg)
                         # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        self.move_front_old(d_x/4) # front in direction of x axis (world coordinate)
+                        self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
                         self.readjust_angle(tag_pos_y_w, d_x) # not working as expected
 
                     # --------------  Get new position --------------
