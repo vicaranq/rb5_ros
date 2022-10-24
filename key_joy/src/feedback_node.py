@@ -91,13 +91,13 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
 
     def readjust_angle(self, tag_pos_y_w, d_x):
-        if abs(tag_pos_y_w) > 0.05: # if more than 5cm, then readjust angle
+        if abs(tag_pos_y_w) > 0.05 and abs(tag_pos_y_w/d_x) <= 1 and d_x > 0.1: # if more than 5cm, and it's a valid value to asin(), and d is not so small, then readjust angle
             # stop before turning
             self.stop_robot()
 
             #get heuristic angle
-            theta = -1*math.asin(tag_pos_y_w/d_x)
-            print("adjusting by: {} deg (tag_pos_y_w: {})".format(theta*180/math.pi, tag_pos_y_w))
+            theta = math.asin(tag_pos_y_w/abs(d_x))
+            print("adjusting by: {} deg (tag_pos_y_w: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_w, d_x))
 
             # if we are facing to +x then it is theta (tag #1 )
 
