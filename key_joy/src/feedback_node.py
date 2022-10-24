@@ -103,7 +103,7 @@ class FeedbackNode:
 
             # if we are facing to +y then it is theta + 90 (tag #2 )
 
-            self.turn_old(theta, update=False) # turn wihtout updating theta of robot, update once reached the target
+            self.turn_old(theta) # turn wihtout updating theta of robot, update once reached the target
 
     def turn_old(self, theta, update=True):
         '''
@@ -122,7 +122,7 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
         if update:
             self.theta_w = theta
-            print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+            print("[turn] theta updated and turned {}rads [{}deg]".format(rads_to_turn, rads_to_turn*180/math.pi))
         else:
             print("[turn] turned {}rads".format(rads_to_turn))
         # self.stop()            
@@ -132,8 +132,6 @@ class FeedbackNode:
         # tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
         # NOTE: change this depending on the tag! 
         return (tag_pos_T['translation'][Z], tag_pos_T['translation'][X]) # distance to x location in world coord.
-
-        
 
     def move_sideways_no_slide(self, y, joy_msg):
         ''' function to move robot on the y-axis using rotation instead of sliding'''
@@ -298,7 +296,10 @@ class FeedbackNode:
                     print("d_x: ",  tag_pos_x_w - dist_to_target_x_w)  
 
                     if abs(dist_to_target_x_w - tag_pos_x_w) < 0.1:
-                        arrived_to_target = True 
+                        arrived_to_target = True
+                        self.x_w = x_target # we should be around here
+                        self.y_w = y_target
+
                         print("ARRIVED TO {}!!!!".format(target_position_w))
                 
                 break         
