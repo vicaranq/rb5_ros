@@ -80,10 +80,21 @@ class FeedbackNode:
                 # print("tags updated!")
             except:
                 print("something fail")
-                pass                
+                pass   
+
+    def stop_robot(self):
+        # reset 
+        joy_msg = self.get_joy_msg()        
+        joy_msg.axes[X] = 0 
+        joy_msg.axes[Y] = 0 
+        joy_msg.axes[THETA] = 0 
+        self.pub_joy.publish(joy_msg)
+
     def readjust_angle(self, tag_pos_y_w, d_x):
         if abs(tag_pos_y_w) > 0.05: # if more than 5cm, then readjust angle
-            
+            # stop before turning
+            self.stop_robot()
+
             #get heuristic angle
             theta = -1*math.asin(tag_pos_y_w/d_x)
             print("adjusting by: {} deg (tag_pos_y_w: {})".format(theta*180/math.pi, tag_pos_y_w))
@@ -253,8 +264,7 @@ class FeedbackNode:
         if d_ <= 0.2:
             # REDUCING TO .5 WAS TOO MUCH
             return speed*0.75
-        return speed
-            
+        return speed            
 
     def move_front_old(self, d, y_axis=False):
         '''
