@@ -381,7 +381,7 @@ class FeedbackNode:
                 joy_msg.axes[THETA] = 0 # reset 
                 self.pub_joy.publish(joy_msg)
                 time.sleep(1)
-                self.theta_pos += rads_to_turn
+                self.theta_w += rads_to_turn
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
 
