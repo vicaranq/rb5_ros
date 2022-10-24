@@ -96,16 +96,16 @@ class FeedbackNode:
             self.stop_robot()
 
             #get heuristic angle
-            theta = math.asin(tag_pos_y_w/abs(d_x))
+            theta = math.asin(tag_pos_y_w/abs(d_x)) # must be -1 no? 
             print("adjusting by: {} deg (tag_pos_y_w: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_w, d_x))
 
             # if we are facing to +x then it is theta (tag #1 )
 
             # if we are facing to +y then it is theta + 90 (tag #2 )
 
-            self.turn_old(theta)
+            self.turn_old(theta, update=False) # turn wihtout updating theta of robot, update once reached the target
 
-    def turn_old(self, theta):
+    def turn_old(self, theta, update=True):
         '''
         theta: angle in radiants to where we want to turn in world frame
         '''
@@ -120,9 +120,12 @@ class FeedbackNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        self.theta_w = theta
-        print("[turn] theta updated and turned {}rads".format(rads_to_turn))
-        self.stop()            
+        if update:
+            self.theta_w = theta
+            print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+        else:
+            print("[turn] turned {}rads".format(rads_to_turn))
+        # self.stop()            
 
     def get_w_cord_for_tag(self, tag_pos_T):
         X, Y, Z = (0,1,2)
