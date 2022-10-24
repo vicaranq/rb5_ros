@@ -125,10 +125,11 @@ class FeedbackNode:
 
                     # move forward a bit
                     time.sleep(1)
-                    # get new position
+                    # --------------  Get new position --------------
+                    # rospy.Subscriber("/tf", TFMessage, self.tag_information)
                     # print("new_tag_pos_T: " ,new_tag_pos_T)
                     new_tag_pos_T = self.tags[tag_id]
-                    tag_pos_x_w, tag_pos_y_w = (tag_pos_T['translation'][Z], -1*tag_pos_T['translation'][X]) # distance to x location in world coord.
+                    tag_pos_x_w, tag_pos_y_w = (new_tag_pos_T['translation'][Z], -1*new_tag_pos_T['translation'][X]) # distance to x location in world coord.
 
                     # check how far to dist_to_target_x_w we are   
                     print("d: ", abs(dist_to_target_x_w - tag_pos_x_w))  
