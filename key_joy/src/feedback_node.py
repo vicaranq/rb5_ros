@@ -265,7 +265,9 @@ class FeedbackNode:
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
 
                 tag_pos_x_w, tag_pos_y_w = self.get_w_cord_for_tag(tag_pos_T)
-                
+
+
+                ''' Move Forward? '''
                 print("tag_pos_x_w: ", tag_pos_x_w)
                 # tag position minus how much we need to move
                 # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
@@ -273,6 +275,17 @@ class FeedbackNode:
                 print("dist_to_target_x_w: ", dist_to_target_x_w)
                 dist_to_target_y_w = tag_pos_y_w - (y_target - self.y_w)
 
+                ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
+                # if x are equal -> move +/-90 deg
+                #else: theta_1 = arctan(delta_y_w, delta_x_w)
+                if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
+                    self.turn_old(90/180*math.pi)
+                    dist_to_target_x_w = dist_to_target_y_w
+                    dist_to_target_y_w=0
+                elif dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
+                    self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
+                    dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
+                    dist_to_target_y_w=0
                 arrived_to_target = False
                 while not arrived_to_target and time.time() < t_start + t_experiment:
                     d_x = tag_pos_x_w -  dist_to_target_x_w 
@@ -349,14 +362,13 @@ if __name__ == "__main__":
     '''
     Running Experiment
     '''
-    print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    feedback_node.run(p, tag_id)
+    # print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    # feedback_node.run(p, tag_id)
     
     '''
-    Try this next
+    Try this next    
+    '''
     for p,tag_id in (points[:2], tags[:2]):        
-        print("======================================================================)
+        print("======================================================================")
         print("Starting navigation to target point: ", p, " tag: ", tag_id)        
         feedback_node.run(p, tag_id)
-
-    '''
