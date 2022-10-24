@@ -238,6 +238,23 @@ class FeedbackNode:
                 points.append((float(temp[0])*-0.8, float(temp[1])*0.8, float(temp[2])))
         print("[file]{} points loaded".format(len(points)))
         return points
+    
+    def run_rotation_calibration(self):
+        joy_msg = Joy()
+        joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
+        joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
+        target_time = 2.5   # [seconds to get to a 90 degrees angle]
+        # ideal: target_time = rad / (speed [rad/s])
+        t_start = time.time()
+        joy_msg.axes[THETA] = 1 # >0.1
+        while time.time() < t_start + target_time:
+            self.pub_joy.publish(joy_msg)
+            # just wait for target_time          
+
+        joy_msg.axes[THETA] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+
+        self.stop()
 
     def run(self, target_position_w, tag_id):
         '''
@@ -364,7 +381,7 @@ class FeedbackNode:
                 joy_msg.axes[THETA] = 0 # reset 
                 self.pub_joy.publish(joy_msg)
                 time.sleep(1)
-                # self.theta_pos = theta
+                self.theta_pos += rads_to_turn
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
 
@@ -397,7 +414,7 @@ if __name__ == "__main__":
     '''
 
 
-
+    feedback_node.run_rotation_calibration()
     # points = get_points_from_file()
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
@@ -418,7 +435,7 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:2], tags[:2]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     feedback_node.run(p, tag_id)
