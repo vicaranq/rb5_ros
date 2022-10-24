@@ -298,7 +298,7 @@ class FeedbackNode:
                 if moving_in_y_w:
                     while not arrived_to_target and time.time() < t_start + t_experiment:
                         
-                        d_y = tag_pos_y_r -  dist_to_target_y_w               
+                        d_y = tag_pos_x_r -  dist_to_target_y_w               
 
                         if abs(d_y) > 0.05: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
@@ -312,7 +312,7 @@ class FeedbackNode:
                         tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
                         # check how far to dist_to_target_x_w we are   
-                        print("d_y: ",  dist_to_target_y_w - tag_pos_x_r)  
+                        print("d_y: ",  tag_pos_x_r - dist_to_target_y_w)  
 
                         if abs(dist_to_target_y_w - tag_pos_x_r) < 0.1:
                             arrived_to_target = True
