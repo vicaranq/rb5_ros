@@ -199,9 +199,12 @@ class FeedbackNode:
         #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
 
         #while time.time() < t_start + time_per_m*abs(d):
+        print(abs(tag_pos_x_r-target_pos_x))
+        print()
         while abs(tag_pos_x_r-target_pos_x) <0.1:
 
             self.pub_joy.publish(joy_msg)
+            time.sleep(0.5)
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
         
 
