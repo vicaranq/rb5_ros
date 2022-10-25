@@ -371,7 +371,9 @@ class FeedbackNode:
 
                 self.turn_old(0)
                 time.sleep(1)
-
+                self.turn_old(0)
+                time.sleep(1)
+                '''
                 time_per_rad = 2.1/ (math.pi/2)
                 joy_msg = self.get_joy_msg()
                 t_start = time.time()
@@ -388,6 +390,7 @@ class FeedbackNode:
                 self.theta_w += rads_to_turn
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
+                '''
 
                                                     
 
