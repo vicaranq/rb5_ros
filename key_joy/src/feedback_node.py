@@ -238,7 +238,7 @@ class FeedbackNode:
 
         #while time.time() < t_start + time_per_m*abs(d):
         temp_dist = tag_pos_y_r
-        while tag_pos_x_r-target_pos_x > 0.05:
+        while tag_pos_x_r-target_pos_x > 0.01:
             time.sleep(0.2) # wait to populate tag dict
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
@@ -253,9 +253,8 @@ class FeedbackNode:
             ''' ====================  MOVE FORWARD ===================='''    
             self.pub_joy.publish(joy_msg)            
             time.sleep(0.2)                                
-            
-        if abs(tag_pos_x_r-target_pos_x) < 0.1:
-            print("Arrived!!")
+                        
+        print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
