@@ -572,7 +572,7 @@ class FeedbackNode:
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         
         t_start = time.time()
-        t_experiment = 30 # [s]
+        t_experiment = 5 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
                 print("Tag info: \n",self.tags[tag_id])
