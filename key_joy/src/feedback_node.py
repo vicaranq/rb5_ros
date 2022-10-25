@@ -221,37 +221,37 @@ class FeedbackNode:
         if tag_id in self.tags:
             time.sleep(1) 
             ''' NOTE: Encapsulate this code into function to use in the next else statement'''
-            # self.move_with_tag( d, y_axis=False)
-            tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+            self.move_with_tag( d, y_axis=False)
+            # tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
-            target_pos_x = tag_pos_x_r - d
+            # target_pos_x = tag_pos_x_r - d
 
             
-            print("[move_front] Moving forward for {}m".format(d))
-            time_per_m = 2.0408   # [seconds to get to a meter] on carpet
-            # time_per_m = 2.7027   # [seconds to get to a meter] on ceramic 
-            t_start = time.time()
+            # print("[move_front] Moving forward for {}m".format(d))
+            # time_per_m = 2.0408   # [seconds to get to a meter] on carpet
+            # # time_per_m = 2.7027   # [seconds to get to a meter] on ceramic 
+            # t_start = time.time()
 
-            #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
-            joy_msg.axes[X] = 1.0 if d >=0 or y_axis else -1.0 # >0.1   
+            # #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
+            # joy_msg.axes[X] = 1.0 if d >=0 or y_axis else -1.0 # >0.1   
 
-            # if d is within 20 cm, start reducing the speed
-            #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
+            # # if d is within 20 cm, start reducing the speed
+            # #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
 
-            #while time.time() < t_start + time_per_m*abs(d):
-            temp_dist = tag_pos_y_r
-            while tag_pos_x_r-target_pos_x > 0.1:
-                tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
-                if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
-                    self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
-                # time.sleep(0.5)    
-                self.pub_joy.publish(joy_msg)            
-                time.sleep(0.3)                                
+            # #while time.time() < t_start + time_per_m*abs(d):
+            # temp_dist = tag_pos_y_r
+            # while tag_pos_x_r-target_pos_x > 0.1:
+            #     tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+            #     if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
+            #         self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
+            #     # time.sleep(0.5)    
+            #     self.pub_joy.publish(joy_msg)            
+            #     time.sleep(0.3)                                
                 
-            if abs(tag_pos_x_r-target_pos_x) < 0.1:
-                print("Arrived!!")
-            joy_msg.axes[X] = 0 # reset 
-            self.pub_joy.publish(joy_msg)
+            # if abs(tag_pos_x_r-target_pos_x) < 0.1:
+            #     print("Arrived!!")
+            # joy_msg.axes[X] = 0 # reset 
+            # self.pub_joy.publish(joy_msg)
         else: 
             time_per_m = 2.7027   # [seconds to get to a meter]
             t_start = time.time()
