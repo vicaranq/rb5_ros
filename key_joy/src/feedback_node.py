@@ -635,6 +635,7 @@ class FeedbackNode:
         
         # From experiment placing the robot right in front of the tag
         tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
+        tag1_q = []
         # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
         print("tag2_q: ", tag2_q, type(tag2_q))
 
@@ -645,7 +646,7 @@ class FeedbackNode:
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
-                # print("Tag info: \n",self.tags[tag_id])
+                print("Tag info: \n",self.tags[tag_id])
                 # print("tag2_q: ", tag2_q,  type(tag2_q))
 
                 '''
