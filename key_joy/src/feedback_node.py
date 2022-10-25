@@ -570,7 +570,7 @@ class FeedbackNode:
             time.sleep(1)
         # move Y axis
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
-        print("delta_y: ", delta_y, "self.y_w: ", self.y_w, "target_y: ", target_position_w[1])
+        print("delta_y: ", delta_y)
         time.sleep(1)
         if abs(delta_y) > 0.1:        
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
@@ -669,13 +669,13 @@ if __name__ == "__main__":
     Running Experiment
     '''
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    feedback_node.run(p, tag_id)
+    # feedback_node.run(p, tag_id)
     
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:2], tags[:2]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     feedback_node.run(p, tag_id)
+    for p,tag_id in zip(points[:2], tags[:2]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
 
