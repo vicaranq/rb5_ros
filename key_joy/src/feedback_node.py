@@ -371,7 +371,7 @@ class FeedbackNode:
 
                 self.turn_old(0)
                 time.sleep(1)
-                self.turn_old(0)
+                self.turn_old(math.pi/2)
                 time.sleep(1)
                 '''
                 time_per_rad = 2.1/ (math.pi/2)
