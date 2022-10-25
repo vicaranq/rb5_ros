@@ -653,7 +653,7 @@ class FeedbackNode:
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
-                print("Tag info: \n",self.tags[tag_id])
+                # print("Tag info: \n",self.tags[tag_id])
                 # print("tag2_q: ", tag2_q,  type(tag2_q))
 
                 '''
