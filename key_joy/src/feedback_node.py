@@ -174,9 +174,10 @@ class FeedbackNode:
         q1_inv[3] = -q1_inv[3] 
         qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
         (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
-
+        
+        print("Pitch value: ", pitch)
         # readjust angle only if pitch is greater than 0.01 
-        if abs(pitch) > 0.01 and abs(pitch) < math.pi/2: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
+        if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
             joy_msg = self.get_joy_msg()
             self.turn_v2(pitch, joy_msg) 
             time.sleep(0.5)   
@@ -191,7 +192,8 @@ class FeedbackNode:
         time_per_rad = 2.3/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
-        joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.05# >0.1
+        #joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.05# >0.1
+        joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else 0.9# >0.1
         while time.time() < t_start + time_per_rad*abs(rads_to_turn):
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
