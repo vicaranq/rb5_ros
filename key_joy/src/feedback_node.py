@@ -162,7 +162,7 @@ class FeedbackNode:
         theta: angle in radiants to where we want to turn 
         '''
         #calibration_time = 2.5 # [sec/rad]time to get to pi/2
-        time_per_rad = 2.1/ (math.pi/2)
+        time_per_rad = 2.0/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
@@ -476,7 +476,7 @@ class FeedbackNode:
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_y: ", delta_y)
         if abs(delta_y) > 0.1:        
-            self.move_sideways_no_slide(-1*delta_y, joy_msg)
+            self.move_sideways_no_slide(delta_y, joy_msg)
             time.sleep(1)
         _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_theta: ", delta_theta)
