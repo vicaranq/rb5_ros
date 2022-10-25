@@ -574,6 +574,7 @@ class FeedbackNode:
         print("delta_x: ", delta_x)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
+        ''' MOVE ON X AXIS '''        
         if abs(delta_x) > 0.1:
             # if the robot is not at zero degrees, then rotate to make it zero
             print("Turning to zero degrees...")
@@ -581,19 +582,25 @@ class FeedbackNode:
             self.move_front_old(delta_x, tag_id) # front in direction of x axis (world coordinate)
             time.sleep(1)
         # move Y axis
+        ''' MOVE ON Y AXIS '''        
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_y: ", delta_y)
         time.sleep(1)
         if abs(delta_y) > 0.1:        
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
+        ''' MOVE ON THETA '''                    
         _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_theta: ", delta_theta)
         time.sleep(1)
         # move angle
         if abs(delta_theta)  > 0.1:
             self.turn_v2(target_position_w[2], joy_msg)
+            # We can use pitch angle at this point to readjust turn 
+            # Robot should be 90deg with respect the coordinate frame of tag 2
+            # self.adjust_turn() here we could use tag2 as reference to make sure we are at 90deg
             time.sleep(1)
+        ''' ---------------'''
         print("State: ", (self.x_w, self.y_w, self.theta_w))
         self.stop()
 
@@ -676,7 +683,7 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    # feedback_node.print_rot_ang_from_tag(tags[0])
+    feedback_node.print_rot_ang_from_tag(tags[1])
     # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
@@ -687,8 +694,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:2], tags[:2]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     feedback_node.run(p, tag_id)
 
