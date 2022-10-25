@@ -537,7 +537,7 @@ if __name__ == "__main__":
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
 
-    points = [(0.8,0,0), (0.8,1.6,np.pi), (0,0,0)]    
+    points = [(0.7,0,0), (0.7,1.4,np.pi), (0,0,0)]    
     tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     p, tag_id = (points[0], tags[0])
     '''
@@ -553,7 +553,7 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
+    for p,tag_id in zip(points[:], tags[:]):        
         print("======================================================================")
         print("Starting navigation to target point: ", p, " tag: ", tag_id)        
         feedback_node.run(p, tag_id)
