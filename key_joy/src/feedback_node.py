@@ -96,7 +96,7 @@ class FeedbackNode:
             self.stop_robot()
 
             #get heuristic angle
-            theta = -1*math.asin(tag_pos_y_r/d_x) # must be -1 no? 
+            theta = -1.0*math.asin(tag_pos_y_r/d_x) # must be -1 no? 
             # theta = math.atan(tag_pos_y_r/d_x) # must be -1 no? 
             print("adjusting by: {} deg (tag_pos_y_r: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_r, d_x))
 
@@ -463,7 +463,7 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_TAG_info( tags[1])
+    # feedback_node.print_TAG_info( tags[1])
     '''
     Running Experiment
     '''
@@ -473,7 +473,7 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:2], tags[:2]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     feedback_node.run(p, tag_id)
+    for p,tag_id in zip(points[:2], tags[:2]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
