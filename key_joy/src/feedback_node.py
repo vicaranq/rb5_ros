@@ -175,11 +175,16 @@ class FeedbackNode:
         print("[turn] theta updated and turned {}rads".format(rads_to_turn))
         self.stop()
 
-    def move_front_old(self, d, y_axis=False):
+    def move_front_old(self, d,tag_id, y_axis=False):
         '''
         Args:
         d -> float type represeting meters
         '''
+
+        tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+
+        target_pos_x = tag_pos_x_r - d
+
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         time_per_m = 2.0408   # [seconds to get to a meter] on carpet
@@ -191,10 +196,17 @@ class FeedbackNode:
         # if d is within 20 cm, start reducing the speed
         #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
 
-        while time.time() < t_start + time_per_m*abs(d):
+        #while time.time() < t_start + time_per_m*abs(d):
+        while abs(tag_pos_x_r-target_pos_x) <0.1:
+
             self.pub_joy.publish(joy_msg)
+            tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+        
+
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
+
+
         #update
         if not y_axis:
             self.x_w += d
@@ -459,6 +471,9 @@ class FeedbackNode:
         print("Robot's World Position: ", self.get_current_pos())
         print("Target Position: ", target_position_w)
 
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+        time.sleep(1)
+
         joy_msg = self.get_joy_msg()
 
         delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position_w)
@@ -470,7 +485,7 @@ class FeedbackNode:
             # if the robot is not at zero degrees, then rotate to make it zero
             print("Turning to zero degrees...")
             self.turn_v2(0,joy_msg)
-            self.move_front_old(delta_x) # front in direction of x axis (world coordinate)
+            self.move_front_old(delta_x, tag_id) # front in direction of x axis (world coordinate)
             time.sleep(1)
         # move Y axis
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
