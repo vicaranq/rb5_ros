@@ -171,7 +171,7 @@ class FeedbackNode:
         joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
 
         # if d is within 20 cm, start reducing the speed
-        joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
+        #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
 
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
@@ -323,7 +323,7 @@ class FeedbackNode:
                 
                     while not arrived_to_target and time.time() < t_start + t_experiment:
                         d_x = tag_pos_x_r - dist_to_target_x_w
-                        self.move_front_old(1/8, y_axis = True) # front in direction of y axis (world coordinate)
+                        self.move_front_old(0.15, y_axis = True) # front in direction of y axis (world coordinate)
                         d_y = tag_pos_y_r - dist_to_target_y_w               
 
                         if abs(d_y) > 0.005: # greater than 5cm
@@ -381,7 +381,7 @@ class FeedbackNode:
 
                     while not arrived_to_target and time.time() < t_start + t_experiment:
                         d_x = tag_pos_x_r -  dist_to_target_x_w               
-                        self.move_front_old(1/8) # front in direction of x axis (world coordinate)
+                        self.move_front_old(0.15) # front in direction of x axis (world coordinate)
                         d_y = tag_pos_y_r -  dist_to_target_y_w  
                         print("DY is: ", d_y)
                         if abs(d_y) > 0.005: # greater than 5cm
