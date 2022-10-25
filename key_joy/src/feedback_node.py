@@ -174,7 +174,7 @@ class FeedbackNode:
         tag3_1 = [-0.19803038269123838, -0.019045190574983963, -0.7039578667645559, 0.681809775573378]
         tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q, 'marker_2':tag3_1}
         assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
-        
+
         q2 = tag_q_dict[tag_id]
         print("Using q2: ", q2)
         q1 = list(self.tags[tag_id]['rotation'])
@@ -242,17 +242,15 @@ class FeedbackNode:
             time.sleep(0.2) # wait to populate tag dict
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
-            if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                
-                if tag_id in { "marker_4", "marker_1"}:
-                    print("Found marker_4 / marker1 ")
-                    pitch = self.readjust_angle_with_quaternions(tag_id) 
-                    # if abs(pitch ) <= 0.01:
-                    #     break doesnt mean we arrived
-                else:
-                    print("Didn't found marker_4")
-                    self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
-            
-            # time.sleep(0.5)    
+            ''' ====================  ADJUST ANGLE ===================='''
+            if tag_id in { "marker_4", "marker_1"}:
+                print("Found marker_4 / marker1 ")
+                pitch = self.readjust_angle_with_quaternions(tag_id) 
+            elif abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                        
+                print("Didn't found marker_4")
+                self.readjust_angle(tag_pos_y_r, tag_pos_x_r)             
+            # time.sleep(0.5)
+            ''' ====================  MOVE FORWARD ===================='''    
             self.pub_joy.publish(joy_msg)            
             time.sleep(0.2)                                
             
