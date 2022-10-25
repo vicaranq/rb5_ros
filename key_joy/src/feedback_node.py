@@ -611,7 +611,8 @@ class FeedbackNode:
                 q_r = q_2*q_1_inverse
                 '''
 
-                q1 = self.tags[tag_id]['rotation']
+                q1 = list(self.tags[tag_id]['rotation'])
+                print("q1: ", q1)
                 q1_inv = q1
                 q1_inv[3] = -q1_inv[3] 
                 print("q1_inv: ", q1_inv, type(q1_inv))
