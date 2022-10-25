@@ -277,150 +277,150 @@ class FeedbackNode:
         
         t_start = time.time()
         t_experiment = 15 # [s]
-        #while time.time() < t_start + t_experiment:
+        while time.time() < t_start + t_experiment:
 
-        if tag_id in self.tags:
+            if tag_id in self.tags:
 
-            tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
+                tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
 
-            #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
+                #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
 
-            tag_pos_x_r, tag_pos_y_r = self.get_w_cord_for_tag(tag_pos_T)
-            # Flags
-            moving_in_y_w = True if y_target - self.y_w > 0 else False
-            
-
-            if moving_in_y_w:
-                ''' Move Forward? '''
-                print("tag_pos_x_r: ", tag_pos_x_r)
-                # tag position minus how much we need to move
-                # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_r - (y_target - self.y_w)             
-                print("dist_to_target_x_w: ", dist_to_target_x_w)
-                dist_to_target_y_w = tag_pos_y_r - (x_target - self.x_w)
-
-                
-                # moving_in_x_w = True if x_target - self.x_w > 0 else False
+                tag_pos_x_r, tag_pos_y_r = self.get_w_cord_for_tag(tag_pos_T)
+                # Flags
+                moving_in_y_w = True if y_target - self.y_w > 0 else False
                 
 
-                ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
-                # if x are equal -> move +/-90 deg
-                #else: theta_1 = arctan(delta_y_w, delta_x_w)
-                '''
-                if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
-                    self.turn_old(90/180*math.pi)                    
-                    dist_to_target_x_w = -dist_to_target_y_w
-                    dist_to_target_y_w=0
-                el '''
-                # if dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
-                #     self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
-                #     dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
-                #     dist_to_target_y_w=0
+                if moving_in_y_w:
+                    ''' Move Forward? '''
+                    print("tag_pos_x_r: ", tag_pos_x_r)
+                    # tag position minus how much we need to move
+                    # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
+                    dist_to_target_x_w = tag_pos_x_r - (y_target - self.y_w)             
+                    print("dist_to_target_x_w: ", dist_to_target_x_w)
+                    dist_to_target_y_w = tag_pos_y_r - (x_target - self.x_w)
 
-                arrived_to_target = False
-            
-                while not arrived_to_target and time.time() < t_start + t_experiment:
-                    d_x = tag_pos_x_r - dist_to_target_x_w
-                    self.move_front_old(d_x/8, y_axis = True) # front in direction of y axis (world coordinate)
-                    d_y = tag_pos_y_r - dist_to_target_y_w               
+                    
+                    # moving_in_x_w = True if x_target - self.x_w > 0 else False
+                    
 
-                    if abs(d_y) > 0.005: # greater than 5cm
-                        # if the robot is not at zero degrees, then rotate to make it zero
-                        # print("Turning to zero degrees...")
-                        # self.turn(0,joy_msg)
-                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        
-                        self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
+                    ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
+                    # if x are equal -> move +/-90 deg
+                    #else: theta_1 = arctan(delta_y_w, delta_x_w)
+                    '''
+                    if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
+                        self.turn_old(90/180*math.pi)                    
+                        dist_to_target_x_w = -dist_to_target_y_w
+                        dist_to_target_y_w=0
+                    el '''
+                    # if dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
+                    #     self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
+                    #     dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
+                    #     dist_to_target_y_w=0
 
-                    # --------------  Get new position --------------
-                    tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+                    arrived_to_target = False
+                
+                    while not arrived_to_target and time.time() < t_start + t_experiment:
+                        d_x = tag_pos_x_r - dist_to_target_x_w
+                        self.move_front_old(d_x/8, y_axis = True) # front in direction of y axis (world coordinate)
+                        d_y = tag_pos_y_r - dist_to_target_y_w               
 
-                    # check how far to dist_to_target_x_w we are   
-                    print("d_y: ",  tag_pos_x_r - dist_to_target_x_w)  
+                        if abs(d_y) > 0.005: # greater than 5cm
+                            # if the robot is not at zero degrees, then rotate to make it zero
+                            # print("Turning to zero degrees...")
+                            # self.turn(0,joy_msg)
+                            # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                            
+                            self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
 
-                    if abs(dist_to_target_x_w - tag_pos_x_r) < 0.1:
-                        arrived_to_target = True
-                        self.x_w = x_target # we should be around here
-                        self.y_w = y_target
+                        # --------------  Get new position --------------
+                        tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
-                        print("ARRIVED TO {}!!!!".format(target_position_w))
-                                  
+                        # check how far to dist_to_target_x_w we are   
+                        print("d_y: ",  tag_pos_x_r - dist_to_target_x_w)  
+
+                        if abs(dist_to_target_x_w - tag_pos_x_r) < 0.1:
+                            arrived_to_target = True
+                            self.x_w = x_target # we should be around here
+                            self.y_w = y_target
+
+                            print("ARRIVED TO {}!!!!".format(target_position_w))
+
+                else:
+                    # moving in X
+
+                    ''' Move Forward? '''
+                    print("tag_pos_x_r: ", tag_pos_x_r)
+                    # tag position minus how much we need to move
+                    # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
+                    dist_to_target_x_w = tag_pos_x_r - (x_target - self.x_w)             
+                    print("dist_to_target_x_w: ", dist_to_target_x_w)
+                    dist_to_target_y_w = tag_pos_y_r - (y_target - self.y_w)
+
+                    
+                    # moving_in_x_w = True if x_target - self.x_w > 0 else False
+                    
+
+                    ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
+                    # if x are equal -> move +/-90 deg
+                    #else: theta_1 = arctan(delta_y_w, delta_x_w)
+                    '''
+                    if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
+                        self.turn_old(90/180*math.pi)                    
+                        dist_to_target_x_w = -dist_to_target_y_w
+                        dist_to_target_y_w=0
+                    el '''
+                    # if dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
+                    #     self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
+                    #     dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
+                    #     dist_to_target_y_w=0
+
+                    arrived_to_target = False
+
+                    while not arrived_to_target and time.time() < t_start + t_experiment:
+                        d_x = tag_pos_x_r -  dist_to_target_x_w               
+                        self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
+                        d_y = tag_pos_y_r -  dist_to_target_y_w  
+                        print("DY is: ", d_y)
+                        if math.abs(d_y) > 0.005: # greater than 5cm
+                            # if the robot is not at zero degrees, then rotate to make it zero
+                            # print("Turning to zero degrees...")
+                            # self.turn(0,joy_msg)
+                            # ---------- Move Front by 1/3 of the estimated displacement ----------------
+                            
+                            self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
+
+                        # --------------  Get new position --------------
+                        tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+
+                        # check how far to dist_to_target_x_w we are   
+                        print("d_x: ",  tag_pos_x_r - dist_to_target_x_w)  
+
+                        if abs(dist_to_target_x_w - tag_pos_x_r) < 0.1:
+                            arrived_to_target = True
+                            self.x_w = x_target # we should be around here
+                            self.y_w = y_target
+
+                            print("ARRIVED TO {}!!!!".format(target_position_w))
+                    
             else:
-                # moving in X
-
-                ''' Move Forward? '''
-                print("tag_pos_x_r: ", tag_pos_x_r)
-                # tag position minus how much we need to move
-                # NOTE: When we get to dist_to_target_x_w, we have arrived to our x coordinate destination
-                dist_to_target_x_w = tag_pos_x_r - (x_target - self.x_w)             
-                print("dist_to_target_x_w: ", dist_to_target_x_w)
-                dist_to_target_y_w = tag_pos_y_r - (y_target - self.y_w)
 
                 
-                # moving_in_x_w = True if x_target - self.x_w > 0 else False
-                
-
-                ''' Move on Y axis? if moving in positive direction, then rotate 90deg else -90deg'''
-                # if x are equal -> move +/-90 deg
-                #else: theta_1 = arctan(delta_y_w, delta_x_w)
-                '''
-                if dist_to_target_x_w == 0 and dist_to_target_y_w != 0 :
-                    self.turn_old(90/180*math.pi)                    
-                    dist_to_target_x_w = -dist_to_target_y_w
-                    dist_to_target_y_w=0
-                el '''
-                # if dist_to_target_x_w != 0 and dist_to_target_y_w !=0 :
-                #     self.turn_old(math.atan2(dist_to_target_y_w,dist_to_target_x_w))
-                #     dist_to_target_x_w = math.sqrt(dist_to_target_x_w**2+dist_to_target_y_w**2)
-                #     dist_to_target_y_w=0
-
-                arrived_to_target = False
-
-                while not arrived_to_target and time.time() < t_start + t_experiment:
-                    d_x = tag_pos_x_r -  dist_to_target_x_w               
-                    self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
-                    d_y = tag_pos_y_r -  dist_to_target_y_w  
-                    #print("DY is: ", d_y)
-                    if abs(d_y) > 0.005: # greater than 5cm
-                        # if the robot is not at zero degrees, then rotate to make it zero
-                        # print("Turning to zero degrees...")
-                        # self.turn(0,joy_msg)
-                        # ---------- Move Front by 1/3 of the estimated displacement ----------------
-                        
-                        self.readjust_angle(tag_pos_y_r, d_y) # not working as expected
-
-                    # --------------  Get new position --------------
-                    tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
-
-                    # check how far to dist_to_target_x_w we are   
-                    print("d_x: ",  tag_pos_x_r - dist_to_target_x_w)  
-
-                    if abs(dist_to_target_x_w - tag_pos_x_r) < 0.1:
-                        arrived_to_target = True
-                        self.x_w = x_target # we should be around here
-                        self.y_w = y_target
-
-                        print("ARRIVED TO {}!!!!".format(target_position_w))
-                
-        else:
-
-            
-            time_per_rad = 2.1/ (math.pi/2)
-            joy_msg = self.get_joy_msg()
-            t_start = time.time()
-            rads_to_turn = (90/180)*math.pi
-            joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
-            #while time.time() < t_start + time_per_rad*abs(rads_to_turn):
-            self.pub_joy.publish(joy_msg)
-            time.sleep(2.5)
-            #time.sleep(0.1)
-                # just wait for target_time          
-            joy_msg.axes[THETA] = 0 # reset 
-            self.pub_joy.publish(joy_msg)
-            time.sleep(1)
-            self.theta_w += rads_to_turn
-            print("[turn] theta updated and turned {}rads".format(rads_to_turn))
-            self.stop()
+                time_per_rad = 2.1/ (math.pi/2)
+                joy_msg = self.get_joy_msg()
+                t_start = time.time()
+                rads_to_turn = (90/180)*math.pi
+                joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
+                #while time.time() < t_start + time_per_rad*abs(rads_to_turn):
+                self.pub_joy.publish(joy_msg)
+                time.sleep(2.5)
+                #time.sleep(0.1)
+                    # just wait for target_time          
+                joy_msg.axes[THETA] = 0 # reset 
+                self.pub_joy.publish(joy_msg)
+                time.sleep(1)
+                self.theta_w += rads_to_turn
+                print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+                self.stop()
                 
 
                                                     
