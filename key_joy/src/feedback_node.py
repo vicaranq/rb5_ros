@@ -184,7 +184,9 @@ class FeedbackNode:
         tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
         target_pos_x = tag_pos_x_r - d
-
+        print("tag position x is: ", tag_pos_x_r)
+        print("distane is: ", d)
+        print()
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         time_per_m = 2.0408   # [seconds to get to a meter] on carpet
