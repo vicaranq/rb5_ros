@@ -201,12 +201,14 @@ class FeedbackNode:
         #while time.time() < t_start + time_per_m*abs(d):
         temp_dist = tag_pos_y_r
         while tag_pos_x_r-target_pos_x > 0.1:
-
-            self.pub_joy.publish(joy_msg)            
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
-            time.sleep(0.5)
             if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
                 self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
+            time.sleep(0.5)    
+            self.pub_joy.publish(joy_msg)            
+            time.sleep(0.5)
+            
+            
             
 
         if abs(tag_pos_x_r-target_pos_x) < 0.1:
