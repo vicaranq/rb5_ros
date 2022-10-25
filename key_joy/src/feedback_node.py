@@ -244,7 +244,7 @@ class FeedbackNode:
             
             # time.sleep(0.5)    
             self.pub_joy.publish(joy_msg)            
-            time.sleep(0.3)                                
+            time.sleep(0.2)                                
             
         if abs(tag_pos_x_r-target_pos_x) < 0.1:
             print("Arrived!!")
