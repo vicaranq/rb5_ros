@@ -191,20 +191,22 @@ class FeedbackNode:
         # time_per_m = 2.7027   # [seconds to get to a meter] on ceramic 
         t_start = time.time()
 
-        joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
+        #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
+        joy_msg.axes[X] = 1.0 if d >=0 or y_axis else -1.0 # >0.1   
 
         # if d is within 20 cm, start reducing the speed
         #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
 
         #while time.time() < t_start + time_per_m*abs(d):
 
-        while abs(tag_pos_x_r-target_pos_x) >0.1:
+        while abs(tag_pos_x_r-target_pos_x) > 0.1:
 
             self.pub_joy.publish(joy_msg)
             # time.sleep(0.5)
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
         
-
+        if abs(tag_pos_x_r-target_pos_x) < 0.1:
+            print("Arrived!!")
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
@@ -474,7 +476,7 @@ class FeedbackNode:
         print("Target Position: ", target_position_w)
 
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
-        time.sleep(1)
+        time.sleep(3)
 
         joy_msg = self.get_joy_msg()
 
