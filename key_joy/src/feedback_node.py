@@ -104,7 +104,7 @@ class FeedbackNode:
 
             # if we are facing to +y then it is theta + 90 (tag #2 )
 
-            self.turn_old(self.theta_w+theta) # turn wihtout updating theta of robot, update once reached the target
+            self.turn_v2(self.theta_w+theta) # turn wihtout updating theta of robot, update once reached the target
 
     def turn_old(self, theta, update=True):
         '''
@@ -205,6 +205,8 @@ class FeedbackNode:
             self.pub_joy.publish(joy_msg)
             # time.sleep(0.5)
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
+
+            self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
         
         if abs(tag_pos_x_r-target_pos_x) < 0.1:
             print("Arrived!!")
