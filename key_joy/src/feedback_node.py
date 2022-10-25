@@ -197,11 +197,12 @@ class FeedbackNode:
         theta: angle in radiants to where we want to turn 
         '''
         #calibration_time = 2.5 # [sec/rad]time to get to pi/2
-        time_per_rad = 2.3/ (math.pi/2)
+        # time_per_rad = 2.3/ (math.pi/2)
+        time_per_rad = 2.1/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
-        #joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.05# >0.1
-        joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
+        joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
+        # joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
         if scale:
             # used for angle readdjustment
             joy_msg.axes[THETA] = 0.5 if rads_to_turn >= 0 else -0.5# >0.1
@@ -253,7 +254,7 @@ class FeedbackNode:
             ''' ====================  MOVE FORWARD ===================='''    
             self.pub_joy.publish(joy_msg)            
             time.sleep(0.2)                                
-                        
+
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
