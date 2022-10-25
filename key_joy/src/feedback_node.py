@@ -179,7 +179,7 @@ class FeedbackNode:
         # readjust angle only if pitch is greater than 0.01 
         if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
             joy_msg = self.get_joy_msg()
-            self.turn_v2(pitch, joy_msg) # readjusting to angle coordinates +CW and -CCC
+            self.turn_v2(pitch + self.theta_w, joy_msg) # readjusting to angle coordinates +CW and -CCC
             time.sleep(0.5)   
         return pitch
 
@@ -236,8 +236,8 @@ class FeedbackNode:
                 if tag_id == "marker_4":
                     print("Found marker_4")
                     pitch = self.readjust_angle_with_quaternions(tag_id) 
-                    if abs(pitch ) <= 0.01:
-                        break
+                    # if abs(pitch ) <= 0.01:
+                    #     break doesnt mean we arrived
                 else:
                     self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
             
