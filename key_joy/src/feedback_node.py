@@ -200,7 +200,7 @@ class FeedbackNode:
 
         #while time.time() < t_start + time_per_m*abs(d):
 
-        while abs(tag_pos_x_r-target_pos_x) > 0.1:
+        while tag_pos_x_r-target_pos_x > 0.1:
 
             self.pub_joy.publish(joy_msg)            
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
