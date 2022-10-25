@@ -635,9 +635,13 @@ class FeedbackNode:
         
         # From experiment placing the robot right in front of the tag
         tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
-        tag1_q = []
+        tag1_q = [-0.031684626256729034, 0.05936072671254348, 0.6980881821665746, 0.7128430952899086]
+        tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q}
         # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
         print("tag2_q: ", tag2_q, type(tag2_q))
+        
+        assert tag_id in tag_q_dict, 'unexpected tag_id for quaternions'
+        q2 = tag_q_dict[tag_id]
 
         # Obtain Tag information
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
@@ -658,7 +662,7 @@ class FeedbackNode:
                 q1 = list(self.tags[tag_id]['rotation'])
                 q1_inv = q1
                 q1_inv[3] = -q1_inv[3] 
-                qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
+                qr = tf.transformations.quaternion_multiply(q2, q1_inv)
                 (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
         
                 print("(roll, pitch, yaw): ", (roll, pitch, yaw))
@@ -683,7 +687,7 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_rot_ang_from_tag(tags[0])
+    feedback_node.print_rot_ang_from_tag(tags[2])
     # feedback_node.print_TAG_info( tags[1])
     '''
     Running Experiment
