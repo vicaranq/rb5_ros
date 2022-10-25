@@ -96,7 +96,8 @@ class FeedbackNode:
             self.stop_robot()
 
             #get heuristic angle
-            theta = -1*math.atan(tag_pos_y_r/d_x) # must be -1 no? 
+            #theta = -1*math.asin(tag_pos_y_r/d_x) # must be -1 no? 
+            theta = math.atan(tag_pos_y_r/d_x) # must be -1 no? 
             print("adjusting by: {} deg (tag_pos_y_r: {} and d_x: {})".format(theta*180/math.pi, tag_pos_y_r, d_x))
 
             # if we are facing to +x then it is theta (tag #1 )
