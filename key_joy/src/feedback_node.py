@@ -145,6 +145,7 @@ class FeedbackNode:
         elif y < 0:
             print("Turning -90deg")
             self.turn_v2(-math.pi/2, joy_msg) # turn right 90 deg
+        time.sleep(1)
         print("Move front for {}m".format(abs(y)))            
         self.move_front_old(y, tag_id, y_axis=True)
 
