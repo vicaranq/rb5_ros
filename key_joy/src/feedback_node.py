@@ -135,7 +135,7 @@ class FeedbackNode:
         # NOTE: change this depending on the tag! 
         return (tag_pos_T['translation'][Z], tag_pos_T['translation'][X]) # distance to x location in world coord.
 
-    def move_sideways_no_slide(self, y, joy_msg):
+    def move_sideways_no_slide(self, y, tag_id, joy_msg):
         ''' function to move robot on the y-axis using rotation instead of sliding'''
         print("[move_sideways_no_slide] Movign sideways for {}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
@@ -146,7 +146,7 @@ class FeedbackNode:
             print("Turning -90deg")
             self.turn_v2(-math.pi/2, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
-        self.move_front_old(y, y_axis=True)
+        self.move_front_old(y, tag_id, y_axis=True)
 
         self.stop()
     
@@ -491,7 +491,7 @@ class FeedbackNode:
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_y: ", delta_y)
         if abs(delta_y) > 0.1:        
-            self.move_sideways_no_slide(delta_y, joy_msg)
+            self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
         _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_theta: ", delta_theta)
