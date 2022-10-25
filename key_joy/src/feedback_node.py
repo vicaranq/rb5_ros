@@ -324,7 +324,7 @@ class FeedbackNode:
                         self.move_front_old(d_x/8, y_axis = True) # front in direction of y axis (world coordinate)
                         d_y = tag_pos_y_r - dist_to_target_y_w               
 
-                        if abs(d_y) > 0.02: # greater than 5cm
+                        if abs(d_y) > 0.005: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
                             # print("Turning to zero degrees...")
                             # self.turn(0,joy_msg)
@@ -381,7 +381,7 @@ class FeedbackNode:
                         d_x = tag_pos_x_r -  dist_to_target_x_w               
                         self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
                         d_y = tag_pos_y_r -  dist_to_target_y_w  
-                        if abs(d_y) > 0.02: # greater than 5cm
+                        if abs(d_y) > 0.005: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
                             # print("Turning to zero degrees...")
                             # self.turn(0,joy_msg)
