@@ -104,7 +104,7 @@ class FeedbackNode:
 
             # if we are facing to +y then it is theta + 90 (tag #2 )
 
-            self.turn_old(theta) # turn wihtout updating theta of robot, update once reached the target
+            self.turn_old(self.theta_w+theta) # turn wihtout updating theta of robot, update once reached the target
 
     def turn_old(self, theta, update=True):
         '''
@@ -265,7 +265,7 @@ class FeedbackNode:
         
         '''              
         print("Robot's World Position: ", self.get_current_pos())
-        print("Targer Position: ", target_position_w)
+        print("Target Position: ", target_position_w)
 
         self.turn_old(0)
         time.sleep(1)
@@ -281,7 +281,8 @@ class FeedbackNode:
         while time.time() < t_start + t_experiment:
 
             if tag_id in self.tags:
-
+                print("Robot's World Position: ", self.get_current_pos())
+                print("Target Position: ", target_position_w)
                 tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
 
                 #if first tag: NOTE: Depending of the tag, the tag coord frame maps differently to world one            
