@@ -268,7 +268,7 @@ class FeedbackNode:
 
         self.turn_old(0)
         time.sleep(1)
-        
+
         # Target in world coordinates
         x_target, y_target, alpha_target = target_position_w
         # Obtain Tag information
@@ -372,9 +372,7 @@ class FeedbackNode:
                     break  
             else:
 
-                self.turn_old(math.pi/2)
-                time.sleep(1)
-                '''
+                
                 time_per_rad = 2.1/ (math.pi/2)
                 joy_msg = self.get_joy_msg()
                 t_start = time.time()
@@ -382,7 +380,7 @@ class FeedbackNode:
                 joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
                 #while time.time() < t_start + time_per_rad*abs(rads_to_turn):
                 self.pub_joy.publish(joy_msg)
-                time.sleep(2)
+                time.sleep(2.1)
                 #time.sleep(0.1)
                     # just wait for target_time          
                 joy_msg.axes[THETA] = 0 # reset 
@@ -391,7 +389,7 @@ class FeedbackNode:
                 self.theta_w += rads_to_turn
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
-                '''
+                
 
                                                     
 
