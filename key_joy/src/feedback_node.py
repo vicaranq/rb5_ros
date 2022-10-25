@@ -344,6 +344,7 @@ class FeedbackNode:
                             self.y_w = y_target
 
                             print("ARRIVED TO {}!!!!".format(target_position_w))
+                    break
 
                 else:
                     # moving in X
@@ -401,6 +402,7 @@ class FeedbackNode:
                             self.y_w = y_target
 
                             print("ARRIVED TO {}!!!!".format(target_position_w))
+                    break
                     
             else:
 
