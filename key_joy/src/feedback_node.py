@@ -601,7 +601,7 @@ class FeedbackNode:
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
-                print("Tag info: \n",self.tags[tag_id])
+                # print("Tag info: \n",self.tags[tag_id])
                 # print("tag2_q: ", tag2_q,  type(tag2_q))
 
                 '''
@@ -621,9 +621,9 @@ class FeedbackNode:
                 # print("qr: ", qr, type(qr))
 
                 (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
-                print()
+                
                 print("(roll, pitch, yaw): ", (roll, pitch, yaw))
-                print()
+                
 
                 time.sleep(1)
 
