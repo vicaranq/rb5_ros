@@ -181,6 +181,7 @@ class FeedbackNode:
         Args:
         d -> float type represeting meters
         '''
+        time.sleep(1) 
         joy_msg = self.get_joy_msg()
         if tag_id in self.tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
