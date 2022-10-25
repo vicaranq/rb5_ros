@@ -216,7 +216,7 @@ class FeedbackNode:
         else: 
             time_per_m = 2.7027   # [seconds to get to a meter]
             t_start = time.time()
-
+            print("[move_front - no tag info] Moving forward for {}m".format(d))
             joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
             while time.time() < t_start + time_per_m*abs(d):
                 self.pub_joy.publish(joy_msg)
@@ -506,11 +506,13 @@ class FeedbackNode:
         # move Y axis
         _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_y: ", delta_y)
+        time.sleep(1)
         if abs(delta_y) > 0.1:        
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
         _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("delta_theta: ", delta_theta)
+        time.sleep(1)
         # move angle
         if abs(delta_theta)  > 0.1:
             self.turn_v2(target_position_w[2], joy_msg)
