@@ -141,12 +141,12 @@ class FeedbackNode:
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
             print("Turning 90deg -> {}rads".format(math.pi/2 - self.theta_w))
-            self.turn(math.pi/2, joy_msg) # turn left 90deg
+            self.turn_v2(math.pi/2, joy_msg) # turn left 90deg
         elif y < 0:
             print("Turning -90deg")
-            self.turn(-math.pi/2, joy_msg) # turn right 90 deg
+            self.turn_v2(-math.pi/2, joy_msg) # turn right 90 deg
         print("Move front for {}m".format(abs(y)))            
-        self.move_front(y, joy_msg, y_axis=True)
+        self.move_front_old(y, joy_msg, y_axis=True)
 
         self.stop()
     
@@ -156,6 +156,24 @@ class FeedbackNode:
             # REDUCING TO .5 WAS TOO MUCH
             return speed*0.75
         return speed            
+
+    def turn_v2(self, theta, joy_msg):
+        '''
+        theta: angle in radiants to where we want to turn 
+        '''
+        #calibration_time = 2.5 # [sec/rad]time to get to pi/2
+        time_per_rad = 2.1/ (math.pi/2)
+        t_start = time.time()
+        rads_to_turn = self.get_rads(theta)
+        joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
+        while time.time() < t_start + time_per_rad*abs(rads_to_turn):
+            self.pub_joy.publish(joy_msg)
+            # just wait for target_time          
+        joy_msg.axes[THETA] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+        self.theta_w = theta
+        print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+        self.stop()
 
     def move_front_old(self, d, y_axis=False):
         '''
@@ -223,7 +241,7 @@ class FeedbackNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        # self.theta_pos = theta
+        # self.theta_w = theta
         print("[turn] theta updated and turned {}rads".format(rads_to_turn))
         self.stop()
 
@@ -257,7 +275,7 @@ class FeedbackNode:
 
         self.stop()
 
-    def run(self, target_position_w, tag_id):
+    def run_backup(self, target_position_w, tag_id):
         '''
         Args:
         target_position_w -> Target position in world coordinates 
@@ -267,8 +285,8 @@ class FeedbackNode:
         print("Robot's World Position: ", self.get_current_pos())
         print("Target Position: ", target_position_w)
 
-        self.turn_old(0)
-        time.sleep(1)
+        # self.turn_old(0)
+        # time.sleep(1)
 
         # Target in world coordinates
         x_target, y_target, alpha_target = target_position_w
@@ -427,12 +445,48 @@ class FeedbackNode:
                 self.theta_w += rads_to_turn
                 print("[turn] theta updated and turned {}rads".format(rads_to_turn))
                 self.stop()
-                
-
-                                                    
-
+                                                                
         print("closing...")
         self.stop()
+
+    def run(self, target_position_w, tag_id):
+        '''
+        Args:
+        target_position_w -> Target position in world coordinates 
+        tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
+        
+        '''              
+        print("Robot's World Position: ", self.get_current_pos())
+        print("Target Position: ", target_position_w)
+
+        joy_msg = self.get_joy_msg()
+
+        delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
+        print("delta_x: ", delta_x)
+        # y_curr, x_curr, theta_curr = self.get_current_pos()
+        # move X axis
+        if abs(delta_x) > 0.1:
+            # if the robot is not at zero degrees, then rotate to make it zero
+            print("Turning to zero degrees...")
+            self.turn_v2(0,joy_msg)
+            self.move_front_old(delta_x) # front in direction of x axis (world coordinate)
+            time.sleep(1)
+        # move Y axis
+        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        print("delta_y: ", delta_y)
+        if abs(delta_y) > 0.1:        
+            self.move_sideways_no_slide(delta_y, joy_msg)
+            time.sleep(1)
+        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
+        print("delta_theta: ", delta_theta)
+        # move angle
+        if abs(delta_theta)  > 0.1:
+            self.turn_v2(target_position_w[2], joy_msg)
+            time.sleep(1)
+        print("State: ", (self.x_w, self.y_w, self.theta_w))
+        self.stop()
+
 
     def print_TAG_info(self,  tag_id):
         print("Robot's World Position: ", self.get_current_pos())
