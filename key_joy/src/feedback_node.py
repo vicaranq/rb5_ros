@@ -198,7 +198,7 @@ class FeedbackNode:
         '''
         #calibration_time = 2.5 # [sec/rad]time to get to pi/2
         # time_per_rad = 2.3/ (math.pi/2)
-        time_per_rad = 2.1/ (math.pi/2)
+        time_per_rad = 2.3/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
