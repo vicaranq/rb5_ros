@@ -381,6 +381,7 @@ class FeedbackNode:
                         d_x = tag_pos_x_r -  dist_to_target_x_w               
                         self.move_front_old(d_x/8) # front in direction of x axis (world coordinate)
                         d_y = tag_pos_y_r -  dist_to_target_y_w  
+                        print("DY is: ", d_y)
                         if abs(d_y) > 0.005: # greater than 5cm
                             # if the robot is not at zero degrees, then rotate to make it zero
                             # print("Turning to zero degrees...")
