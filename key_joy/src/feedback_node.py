@@ -217,7 +217,7 @@ class FeedbackNode:
             time_per_m = 2.7027   # [seconds to get to a meter]
             t_start = time.time()
             print("[move_front - no tag info] Moving forward for {}m".format(d))
-            joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
+            joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.3 # >0.1         
             while time.time() < t_start + time_per_m*abs(d):
                 self.pub_joy.publish(joy_msg)
             joy_msg.axes[X] = 0 # reset 
