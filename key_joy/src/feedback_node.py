@@ -184,6 +184,7 @@ class FeedbackNode:
         time.sleep(1) 
         joy_msg = self.get_joy_msg()
         if tag_id in self.tags:
+            time.sleep(1) 
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
             target_pos_x = tag_pos_x_r - d
