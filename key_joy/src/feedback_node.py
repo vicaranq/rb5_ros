@@ -266,6 +266,9 @@ class FeedbackNode:
         print("Robot's World Position: ", self.get_current_pos())
         print("Targer Position: ", target_position_w)
 
+        self.turn_old(0)
+        time.sleep(1)
+        
         # Target in world coordinates
         x_target, y_target, alpha_target = target_position_w
         # Obtain Tag information
@@ -369,8 +372,6 @@ class FeedbackNode:
                     break  
             else:
 
-                self.turn_old(0)
-                time.sleep(1)
                 self.turn_old(math.pi/2)
                 time.sleep(1)
                 '''
