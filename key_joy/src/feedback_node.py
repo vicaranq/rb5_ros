@@ -167,12 +167,17 @@ class FeedbackNode:
     def readjust_angle_with_quaternions(self, tag_id):
         # make it work for tag 2 first
         print("Readusting with quaternions....")
-        tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
 
+        # find quaternion of reference
+        tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
+        tag1_q = [0,0,0,0]
+        tag_qs_dict = {'marker_1': tag1_q, "marker_4": tag2_q}
+        q2 = tag_qs_dict[tag_id]
+        print("Using q2: ", q2)
         q1 = list(self.tags[tag_id]['rotation'])
         q1_inv = q1
         q1_inv[3] = -q1_inv[3] 
-        qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
+        qr = tf.transformations.quaternion_multiply(q2, q1_inv)
         (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
         
         print("Pitch value: ", pitch)
@@ -231,15 +236,17 @@ class FeedbackNode:
         #while time.time() < t_start + time_per_m*abs(d):
         temp_dist = tag_pos_y_r
         while tag_pos_x_r-target_pos_x > 0.05:
-            print("d: ", tag_pos_x_r-target_pos_x)
+            time.sleep(0.2) # wait to populate tag dict
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
-            if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
-                if tag_id == "marker_4":
-                    print("Found marker_4")
+            print("d: ", tag_pos_x_r-target_pos_x)
+            if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                
+                if tag_id in { "marker_4"}:
+                    print("Found marker_4 ")
                     pitch = self.readjust_angle_with_quaternions(tag_id) 
                     # if abs(pitch ) <= 0.01:
                     #     break doesnt mean we arrived
                 else:
+                    print("Didn't found marker_4")
                     self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
             
             # time.sleep(0.5)    
@@ -257,7 +264,7 @@ class FeedbackNode:
         Args:
         d -> float type represeting meters
         '''
-        time.sleep(1) 
+        # time.sleep(1) 
         joy_msg = self.get_joy_msg()
         if tag_id in self.tags:
             time.sleep(1) 
@@ -675,7 +682,7 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    # feedback_node.print_rot_ang_from_tag(tags[1])
+    feedback_node.print_rot_ang_from_tag(tags[0])
     # feedback_node.print_TAG_info( tags[1])
     '''
     Running Experiment
@@ -686,8 +693,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:2], tags[:2]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     feedback_node.run(p, tag_id)
 
