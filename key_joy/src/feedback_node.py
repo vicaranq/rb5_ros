@@ -278,6 +278,7 @@ class FeedbackNode:
         t_start = time.time()
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
+            time.sleep(0.5)
             if tag_id in self.tags:
 
                 tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
