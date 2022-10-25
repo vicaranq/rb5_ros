@@ -598,11 +598,11 @@ class FeedbackNode:
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         
         t_start = time.time()
-        t_experiment = 5 # [s]
+        t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
             if tag_id in self.tags:
                 print("Tag info: \n",self.tags[tag_id])
-                print("tag2_q: ", tag2_q,  type(tag2_q))
+                # print("tag2_q: ", tag2_q,  type(tag2_q))
 
                 '''
                 Say you have two quaternions from the same frame, q_1 and q_2. You want to find the relative rotation, q_r, to go from q_1 to q_2:
@@ -612,17 +612,18 @@ class FeedbackNode:
                 '''
 
                 q1 = list(self.tags[tag_id]['rotation'])
-                print("q1: ", q1)
+                # print("q1: ", q1)
                 q1_inv = q1
                 q1_inv[3] = -q1_inv[3] 
-                print("q1_inv: ", q1_inv, type(q1_inv))
+                # print("q1_inv: ", q1_inv, type(q1_inv))
                 qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
                 
-                print("qr: ", qr, type(qr))
+                # print("qr: ", qr, type(qr))
 
                 (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
-
+                print()
                 print("(roll, pitch, yaw): ", (roll, pitch, yaw))
+                print()
 
                 time.sleep(1)
 
