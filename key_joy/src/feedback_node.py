@@ -639,7 +639,7 @@ class FeedbackNode:
         tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q}
         # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
         print("tag2_q: ", tag2_q, type(tag2_q))
-        
+        print("Tag info: \n",self.tags[tag_id])
         assert tag_id in tag_q_dict, 'unexpected tag_id for quaternions'
         q2 = tag_q_dict[tag_id]
 
