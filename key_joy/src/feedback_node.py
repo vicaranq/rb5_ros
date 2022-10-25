@@ -31,9 +31,9 @@ class FeedbackNode:
 
     def get_deltas(self, curr_pos, target_pos):
         ''' curr_pos=(y,x,theta) , target_pos=(x,y,theta)'''
-        delta_x = target_pos[0] - curr_pos[X]
-        delta_y = target_pos[1] - curr_pos[Y]
-        delta_theta = target_pos[2] - curr_pos[THETA]
+        delta_x = target_pos[0] - curr_pos[0]
+        delta_y = target_pos[1] - curr_pos[1]
+        delta_theta = target_pos[2] - curr_pos[2]
         return (delta_x, delta_y, delta_theta)
     
     def get_joy_msg(self):
