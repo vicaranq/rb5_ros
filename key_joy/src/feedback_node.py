@@ -8,6 +8,8 @@ import time, math
 import numpy as np
 
 from tf.transformations import *
+from geometry_msgs.msg import Quaternion
+import tf 
 
 
 X = 1
@@ -162,6 +164,23 @@ class FeedbackNode:
             return speed*0.75
         return speed            
 
+    def readjust_angle_with_quaternions(self, tag_id):
+        # make it work for tag 2 first
+        print("Readusting with quaternions....")
+        tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
+
+        q1 = list(self.tags[tag_id]['rotation'])
+        q1_inv = q1
+        q1_inv[3] = -q1_inv[3] 
+        qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
+        (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
+
+        # readjust angle only if pitch is greater than 0.01 
+        if abs(pitch) > 0.01: # ~ off by 2deg is fine
+            joy_msg = self.get_joy_msg()
+            self.turn_v2(pitch, joy_msg)         
+
+
     def turn_v2(self, theta, joy_msg):
         '''
         theta: angle in radiants to where we want to turn 
@@ -179,8 +198,10 @@ class FeedbackNode:
         self.theta_w = theta
         print("[turn] theta updated and turned {}rads".format(rads_to_turn))
         self.stop()
-    def move_with_tag(self, d, y_axis=False):
 
+    def move_with_tag(self, d, tag_id, y_axis=False):
+        
+        
         joy_msg = self.get_joy_msg()
 
         tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
@@ -204,7 +225,11 @@ class FeedbackNode:
         while tag_pos_x_r-target_pos_x > 0.1:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
-                self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
+                if tag_id == "marker_4":
+                    self.readjust_angle_with_quaternions(tag_id) 
+                else:
+                    self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
+            
             # time.sleep(0.5)    
             self.pub_joy.publish(joy_msg)            
             time.sleep(0.3)                                
@@ -225,7 +250,7 @@ class FeedbackNode:
         if tag_id in self.tags:
             time.sleep(1) 
             ''' NOTE: Encapsulate this code into function to use in the next else statement'''
-            self.move_with_tag( d, y_axis=False)
+            self.move_with_tag( d, tag_id, y_axis=False)
             # tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
 
             # target_pos_x = tag_pos_x_r - d
@@ -610,21 +635,13 @@ class FeedbackNode:
                 You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
                 q_r = q_2*q_1_inverse
                 '''
-
                 q1 = list(self.tags[tag_id]['rotation'])
-                # print("q1: ", q1)
                 q1_inv = q1
                 q1_inv[3] = -q1_inv[3] 
-                # print("q1_inv: ", q1_inv, type(q1_inv))
                 qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
-                
-                # print("qr: ", qr, type(qr))
-
                 (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
-                
+        
                 print("(roll, pitch, yaw): ", (roll, pitch, yaw))
-                
-
                 time.sleep(1)
 
             elif self.tags:
@@ -646,7 +663,7 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_rot_ang_from_tag(tags[1])
+    # feedback_node.print_rot_ang_from_tag(tags[1])
     # feedback_node.print_TAG_info( tags[1])
     '''
     Running Experiment
@@ -657,8 +674,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:], tags[:]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     feedback_node.run(p, tag_id)
+    for p,tag_id in zip(points[:2], tags[:2]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
 
