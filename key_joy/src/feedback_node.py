@@ -170,9 +170,12 @@ class FeedbackNode:
 
         # find quaternion of reference
         tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
-        tag1_q = [0,0,0,0]
-        tag_qs_dict = {'marker_1': tag1_q, "marker_4": tag2_q}
-        q2 = tag_qs_dict[tag_id]
+        tag1_q = [-0.031684626256729034, 0.05936072671254348, 0.6980881821665746, 0.7128430952899086]
+        tag3_1 = [-0.19803038269123838, -0.019045190574983963, -0.7039578667645559, 0.681809775573378]
+        tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q, 'marker_2':tag3_1}
+        assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
+        
+        q2 = tag_q_dict[tag_id]
         print("Using q2: ", q2)
         q1 = list(self.tags[tag_id]['rotation'])
         q1_inv = q1
@@ -240,8 +243,8 @@ class FeedbackNode:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
             if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                
-                if tag_id in { "marker_4"}:
-                    print("Found marker_4 ")
+                if tag_id in { "marker_4", "marker_1"}:
+                    print("Found marker_4 / marker1 ")
                     pitch = self.readjust_angle_with_quaternions(tag_id) 
                     # if abs(pitch ) <= 0.01:
                     #     break doesnt mean we arrived
@@ -691,13 +694,13 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_rot_ang_from_tag(tags[0])
+    # feedback_node.print_rot_ang_from_tag(tags[0])
     # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
-    # print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    # feedback_node.run(p, tag_id)
+    print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    feedback_node.run(p, tag_id)
     
     '''
     Try this next    
