@@ -203,9 +203,9 @@ class FeedbackNode:
         rads_to_turn = self.get_rads(theta)
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
         joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
-        if scale:
-            # used for angle readdjustment
-            joy_msg.axes[THETA] = 0.5 if rads_to_turn >= 0 else -0.5# >0.1
+        # if scale:
+        #     # used for angle readdjustment
+        #     joy_msg.axes[THETA] = 0.5 if rads_to_turn >= 0 else -0.5# >0.1
 
         while time.time() < t_start + time_per_rad*abs(rads_to_turn):
             self.pub_joy.publish(joy_msg)
@@ -354,10 +354,11 @@ class FeedbackNode:
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
         joy_msg.buttons = [0, 0, 0, 0, 0, 0, 0, 0]
-        target_time = 2.1   # [seconds to get to a 90 degrees angle]
+        #target_time = 2.1   # [seconds to get to a 90 degrees angle]
+        target_time = 2.3   # [seconds to get to a 90 degrees angle]
         # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
-        joy_msg.axes[THETA] = 1 # >0.1
+        joy_msg.axes[THETA] = 0.9 #1 # >0.1
         while time.time() < t_start + target_time:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
@@ -651,11 +652,12 @@ if __name__ == "__main__":
     feedback_node = FeedbackNode()
     rospy.init_node("feedback")
 
-    # feedback_node.run_rotation_calibration()
     # points = get_points_from_file()
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
-
+    ''' Calibrate'''
+    feedback_node.run_rotation_calibration()
+    ''' -----'''
     points = [(0.7,0.0,0.0), (0.7,1.4,np.pi), (0.0,0.0,0.0)]    
     #tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
@@ -674,8 +676,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:2], tags[:2]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     feedback_node.run(p, tag_id)
 
