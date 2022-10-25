@@ -196,9 +196,9 @@ class FeedbackNode:
         '''
         theta: angle in radiants to where we want to turn 
         '''
-        #calibration_time = 2.5 # [sec/rad]time to get to pi/2
-        # time_per_rad = 2.3/ (math.pi/2)
-        time_per_rad = 2.3/ (math.pi/2)
+        # From calibration tests:
+        time_per_rad = 2.3/ (math.pi/2) if theta >=0 else 2.1/ (math.pi/2)
+        
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
@@ -358,7 +358,14 @@ class FeedbackNode:
         #target_time = 2.3   # [seconds to get to a 90 degrees angle]
         target_time = 2.1
 
-        ''' on carpet 2.3s at 0.9 works great for positive turns'''
+        ''' 
+        NOTE:
+        On carpet...
+        
+        2.3s at 0.9 works great for positive turns
+        2.1s at -0.9 for negative turns
+        
+        '''
 
         # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
