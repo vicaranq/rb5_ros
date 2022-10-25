@@ -103,8 +103,8 @@ class FeedbackNode:
             # if we are facing to +x then it is theta (tag #1 )
 
             # if we are facing to +y then it is theta + 90 (tag #2 )
-
-            self.turn_v2(self.theta_w+theta) # turn wihtout updating theta of robot, update once reached the target
+            joy_msg = self.get_joy_msg()
+            self.turn_v2(self.theta_w+theta, joy_msg) # turn wihtout updating theta of robot, update once reached the target
 
     def turn_old(self, theta, update=True):
         '''
