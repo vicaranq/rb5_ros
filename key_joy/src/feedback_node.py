@@ -276,9 +276,9 @@ class FeedbackNode:
         time.sleep(1)
         
         t_start = time.time()
-        t_experiment = 10 # [s]
+        t_experiment = 15 # [s]
         while time.time() < t_start + t_experiment:
-            time.sleep(0.5)
+
             if tag_id in self.tags:
 
                 tag_pos_T = self.tags[tag_id] # tag position information in tag coordinate frame       
@@ -335,7 +335,7 @@ class FeedbackNode:
                         # check how far to dist_to_target_x_w we are   
                         print("d_y: ",  tag_pos_x_r - dist_to_target_y_w)  
 
-                        if abs(dist_to_target_y_w - tag_pos_x_r) < 0.1:
+                        if abs(dist_to_target_y_w - tag_pos_x_r) < 0.2:
                             arrived_to_target = True
                             self.x_w = x_target # we should be around here
                             self.y_w = y_target
