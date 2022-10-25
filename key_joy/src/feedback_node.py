@@ -166,7 +166,7 @@ class FeedbackNode:
         time_per_rad = 2.3/ (math.pi/2)
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
-        joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
+        joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1# >0.1
         while time.time() < t_start + time_per_rad*abs(rads_to_turn):
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
@@ -545,7 +545,7 @@ if __name__ == "__main__":
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
 
-    points = [(0.7,0,0), (0.7,1.4,np.pi), (0,0,0)]    
+    points = [(0.7,0.0,0.0), (0.7,1.4,np.pi), (0.,1.4,0.0), (0.0,0.0,0.0)]    
     tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     p, tag_id = (points[0], tags[0])
     '''
