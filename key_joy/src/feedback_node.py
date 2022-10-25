@@ -202,12 +202,12 @@ class FeedbackNode:
 
         while abs(tag_pos_x_r-target_pos_x) > 0.1:
 
-            self.pub_joy.publish(joy_msg)
-            # time.sleep(0.5)
+            self.pub_joy.publish(joy_msg)            
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
-
+            time.sleep(0.5)
             self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
-        
+            
+
         if abs(tag_pos_x_r-target_pos_x) < 0.1:
             print("Arrived!!")
         joy_msg.axes[X] = 0 # reset 
