@@ -198,7 +198,7 @@ class FeedbackNode:
         '''
         # From calibration tests:
         time_per_rad = 2.3/ (math.pi/2) if theta >=0 else 2.1/ (math.pi/2)
-        
+
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
@@ -667,7 +667,7 @@ if __name__ == "__main__":
     # print(points)
     # points = [(0,0,0),(1,0,0),(1,1,1.57),(2,1,0),(2,2,-1.57),(1,1,-0.78),(0,0,0)]
     ''' Calibrate'''
-    feedback_node.run_rotation_calibration()
+    # feedback_node.run_rotation_calibration()
     ''' -----'''
     points = [(0.7,0.0,0.0), (0.7,1.4,np.pi), (0.0,0.0,0.0)]    
     #tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
@@ -687,8 +687,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:2], tags[:2]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     feedback_node.run(p, tag_id)
+    for p,tag_id in zip(points[:2], tags[:2]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
 
