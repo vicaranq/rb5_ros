@@ -176,9 +176,11 @@ class FeedbackNode:
         (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
 
         # readjust angle only if pitch is greater than 0.01 
-        if abs(pitch) > 0.01: # ~ off by 2deg is fine
+        if abs(pitch) > 0.01 and abs(pitch) < math.pi/2: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
             joy_msg = self.get_joy_msg()
-            self.turn_v2(pitch, joy_msg)         
+            self.turn_v2(pitch, joy_msg) 
+            time.sleep(0.5)   
+        return pitch
 
 
     def turn_v2(self, theta, joy_msg):
@@ -226,7 +228,10 @@ class FeedbackNode:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             if abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:
                 if tag_id == "marker_4":
-                    self.readjust_angle_with_quaternions(tag_id) 
+                    print("Found marker_4")
+                    pitch = self.readjust_angle_with_quaternions(tag_id) 
+                    if abs(pitch ) <= 0.01:
+                        break
                 else:
                     self.readjust_angle(tag_pos_y_r, tag_pos_x_r) 
             
