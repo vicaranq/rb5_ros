@@ -641,37 +641,40 @@ class FeedbackNode:
         # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
         print("tag2_q: ", tag2_q, type(tag2_q))
         time.sleep(0.1)
-        print("Tag info: \n",self.tags[tag_id])
-        assert tag_id in tag_q_dict, 'unexpected tag_id for quaternions'
-        q2 = tag_q_dict[tag_id]
+        if tag_id in self.tags:
+            print("Tag info: \n",self.tags[tag_id])
+            assert tag_id in tag_q_dict, 'unexpected tag_id for quaternions'
+            q2 = tag_q_dict[tag_id]
 
-        # Obtain Tag information
-        rospy.Subscriber("/tf", TFMessage, self.tag_information)
-        
-        t_start = time.time()
-        t_experiment = 10 # [s]
-        while time.time() < t_start + t_experiment:
-            if tag_id in self.tags:
-                print("Tag info: \n",self.tags[tag_id])
-                # print("tag2_q: ", tag2_q,  type(tag2_q))
+            # Obtain Tag information
+            rospy.Subscriber("/tf", TFMessage, self.tag_information)
+            
+            t_start = time.time()
+            t_experiment = 10 # [s]
+            while time.time() < t_start + t_experiment:
+                if tag_id in self.tags:
+                    print("Tag info: \n",self.tags[tag_id])
+                    # print("tag2_q: ", tag2_q,  type(tag2_q))
 
-                '''
-                Say you have two quaternions from the same frame, q_1 and q_2. You want to find the relative rotation, q_r, to go from q_1 to q_2:
-                q_2 = q_r*q_1
-                You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
-                q_r = q_2*q_1_inverse
-                '''
-                q1 = list(self.tags[tag_id]['rotation'])
-                q1_inv = q1
-                q1_inv[3] = -q1_inv[3] 
-                qr = tf.transformations.quaternion_multiply(q2, q1_inv)
-                (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
-        
-                print("(roll, pitch, yaw): ", (roll, pitch, yaw))
-                time.sleep(1)
+                    '''
+                    Say you have two quaternions from the same frame, q_1 and q_2. You want to find the relative rotation, q_r, to go from q_1 to q_2:
+                    q_2 = q_r*q_1
+                    You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
+                    q_r = q_2*q_1_inverse
+                    '''
+                    q1 = list(self.tags[tag_id]['rotation'])
+                    q1_inv = q1
+                    q1_inv[3] = -q1_inv[3] 
+                    qr = tf.transformations.quaternion_multiply(q2, q1_inv)
+                    (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
+            
+                    print("(roll, pitch, yaw): ", (roll, pitch, yaw))
+                    time.sleep(1)
 
-            elif self.tags:
-                print("Different Tags observed: ", list(self.tags.keys()) )                
+                elif self.tags:
+                    print("Different Tags observed: ", list(self.tags.keys()) )   
+        else:
+            print("tag ",  tag_id, " not found")             
 
 if __name__ == "__main__":
     feedback_node = FeedbackNode()
