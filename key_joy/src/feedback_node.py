@@ -414,6 +414,7 @@ class FeedbackNode:
                 t_start = time.time()
                 #rads_to_turn = (90/180)*math.pi
                 rads_to_turn = math.cos((x_target-self.x_w)/(y_target-self.y_w))
+                print("radians to turn is: ", rads_to_turn)
                 joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
                 #while time.time() < t_start + time_per_rad*abs(rads_to_turn):
                 self.pub_joy.publish(joy_msg)
