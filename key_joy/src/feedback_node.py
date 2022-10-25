@@ -407,14 +407,15 @@ class FeedbackNode:
             else:
 
                 
-                time_per_rad = 2.1/ (math.pi/2)
+                time_per_rad = 2.5
                 joy_msg = self.get_joy_msg()
                 t_start = time.time()
-                rads_to_turn = (90/180)*math.pi
+                #rads_to_turn = (90/180)*math.pi
+                rads_to_turn = math.cos((x_target-self.x_w)/(y_target-self.y_w))
                 joy_msg.axes[THETA] = 1 if rads_to_turn >= 0 else -1# >0.1
                 #while time.time() < t_start + time_per_rad*abs(rads_to_turn):
                 self.pub_joy.publish(joy_msg)
-                time.sleep(2.5)
+                time.sleep(time_per_rad*rads_to_turn)
                 #time.sleep(0.1)
                     # just wait for target_time          
                 joy_msg.axes[THETA] = 0 # reset 
