@@ -585,33 +585,39 @@ class FeedbackNode:
 
         joy_msg = self.get_joy_msg()
 
-        delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        delta_x, delta_y, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
         print("delta_x: ", delta_x)
-        # y_curr, x_curr, theta_curr = self.get_current_pos()
-        # move X axis
-        if abs(delta_x) > 0.1:
-            # if the robot is not at zero degrees, then rotate to make it zero
-            print("Turning to zero degrees...")
-            self.turn_v2(0,joy_msg)
-            self.move_front_old(delta_x, tag_id) # front in direction of x axis (world coordinate)
+
+        # to correct angle
+        angle = 0
+        if delta_x<0.1 and delta_y>0.1:
+            angle=math.pi/2
+        elif deta_x<0.1 and delta_y<-0.1:
+            angle=math.pi/2
+        else:
+            angle=math.tan(delta_x/delta_y)
+	
+        if abs(angle)  > 0.1:
+            self.turn_v2(self.theta_w+angle, joy_msg)
             time.sleep(1)
-        # move Y axis
-        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
-        print("delta_y: ", delta_y)
-        time.sleep(1)
-        if abs(delta_y) > 0.1:        
-            self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
-            time.sleep(1)
-        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
-        print("delta_theta: ", delta_theta)
-        time.sleep(1)
-        # move angle
-        if abs(delta_theta)  > 0.1:
+        print("State: ", (self.x_w, self.y_w, self.theta_w))
+        self.stop()
+	
+        #move forward
+        dist = math.sqrt(delta_x**2, delta_y**2)
+            if abs(delta_x) > 0.1:
+                # self.turn_v2(0,joy_msg)
+                self.move_front_old(dist, tag_id)
+                time.sleep(1)	
+
+        # move to the required angle
+        if abs(target_position_w[2]-self.theta_w)  > 0.1:
             self.turn_v2(target_position_w[2], joy_msg)
             time.sleep(1)
         print("State: ", (self.x_w, self.y_w, self.theta_w))
         self.stop()
+
 
 
     def print_TAG_info(self,  tag_id):
