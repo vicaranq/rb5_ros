@@ -358,7 +358,7 @@ class FeedbackNode:
         target_time = 2.3   # [seconds to get to a 90 degrees angle]
         # ideal: target_time = rad / (speed [rad/s])
         t_start = time.time()
-        joy_msg.axes[THETA] = 0.9 #1 # >0.1
+        joy_msg.axes[THETA] = -0.9 #1 # >0.1
         while time.time() < t_start + target_time:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
