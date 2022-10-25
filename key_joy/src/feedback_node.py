@@ -636,9 +636,11 @@ class FeedbackNode:
         # From experiment placing the robot right in front of the tag
         tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
         tag1_q = [-0.031684626256729034, 0.05936072671254348, 0.6980881821665746, 0.7128430952899086]
-        tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q}
+        tag3_1 = [-0.19803038269123838, -0.019045190574983963, -0.7039578667645559, 0.681809775573378]
+        tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q, 'marker_2':tag3_1}
         # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
         print("tag2_q: ", tag2_q, type(tag2_q))
+        time.sleep(0.1)
         print("Tag info: \n",self.tags[tag_id])
         assert tag_id in tag_q_dict, 'unexpected tag_id for quaternions'
         q2 = tag_q_dict[tag_id]
@@ -687,8 +689,8 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    # feedback_node.print_rot_ang_from_tag(tags[2])
-    feedback_node.print_TAG_info( tags[2])
+    feedback_node.print_rot_ang_from_tag(tags[2])
+    # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
