@@ -6,6 +6,10 @@ from tf2_msgs.msg import TFMessage
 from key_parser import get_key, save_terminal_settings, restore_terminal_settings
 import time, math
 import numpy as np
+
+from tf.transformations import *
+
+
 X = 1
 Y = 0 
 THETA = 2
@@ -346,6 +350,7 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
 
         self.stop()
+      
 
     def run_backup(self, target_position_w, tag_id):
         '''
@@ -580,6 +585,49 @@ class FeedbackNode:
             elif self.tags:
                 print("Different Tags observed: ", list(self.tags.keys()) )
 
+    def print_rot_ang_from_tag(self,  tag_id):
+        from geometry_msgs.msg import Quaternion
+        import tf 
+        
+        # From experiment placing the robot right in front of the tag
+        tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
+        # tag2_q = Quaternion(tag2_quat_tf[0], tag2_quat_tf[1], tag2_quat_tf[2], tag2_quat_tf[3])
+        print("tag2_q: ", tag2_q, type(tag2_q))
+
+        # Obtain Tag information
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+        
+        t_start = time.time()
+        t_experiment = 5 # [s]
+        while time.time() < t_start + t_experiment:
+            if tag_id in self.tags:
+                print("Tag info: \n",self.tags[tag_id])
+                print("tag2_q: ", tag2_q,  type(tag2_q))
+
+                '''
+                Say you have two quaternions from the same frame, q_1 and q_2. You want to find the relative rotation, q_r, to go from q_1 to q_2:
+                q_2 = q_r*q_1
+                You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
+                q_r = q_2*q_1_inverse
+                '''
+
+                q1 = self.tags[tag_id]['translation']
+                q1_inv = q1
+                q1_inv[3] = -q1_inv[3] 
+                print("q1_inv: ", q1_inv, type(q1_inv))
+                qr = tf.transformations.quaternion_multiply(tag2_q, q1_inv)
+                
+                print("qr: ", qr, type(qr))
+
+                (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
+
+                print("(roll, pitch, yaw): ", (roll, pitch, yaw))
+
+                time.sleep(1)
+
+            elif self.tags:
+                print("Different Tags observed: ", list(self.tags.keys()) )                
+
 if __name__ == "__main__":
     feedback_node = FeedbackNode()
     rospy.init_node("feedback")
@@ -596,7 +644,8 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    feedback_node.print_TAG_info( tags[1])
+    feedback_node.print_rot_ang_from_tag(tags[1])
+    # feedback_node.print_TAG_info( tags[1])
     '''
     Running Experiment
     '''
@@ -610,3 +659,4 @@ if __name__ == "__main__":
     #     print("======================================================================")
     #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
     #     feedback_node.run(p, tag_id)
+
