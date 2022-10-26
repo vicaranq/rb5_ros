@@ -240,17 +240,17 @@ class FeedbackNode:
 
         #while time.time() < t_start + time_per_m*abs(d):
         temp_dist = tag_pos_y_r
-        while tag_pos_x_r-target_pos_x > 0.05:
+        while tag_pos_x_r-target_pos_x > 0.08:
             time.sleep(0.2) # wait to populate tag dict
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
             ''' ====================  ADJUST ANGLE ===================='''
             if tag_id in { "marker_4", "marker_1", "marker_2"}:
-                print("Found marker_4 / marker1 / marker_2 ")
+                print("Found ", tag_id)
                 pitch = self.readjust_angle_with_quaternions(tag_id) 
             elif abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                        
                 print("Didn't found marker_4")
-                self.readjust_angle(tag_pos_y_r, tag_pos_x_r)             
+                # self.readjust_angle(tag_pos_y_r, tag_pos_x_r)             
             # time.sleep(0.5)
             ''' ====================  MOVE FORWARD ===================='''    
             self.pub_joy.publish(joy_msg)            
