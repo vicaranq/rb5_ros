@@ -262,7 +262,7 @@ class FeedbackNode:
 
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
         joy_msg.axes[X] = 0 # reset 
-        self.pub_joy.publish(joy_msg)
+        self.pub_joy.publish(joy_msg) # todo: maybe decrease time of samplig on d to get to target so it doesnt hit target
 
 
     def move_front_old(self, d,tag_id, y_axis=False, moving_diag=False, diag_update=(0,0)):
@@ -623,9 +623,10 @@ class FeedbackNode:
             print("delta_y: ", delta_y)
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
-            # _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                 
+                        
+        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                                 
         # move angle
-        elif abs(delta_theta)  > 0.1:
+        if abs(delta_theta)  > 0.1:
             print("delta_theta: ", delta_theta)
             ''' MOVE ON THETA '''                    
             self.turn_v2(target_position_w[2], joy_msg)
