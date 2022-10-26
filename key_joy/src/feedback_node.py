@@ -253,7 +253,7 @@ class FeedbackNode:
 
         #while time.time() < t_start + time_per_m*abs(d):
         temp_dist = tag_pos_y_r
-        while tag_pos_x_r-target_pos_x > 0.08:
+        while tag_pos_x_r-target_pos_x > 0.1:
             time.sleep(0.2) # wait to populate tag dict
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
