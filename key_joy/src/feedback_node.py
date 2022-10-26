@@ -719,7 +719,7 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
+    for p,tag_id in zip(points[:], tags[:]):        
         print("======================================================================")
         print("Starting navigation to target point: ", p, " tag: ", tag_id)        
         feedback_node.run(p, tag_id)
