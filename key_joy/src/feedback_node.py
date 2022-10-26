@@ -217,7 +217,7 @@ class FeedbackNode:
         print("[turn] theta updated and turned {}rads".format(rads_to_turn))
         self.stop()
 
-    def move_with_tag(self, d, tag_id, y_axis=False):
+    def move_with_tag(self, d, tag_id, y_axis=False, moving_diag=False):
         
         
         joy_msg = self.get_joy_msg()
@@ -233,7 +233,10 @@ class FeedbackNode:
         t_start = time.time()
 
         #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1   
-        joy_msg.axes[X] = 1.0 if d >=0 or y_axis else -1.0 # >0.1   
+        joy_msg.axes[X] = 1.0 if d >=0 or y_axis else -1.0 # >0.1  
+        if moving_diag:
+            print("Moving slower in diagonal")
+            joy_msg.axes[X] = 0.8 if d >=0 else -0.8 # >0.1         
 
         # if d is within 20 cm, start reducing the speed
         #joy_msg.axes[X] = self.reduce_speed(d, joy_msg.axes[X])
@@ -271,7 +274,7 @@ class FeedbackNode:
         if tag_id in self.tags:
             time.sleep(1) 
             ''' NOTE: Encapsulate this code into function to use in the next else statement'''
-            self.move_with_tag( d, tag_id, y_axis=False)
+            self.move_with_tag( d, tag_id, y_axis=False, moving_diag=moving_diag)
 
         else: 
             time_per_m = 2.7027   # [seconds to get to a meter]
