@@ -565,7 +565,9 @@ class FeedbackNode:
         tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
         '''              
-        self.x_w, self.y_w, self.theta_w = robot_pos
+        if robot_pos != (0.0,0.0,0.0):
+            self.x_w, self.y_w, self.theta_w = robot_pos
+            
         print("Robot's World Position: ", self.get_current_pos())
         print("Target Position: ", target_position_w)
 
