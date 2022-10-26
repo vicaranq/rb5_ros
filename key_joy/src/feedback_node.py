@@ -714,13 +714,13 @@ if __name__ == "__main__":
     Running Experiment
     '''
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    # feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
+    feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
     
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:2], tags[:2]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        feedback_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:2], tags[:2]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     feedback_node.run(p, tag_id)
 
