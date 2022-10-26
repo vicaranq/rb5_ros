@@ -564,7 +564,7 @@ class FeedbackNode:
         tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
         '''              
-        self.x_w, self.y, self.theta_w = robot_pos
+        self.x_w, self.y_w, self.theta_w = robot_pos
         print("Robot's World Position: ", self.get_current_pos())
         print("Target Position: ", target_position_w)
 
@@ -573,14 +573,15 @@ class FeedbackNode:
 
         joy_msg = self.get_joy_msg()
 
-        delta_x, delta_y , _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        delta_x, delta_y , delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
         print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
-        print("delta_x: ", delta_x)
+        print("delta_x: ", delta_x, "delta_y: ", delta_y)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
 
-        ''' MOVE DIAG '''
+        
         if abs(delta_x) > 0.1 and abs(delta_y) > 0.1:
+            ''' MOVE DIAG '''
             print("Move Diag!")
             print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
 
@@ -594,35 +595,33 @@ class FeedbackNode:
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
             self.move_front_old(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
-            time.sleep(1)
-
-        ''' MOVE ON X AXIS '''        
-        if abs(delta_x) > 0.1:
+            time.sleep(1)                   
+        elif abs(delta_x) > 0.1:
+            ''' MOVE ON X AXIS ''' 
             # if the robot is not at zero degrees, then rotate to make it zero
             print("Turning to zero degrees...")
             self.turn_v2(0,joy_msg)
             self.move_front_old(delta_x, tag_id) # front in direction of x axis (world coordinate)
             time.sleep(1)
-        # move Y axis
-        ''' MOVE ON Y AXIS '''        
-        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X
-        print("delta_y: ", delta_y)
-        time.sleep(1)
-        if abs(delta_y) > 0.1:        
+            
+            # _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X    
+        elif abs(delta_y) > 0.1:        
+            # move Y axis
+            ''' MOVE ON Y AXIS '''        
+            print("delta_y: ", delta_y)
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
-        ''' MOVE ON THETA '''                    
-        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y 
-        print("delta_theta: ", delta_theta)
-        time.sleep(1)
+            # _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                 
         # move angle
-        if abs(delta_theta)  > 0.1:
+        elif abs(delta_theta)  > 0.1:
+            print("delta_theta: ", delta_theta)
+            ''' MOVE ON THETA '''                    
             self.turn_v2(target_position_w[2], joy_msg)
             # We can use pitch angle at this point to readjust turn 
             # Robot should be 90deg with respect the coordinate frame of tag 2
             # self.adjust_turn() here we could use tag2 as reference to make sure we are at 90deg
             time.sleep(1)
-        ''' ---------------'''
+        ''' ----------------------------------------------------------------'''
         print("State: ", (self.x_w, self.y_w, self.theta_w))
         self.stop()
 
