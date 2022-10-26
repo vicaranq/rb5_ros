@@ -244,8 +244,8 @@ class FeedbackNode:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])
             print("d: ", tag_pos_x_r-target_pos_x)
             ''' ====================  ADJUST ANGLE ===================='''
-            if tag_id in { "marker_4", "marker_1"}:
-                print("Found marker_4 / marker1 ")
+            if tag_id in { "marker_4", "marker_1", "marker_2"}:
+                print("Found marker_4 / marker1 / marker_2 ")
                 pitch = self.readjust_angle_with_quaternions(tag_id) 
             elif abs(temp_dist - tag_pos_y_r) > 0.05 and tag_pos_x_r-target_pos_x > 0.2:                        
                 print("Didn't found marker_4")
@@ -586,12 +586,15 @@ class FeedbackNode:
             print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
 
             # first find tag associated to target
+            time.sleep(0.2)
             while tag_id not in self.tags:
                 # rotate until findind the tag
                 print("Looking for tag: ", tag_id )
                 self.turn_v2(self.theta_w + 10*(math.pi/180),joy_msg)
+                time.sleep(0.2)
             # Now we see tag
             # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
+            print("Found it! ")
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
             self.move_front_old(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
