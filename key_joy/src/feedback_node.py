@@ -204,9 +204,9 @@ class FeedbackNode:
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
         # rads_to_turn has to be within 2pi range
-        sign = -1 if rads_to_turn >=0 else 1
-        rads_to_turn = abs(rads_to_turn) % (2*math.pi)
-        rads_to_turn = sign*rads_to_turn
+        # sign = -1 if rads_to_turn >=0 else 1
+        # rads_to_turn = abs(rads_to_turn) % (2*math.pi)
+        # rads_to_turn = sign*rads_to_turn
 
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
         joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
