@@ -258,7 +258,7 @@ class FeedbackNode:
             # time.sleep(0.5)
             ''' ====================  MOVE FORWARD ===================='''    
             self.pub_joy.publish(joy_msg)            
-            time.sleep(0.1)                                
+            time.sleep(0.2)                                
 
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
         joy_msg.axes[X] = 0 # reset 
