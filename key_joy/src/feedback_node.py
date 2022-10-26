@@ -707,13 +707,13 @@ if __name__ == "__main__":
     '''
     Getting Tag info
     '''
-    # feedback_node.print_rot_ang_from_tag(tags[1])
-    # feedback_node.print_TAG_info( tags[2])
+    # feedback_node.print_rot_ang_from_tag(tags[2])
+    feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
+    # feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
     
     '''
     Try this next    
