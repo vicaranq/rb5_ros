@@ -172,7 +172,8 @@ class FeedbackNode:
         tag2_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
         tag1_q = [-0.031684626256729034, 0.05936072671254348, 0.6980881821665746, 0.7128430952899086]
         #tag3_1 = [-0.19803038269123838, -0.019045190574983963, -0.7039578667645559, 0.681809775573378] # facing straight
-        tag3_1 = [0.012554685868491552, -0.15974074559935636, -0.7087651669450613, 0.68700597681784740]# facing diagonal at tag 3
+        # tag3_1 = [0.012554685868491552, -0.15974074559935636, -0.7087651669450613, 0.68700597681784740]# facing diagonal at tag 3
+        tag3_1 = [-0.0766701086000425, -0.09950813695988033, -0.7134872517193238, 0.6893154334265537] # mixed of above two
         tag_q_dict = {'marker_1': tag1_q, 'marker_4':tag2_q, 'marker_2':tag3_1}
         assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
 
@@ -716,7 +717,7 @@ if __name__ == "__main__":
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    feedback_node.print_TAG_info( tags[2])
+    # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
@@ -726,8 +727,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:], tags[:]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     feedback_node.run(p, tag_id)
+    for p,tag_id in zip(points[:], tags[:]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        feedback_node.run(p, tag_id)
 
