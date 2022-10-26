@@ -554,13 +554,14 @@ class FeedbackNode:
         print("closing...")
         self.stop()
 
-    def run(self, target_position_w, tag_id):
+    def run(self, target_position_w, tag_id, robot_pos = (0.0,0.0,0.0)):
         '''
         Args:
         target_position_w -> Target position in world coordinates 
         tag_id -> unique identifier for  tag associaetd to the target position (1m away from actual target)
         
         '''              
+        self.x_w, self.y, self.theta_w = robot_pos
         print("Robot's World Position: ", self.get_current_pos())
         print("Target Position: ", target_position_w)
 
@@ -679,17 +680,17 @@ if __name__ == "__main__":
     points = [(0.7,0.0,0.0), (0.7,1.4,np.pi), (0.0,0.0,0.0)]    
     #tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
-    p, tag_id = (points[0], tags[0])
+    p, tag_id = (points[2], tags[2])
     '''
     Getting Tag info
     '''
-    feedback_node.print_rot_ang_from_tag(tags[1])
+    # feedback_node.print_rot_ang_from_tag(tags[1])
     # feedback_node.print_TAG_info( tags[2])
     '''
     Running Experiment
     '''
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    # feedback_node.run(p, tag_id)
+    feedback_node.run(p, tag_id,robot_pos= (0.7,1.4,np.pi) )
     
     '''
     Try this next    
