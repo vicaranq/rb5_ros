@@ -260,7 +260,7 @@ class FeedbackNode:
         self.pub_joy.publish(joy_msg)
 
 
-    def move_front_old(self, d,tag_id, y_axis=False):
+    def move_front_old(self, d,tag_id, y_axis=False, moving_diag=False, diag_update=(0,0)):
         '''
         Args:
         d -> float type represeting meters
@@ -288,10 +288,13 @@ class FeedbackNode:
             time.sleep(1)  
 
         #update
-        if not y_axis:
-            self.x_w += d
-        else:
+        if moving_diag:
+            assert diag_update != (0,0), " Unexpected diag update"
+            self.x_w, self.y_w = diag_update
+        elif y_axis:
             self.y_w += d
+        else:
+            self.x_w += d
 
     def move_front_new(self, d, joy_msg, y_axis=False):
         '''
@@ -570,11 +573,29 @@ class FeedbackNode:
 
         joy_msg = self.get_joy_msg()
 
-        delta_x, _, _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        delta_x, delta_y , _ = self.get_deltas(self.get_current_pos(), target_position_w)
         print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
         print("delta_x: ", delta_x)
         # y_curr, x_curr, theta_curr = self.get_current_pos()
         # move X axis
+
+        ''' MOVE DIAG '''
+        if abs(delta_x) > 0.1 and abs(delta_y) > 0.1:
+            print("Move Diag!")
+            print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
+
+            # first find tag associated to target
+            while tag_id not in self.tags:
+                # rotate until findind the tag
+                print("Looking for tag: ", tag_id )
+                self.turn_v2(self.theta_w + 10*(math.pi/180),joy_msg)
+            # Now we see tag
+            # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
+            d = math.sqrt(delta_x**2 + delta_y**2)
+            print("Distance to travel: ", d)            
+            self.move_front_old(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
+            time.sleep(1)
+
         ''' MOVE ON X AXIS '''        
         if abs(delta_x) > 0.1:
             # if the robot is not at zero degrees, then rotate to make it zero
@@ -584,14 +605,14 @@ class FeedbackNode:
             time.sleep(1)
         # move Y axis
         ''' MOVE ON Y AXIS '''        
-        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w)
+        _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X
         print("delta_y: ", delta_y)
         time.sleep(1)
         if abs(delta_y) > 0.1:        
             self.move_sideways_no_slide(delta_y, tag_id, joy_msg)
             time.sleep(1)
         ''' MOVE ON THETA '''                    
-        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w)
+        _, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y 
         print("delta_theta: ", delta_theta)
         time.sleep(1)
         # move angle
@@ -690,7 +711,7 @@ if __name__ == "__main__":
     Running Experiment
     '''
     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    feedback_node.run(p, tag_id,robot_pos= (0.7,1.4,np.pi) )
+    feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
     
     '''
     Try this next    
