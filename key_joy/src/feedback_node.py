@@ -189,7 +189,7 @@ class FeedbackNode:
         if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
             joy_msg = self.get_joy_msg()
             self.turn_v2(pitch + self.theta_w, joy_msg) # readjusting to angle coordinates +CW and -CCC
-            time.sleep(0.5)   
+            time.sleep(0.2)   
         return pitch
 
 
