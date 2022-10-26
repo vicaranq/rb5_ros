@@ -203,6 +203,11 @@ class FeedbackNode:
 
         t_start = time.time()
         rads_to_turn = self.get_rads(theta)
+        # rads_to_turn has to be within 2pi range
+        sign = -1 if rads_to_turn >=0 else 1
+        rads_to_turn = abs(rads_to_turn) % (2*math.pi)
+        rads_to_turn = sign*rads_to_turn
+
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
         joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
         # if scale:
@@ -214,8 +219,12 @@ class FeedbackNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        self.theta_w = theta
-        print("[turn] theta updated and turned {}rads".format(rads_to_turn))
+        
+        # theta_w has to be within 2pi range   
+        sign = -1 if theta >=0 else 1    
+        theta_mod =  abs(theta) %  (2*math.pi)
+        self.theta_w =  sign*theta_mod
+        print("[turn] theta updated to {} and turned {}rads".format(self.theta_w, rads_to_turn))
         self.stop()
 
     def move_with_tag(self, d, tag_id, y_axis=False, moving_diag=False):
