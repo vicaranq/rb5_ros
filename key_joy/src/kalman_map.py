@@ -392,7 +392,7 @@ class KalmanNode:
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
-    def run(self, target_position_w, tag_id, robot_pos = (0.0,0.0,0.0)):
+    def run(self, robot_pos = (0.0,0.0,0.0)):
         '''
         Args:
         target_position_w -> Target position in world coordinates 
@@ -402,7 +402,7 @@ class KalmanNode:
         if robot_pos != (0.0,0.0,0.0):
             self.x_w, self.y_w, self.theta_w = robot_pos
         print("Robot's World Position: ", self.get_current_pos())
-        print("Target Position: ", target_position_w)
+        # print("Target Position: ", target_position_w)
 
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         time.sleep(3)
@@ -459,7 +459,8 @@ class KalmanNode:
             self.turn_90(joy_msg)
             time.sleep(1)
             self.theta_w = self.theta_w+np.pi/2
-
+        
+        print(self.state)
 
 
         '''
@@ -558,7 +559,7 @@ class KalmanNode:
          
 
 if __name__ == "__main__":
-    feedback_node = KalmanNode()
+    kalman_node = KalmanNode()
     rospy.init_node("kalman")
 
     # points = get_points_from_file()
@@ -567,7 +568,7 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # feedback_node.run_rotation_calibration()
     ''' -----'''
-    points = [(1.0,0.0,np.pi/2.0), (1.0,1.0,np.pi), (0.0,1.0,np.pi*1.5),(0.0,1.0,0.0) ]    
+    # points = [(1.0,0.0,np.pi/2.0), (1.0,1.0,np.pi), (0.0,1.0,np.pi*1.5),(0.0,1.0,0.0) ]    
     #tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     #tags = ["marker_1","marker_4","marker_2"] # tag ids associated to each position
     #p, tag_id = (points[2], tags[2])
@@ -584,9 +585,10 @@ if __name__ == "__main__":
     
     '''
     Try this next    
-    '''
+    
     for p in points[:]:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
-
+    '''
+    kalman_node.run()
