@@ -318,11 +318,6 @@ class KalmanNode:
 
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        #update
-        if not y_axis:
-            self.x_pos += d
-        else:
-            self.y_pos += d
        
     def get_rads(self, theta):
         return theta - self.theta_w
