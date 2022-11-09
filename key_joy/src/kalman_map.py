@@ -33,16 +33,19 @@ class KalmanNode:
         self.tags = np.zeros((30,1))
         # system state
         self.state = np.zeros((33,1))
-        self.system_matrix_F = np.identity(33)
+        self.system_matrix_F = np.identity(33) 
         # it is really G*di, but since G is Identity matrix we put them together
-        self.control_matrix_G = np.zeros((33,1))
+        self.control_matrix_G = np.zeros((33,1)) # Victor: Has to change according to the state size 
         
         # calculated every time
-        self.H = np.zeros((30,33))
+        self.H = np.zeros((30,33)) 
         # covariance matrix, initialized to 0.01
-        self.P = np.identity(33)/100
+        self.P = np.identity(33)/100 # Victor: This might be too low (this numbers kind of assumes a system that is around 0.6deg and 1cm accurate, may affect the update)
         # noise at 0.01^2
         self.R = np.identity(30)/10000
+
+        self.cache_P = [] # update covarience cache every time step
+        self.cache_states = [] # update state cache every time step
 
 
     def get_current_pos(self):
@@ -392,6 +395,10 @@ class KalmanNode:
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
 
+    def save_data(self):
+        self.cache_P.append(self.P)
+        self.cache_states.append(self.state)
+
     def run(self, robot_pos = (0.0,0.0,0.0)):
         '''
         Args:
@@ -408,7 +415,7 @@ class KalmanNode:
         time.sleep(3)
 
         joy_msg = self.get_joy_msg()
-
+        # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
         for i in range(4):
             for j in range(10):
                 # move forward 0.1m
@@ -439,24 +446,29 @@ class KalmanNode:
                 # is this the correct rotation matrix
                 transformation_matrix = np.zeros((3,3))
                 transformation_matrix[0][0] = np.cos(self.state[2])
-                transformation_matrix[0][1] = 1.0*np.sin(self.state[2])
-                transformation_matrix[1][0] = -1.0*np.sin(self.state[2])
+                transformation_matrix[0][1] = 1.0*np.sin(self.state[2])  # -1.0*np.sin(self.state[2]) ?
+                transformation_matrix[1][0] = -1.0*np.sin(self.state[2]) # 1.0*np.sin(self.state[2]) ?
                 transformation_matrix[1][1] = np.cos(self.state[2])
                 transformation_matrix[2][2] = 1
                 for k in range(0,30,3):
-                    self.H[k:k+3,0:3] = -1.0*transformation_matrix
+                    self.H[k:k+3,0:3] = -1.0*transformation_matrix # Victor: -1? 
                 
                 # fill transformation matrix for tags
                 for k in range(3,30,3):
                     self.H[k:k+3,k+3:k+6] = transformation_matrix
 
                 # calculate Kalman filter gain
-                K = self.P@np.transpose(self.H)@(self.H@self.P@np.transpose(self.H) + self.R)
+                #K = self.P@np.transpose(self.H)@(self.H@self.P@np.transpose(self.H) + self.R) # Victor: S^-1? 
+                S = (self.H@self.P@np.transpose(self.H) + self.R)
+                K = self.P@np.transpose(self.H)@np.linalg.inv(S)
                 # update state
                 self.state = self.state + K@(self.tags-self.H@self.state)
                 # update covariance
                 self.P = (np.identity(33)-K@self.H)@self.P
-
+            
+                # Save State and Coveriance Data
+                self.save_data()
+                
             self.turn_90(joy_msg)
             time.sleep(1)
             self.theta_w = self.theta_w+np.pi/2
