@@ -23,8 +23,6 @@ class KalmanNode:
 
         # Initialize position of robot 
         # (assuming -x to front, +y to the left, theta opening from -x towards y axis)
-        # self.x_pos = 0
-        # self.y_pos = 0
         self.x_w = 0
         self.y_w = 0
         self.theta_w = 0
@@ -408,7 +406,7 @@ class KalmanNode:
            )
         # save covariances samplesx33x33
         covs_cache = np.array(self.cache_states)
-        covsReshaped = covs_cache.reshape(self.cache_states.shape[0], -1) 
+        covsReshaped = covs_cache.reshape(covs_cache.shape[0], -1) 
         np.savetxt("covs_cache.csv", 
            covsReshaped,
            delimiter =", "
@@ -506,7 +504,8 @@ class KalmanNode:
             time.sleep(1)
             self.theta_w = self.theta_w+np.pi/2 # Victor: mod 2pi if we do more loops in other experiments 
         
-        print(self.state)
+        for i in range(len(self.state)):
+            print(i , " --> ", self.state[i])
 
         # right saved states and covariances to file
         self.write_saved_data()
