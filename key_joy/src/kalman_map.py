@@ -581,6 +581,7 @@ class KalmanNode:
                             XY_map = np.dot(H_, np.array([ [x_r],[y_r],[1]]))
 
                             S_to_add = np.array( [ XY_map[0]  , XY_map[1], theta_r + theta_map ] )
+                            S_to_add = S_to_add[:,np.newaxis]
                             print('S_to_add:',S_to_add, S_to_add.shape)
                             self.state = np.concatenate( (self.state, S_to_add) )
                             self.tagId_to_idx.append(marker)
