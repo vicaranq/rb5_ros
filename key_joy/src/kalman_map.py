@@ -493,6 +493,11 @@ class KalmanNode:
 
                 K = np.dot( np.dot(self.P, np.transpose(self.H)) ,  np.linalg.inv(S) )
                 # update state
+                temp = np.dot(K, (self.tags- np.dot(self.H, self.state) ))
+                print("robot state:")
+                print(self.state[:3])
+                print("temp: ")
+                print(temp[:3])
                 self.state = self.state + np.dot(K, (self.tags- np.dot(self.H, self.state) ))
                 # update covariance
                 self.P = np.dot( (np.identity(33)- np.dot(K,self.H) ) , self.P )
