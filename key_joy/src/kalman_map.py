@@ -569,8 +569,8 @@ class KalmanNode:
                             x_r = self.tags[marker]['x']
                             y_r = self.tags[marker]['y']
                             theta_r = self.tags[marker]['theta']
-
-                            theta_map = self.state[2,1] # from robot
+                            print("theta_map: ", theta_map , type(theta_map))
+                            theta_map = self.state[2,0] # from robot
                             print("theta_map: ", theta_map , type(theta_map))
                             H_ = np.array( [
                                 [np.cos(theta_map), -1*np.sin(theta_map), self.state[0] ],
