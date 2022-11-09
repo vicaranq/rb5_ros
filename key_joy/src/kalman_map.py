@@ -427,10 +427,10 @@ class KalmanNode:
     def update_H(self, num):
 
         transformation_matrix = np.zeros((3,3))
-        transformation_matrix[0][0] = np.cos(self.state[2])
-        transformation_matrix[0][1] = 1.0*np.sin(self.state[2])  
-        transformation_matrix[1][0] = -1.0*np.sin(self.state[2]) 
-        transformation_matrix[1][1] = np.cos(self.state[2])
+        transformation_matrix[0][0] = np.cos(self.state[2,0])
+        transformation_matrix[0][1] = 1.0*np.sin(self.state[2,0])  
+        transformation_matrix[1][0] = -1.0*np.sin(self.state[2,0]) 
+        transformation_matrix[1][1] = np.cos(self.state[2,0])
         transformation_matrix[2][2] = 1
 
 
