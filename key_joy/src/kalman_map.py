@@ -100,7 +100,7 @@ class KalmanNode:
                 num = num-1
                 assert type(num) == int, "Unexpected extracted tag id type"
                 assert num <= 9, " unexpected tag number"
-                
+
                 # x and y reading from tag
                 self.tags[num*3]=self.get_translation(message)[2] # assuming z-axis from tag aligns with x-axis from robot
                 self.tags[num*3+1]=self.get_translation(message)[0] # assuming x-axis from tag aligns with y-axis from robot
@@ -418,7 +418,7 @@ class KalmanNode:
            delimiter =", "
            )
         with open('cov_original_shape.txt', 'w') as f:
-            f.write(str(covs_cache.shape))
+            f.write(str(covs_cache.shape))ss
         # NOTE: 
         # To load: 
         # loadedArr = np.loadtxt(filename)
@@ -467,8 +467,8 @@ class KalmanNode:
 
         joy_msg = self.get_joy_msg()
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for i in range(4):
-            for j in range(10):
+        for i in range(1):
+            for j in range(10): #10
                 # move forward 0.1m
                 self.move_front_new(0.1) # front in direction of x axis (world coordinate)
                 time.sleep(1)
