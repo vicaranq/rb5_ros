@@ -86,9 +86,9 @@ class KalmanNode:
         if message:
             # expecting message from /tf topic
             try: 
-                # print("message:\n", message)
-                # print("message_type:\n", type(message))
-                # print("message.transforms_type:\n", type(message.transforms))
+                print("message:\n", message)
+                print("message_type:\n", type(message))
+                print("message.transforms_type:\n", type(message.transforms))
 
                 # print('msg.transforms[0]', message.transforms[0])
                 # print('msg.transforms[0].transform', message.transforms[0].transform)
@@ -96,8 +96,11 @@ class KalmanNode:
 
                 tag_id = message.transforms[0].child_frame_id
                 assert type(tag_id) == str, "Unexpected tag type"
-                num = re.findall(r'\d+', tag_id)[0]
+                num = int(re.findall(r'\d+', tag_id)[0])
+                num = num-1
                 assert type(num) == int, "Unexpected extracted tag id type"
+                assert num <= 9, " unexpected tag number"
+                
                 # x and y reading from tag
                 self.tags[num*3]=self.get_translation(message)[2] # assuming z-axis from tag aligns with x-axis from robot
                 self.tags[num*3+1]=self.get_translation(message)[0] # assuming x-axis from tag aligns with y-axis from robot
@@ -107,8 +110,8 @@ class KalmanNode:
                 # print("tags updated!")
             except:
                 print("something fail")
-                # Victor: raise ?
-                pass   
+                raise
+                  
 
     def stop_robot(self):
         # reset 
@@ -420,6 +423,32 @@ class KalmanNode:
         # To load: 
         # loadedArr = np.loadtxt(filename)
         # loadedOriginal = loadedArr.reshape(x, y, z) where x,y,z come from cov_original_shape.txt
+    def update_H(self):
+
+        transformation_matrix = np.zeros((3,3))
+        transformation_matrix[0][0] = np.cos(self.state[2])
+        transformation_matrix[0][1] = 1.0*np.sin(self.state[2])  
+        transformation_matrix[1][0] = -1.0*np.sin(self.state[2]) 
+        transformation_matrix[1][1] = np.cos(self.state[2])
+        transformation_matrix[2][2] = 1
+
+
+        for k in range(0,30,3):
+            self.H[k:k+3,0:3] = -1.0*transformation_matrix # Victor: -1? 
+        
+        # fill transformation matrix for tags
+        for k in range(0,30,3):
+            self.H[k:k+3,k+3:k+6] = transformation_matrix
+    def update_G(self, i ):
+        self.control_matrix_G = np.zeros((33,1))
+        if i==0:
+            self.control_matrix_G[0] = 0.1
+        elif i==1:
+            self.control_matrix_G[1] = 0.1
+        elif i==2:
+            self.control_matrix_G[0] = -0.1
+        elif i==3:
+            self.control_matrix_G[1] = -0.1  
 
     def run(self, robot_pos = (0.0,0.0,0.0)):
         '''
@@ -447,6 +476,7 @@ class KalmanNode:
                 Kalman update for distance
                 '''
                 # first update state
+                self.control_matrix_G = np.zeros((33,1))
                 if i==0:
                     self.control_matrix_G[0] = 0.1
                 elif i==1:
@@ -455,27 +485,15 @@ class KalmanNode:
                     self.control_matrix_G[0] = -0.1
                 elif i==3:
                     self.control_matrix_G[1] = -0.1
+                # self.update_G(i)
 
                 self.state = self.state+self.control_matrix_G
-                self.control_matrix_G = np.zeros((33,1))
+                # self.control_matrix_G = np.zeros((33,1))
 
                 # calculate H
-                # is this the correct rotation matrix
-                transformation_matrix = np.zeros((3,3))
-                transformation_matrix[0][0] = np.cos(self.state[2])
-                transformation_matrix[0][1] = 1.0*np.sin(self.state[2])  # -1.0*np.sin(self.state[2]) ?
-                transformation_matrix[1][0] = -1.0*np.sin(self.state[2]) # 1.0*np.sin(self.state[2]) ?
-                transformation_matrix[1][1] = np.cos(self.state[2])
-                transformation_matrix[2][2] = 1
-                for k in range(0,30,3):
-                    self.H[k:k+3,0:3] = -1.0*transformation_matrix # Victor: -1? 
-                
-                # fill transformation matrix for tags
-                for k in range(3,30,3):
-                    self.H[k:k+3,k+3:k+6] = transformation_matrix
+                self.update_H()
 
                 # calculate Kalman filter gain
-                #K = self.P@np.transpose(self.H)@(self.H@self.P@np.transpose(self.H) + self.R) # Victor: S^-1? 
                 S = (self.H@self.P@np.transpose(self.H) + self.R)
                 K = self.P@np.transpose(self.H)@np.linalg.inv(S)
                 # update state
