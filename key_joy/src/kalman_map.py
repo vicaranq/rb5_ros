@@ -569,7 +569,7 @@ class KalmanNode:
                             x_r = self.tags[marker]['x']
                             y_r = self.tags[marker]['y']
                             theta_r = self.tags[marker]['theta']
-                            print("theta_map: ", theta_map , type(theta_map))
+                            # print("theta_map: ", theta_map , type(theta_map))
                             theta_map = self.state[2,0] # from robot
                             print("theta_map: ", theta_map , type(theta_map))
                             H_ = np.array( [
