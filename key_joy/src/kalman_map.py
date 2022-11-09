@@ -418,7 +418,7 @@ class KalmanNode:
            delimiter =", "
            )
         with open('cov_original_shape.txt', 'w') as f:
-            f.write(str(covs_cache.shape))ss
+            f.write(str(covs_cache.shape))
         # NOTE: 
         # To load: 
         # loadedArr = np.loadtxt(filename)
