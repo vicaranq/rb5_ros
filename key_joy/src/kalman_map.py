@@ -494,12 +494,14 @@ class KalmanNode:
                 self.update_H()
 
                 # calculate Kalman filter gain
-                S = (self.H@self.P@np.transpose(self.H) + self.R)
-                K = self.P@np.transpose(self.H)@np.linalg.inv(S)
+                #S = (self.H@self.P@np.transpose(self.H) + self.R)
+                S = np.dot(np.dot(self.H,self.P) , np.transpose(self.H) ) + self.R
+
+                K = np.dot( np.dot(self.P, np.transpose(self.H)) ,  np.linalg.inv(S) )
                 # update state
-                self.state = self.state + K@(self.tags-self.H@self.state)
+                self.state = self.state + np.dot(K, (self.tags- np.dot(self.H, self.state) ))
                 # update covariance
-                self.P = (np.identity(33)-K@self.H)@self.P
+                self.P = np.dot( (np.identity(33)- np.dot(K,self.H) ) , self.P )
             
                 # Save State and Covariance Data
                 self.save_data()
