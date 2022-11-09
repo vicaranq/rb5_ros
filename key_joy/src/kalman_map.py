@@ -99,7 +99,7 @@ class KalmanNode:
                 num = int(re.findall(r'\d+', tag_id)[0])
                 num = num-1
                 assert type(num) == int, "Unexpected extracted tag id type"
-                assert num <= 9, " unexpected tag number"
+                # assert num <= 9, " unexpected tag number"
                 qr = self.get_rotation(message)
                 (roll, pitch, yaw) = euler_from_quaternion (qr) 
 
