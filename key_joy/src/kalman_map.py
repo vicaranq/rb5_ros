@@ -84,9 +84,9 @@ class KalmanNode:
         if message:
             # expecting message from /tf topic
             try: 
-                print("message:\n", message)
-                print("message_type:\n", type(message))
-                print("message.transforms_type:\n", type(message.transforms))
+                # print("message:\n", message)
+                # print("message_type:\n", type(message))
+                # print("message.transforms_type:\n", type(message.transforms))
 
                 # print('msg.transforms[0]', message.transforms[0])
                 # print('msg.transforms[0].transform', message.transforms[0].transform)
@@ -462,7 +462,7 @@ class KalmanNode:
         joy_msg = self.get_joy_msg()
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
         for i in range(1):
-            for j in range(10): #10
+            for j in range(1): #10
                 # move forward 0.1m
                 self.move_front_new(0.1) # front in direction of x axis (world coordinate)
                 time.sleep(1)
