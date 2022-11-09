@@ -99,14 +99,15 @@ class KalmanNode:
                 num = re.findall(r'\d+', tag_id)[0]
                 assert type(num) == int, "Unexpected extracted tag id type"
                 # x and y reading from tag
-                self.tags[num*3]=self.get_translation(message)[2]
-                self.tags[num*3+1]=self.get_translation(message)[0]
+                self.tags[num*3]=self.get_translation(message)[2] # assuming z-axis from tag aligns with x-axis from robot
+                self.tags[num*3+1]=self.get_translation(message)[0] # assuming x-axis from tag aligns with y-axis from robot
                 # pose angle of tag
                 # note this angle is 1/2cos(theta), where theta is the pose rotation of tag
-                self.tags[num*3+2]=self.get_rotation(message)[0]
+                self.tags[num*3+2]=self.get_rotation(message)[0] # Victor: angle of rotation from x-axis in tag?
                 # print("tags updated!")
             except:
                 print("something fail")
+                # Victor: raise ?
                 pass   
 
     def stop_robot(self):
@@ -399,6 +400,27 @@ class KalmanNode:
         self.cache_P.append(self.P)
         self.cache_states.append(self.state)
 
+    def write_saved_data(self):
+
+        # save states -> hardcoding 33 dims so -> 33xsamples
+        np.savetxt("states_cache.csv", 
+           np.array(self.cache_states),
+           delimiter =", "
+           )
+        # save covariances samplesx33x33
+        covs_cache = np.array(self.cache_states)
+        covsReshaped = covs_cache.reshape(self.cache_states.shape[0], -1) 
+        np.savetxt("covs_cache.csv", 
+           covsReshaped,
+           delimiter =", "
+           )
+        with open('cov_original_shape.txt', 'w') as f:
+            f.write(str(covs_cache.shape))
+        # NOTE: 
+        # To load: 
+        # loadedArr = np.loadtxt(filename)
+        # loadedOriginal = loadedArr.reshape(x, y, z) where x,y,z come from cov_original_shape.txt
+
     def run(self, robot_pos = (0.0,0.0,0.0)):
         '''
         Args:
@@ -427,20 +449,15 @@ class KalmanNode:
                 # first update state
                 if i==0:
                     self.control_matrix_G[0] = 0.1
-                    self.state = self.state+self.control_matrix_G
-                    self.control_matrix_G = np.zeros((33,1))
                 elif i==1:
                     self.control_matrix_G[1] = 0.1
-                    self.state = self.state+self.control_matrix_G
-                    self.control_matrix_G = np.zeros((33,1))
                 elif i==2:
                     self.control_matrix_G[0] = -0.1
-                    self.state = self.state+self.control_matrix_G
-                    self.control_matrix_G = np.zeros((33,1))
                 elif i==3:
                     self.control_matrix_G[1] = -0.1
-                    self.state = self.state+self.control_matrix_G
-                    self.control_matrix_G = np.zeros((33,1))
+
+                self.state = self.state+self.control_matrix_G
+                self.control_matrix_G = np.zeros((33,1))
 
                 # calculate H
                 # is this the correct rotation matrix
@@ -466,16 +483,17 @@ class KalmanNode:
                 # update covariance
                 self.P = (np.identity(33)-K@self.H)@self.P
             
-                # Save State and Coveriance Data
+                # Save State and Covariance Data
                 self.save_data()
-                
+
             self.turn_90(joy_msg)
             time.sleep(1)
-            self.theta_w = self.theta_w+np.pi/2
+            self.theta_w = self.theta_w+np.pi/2 # Victor: mod 2pi if we do more loops in other experiments 
         
         print(self.state)
 
-
+        # right saved states and covariances to file
+        self.write_saved_data()
         '''
         8 point motion
         '''
