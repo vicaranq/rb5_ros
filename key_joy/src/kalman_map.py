@@ -507,7 +507,7 @@ class KalmanNode:
                 # self.update_G(i)
 
                 # Update robot state, future label states are expected not to move so G is 0 for tags
-                self.state = self.state[:3] + self.control_matrix_G
+                self.state = self.state[:3] + self.control_matrix_G[:3]
                 # self.control_matrix_G = np.zeros((33,1))
                 
                 # if we see tags
