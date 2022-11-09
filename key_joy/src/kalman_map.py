@@ -301,11 +301,12 @@ class KalmanNode:
         else:
             self.x_w += d
 
-    def move_front_new(self, d, joy_msg, y_axis=False):
+    def move_front_new(self, d, y_axis=False):
         '''
         Args:
         d -> int type represeting meters
         '''
+        joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         time_per_m = 2.0408   # [seconds to get to a meter]
         
