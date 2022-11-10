@@ -481,7 +481,7 @@ class KalmanNode:
         local_P[:3,:3]=self.P[:3,:3] 
         # Get the sliced diagonal from self.P corresponding to the local_P based on the seen indices (e.g. tag with index 0 would mean the first tag we ever saw)
         for idx in range(len(idxs_seen)):
-            assert idxs_seen[idx] > 0 and idxs_seen[idx] < len(self.P), " Unexpected index: {}, for P shape: {}".format(idxs_seen[idx], self.P.shape )
+            assert idxs_seen[idx] >= 0 and idxs_seen[idx] < len(self.P), " Unexpected index: {}, for P shape: {}".format(idxs_seen[idx], self.P.shape )
             local_P[idx*3+3:idx*3+6, idx*3+3:idx*3+6] = self.P[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6, idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return  local_P   
 
@@ -489,7 +489,7 @@ class KalmanNode:
         local_state = np.zeros((num*3+3,1)) # num of seen tags (x,y,theta) plus robot's (x,y,theta)
         local_state[:3] = self.state[:3] # robot
         for idx in range(len(idxs_seen)):
-            assert idxs_seen[idx] > 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
+            assert idxs_seen[idx] >= 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
