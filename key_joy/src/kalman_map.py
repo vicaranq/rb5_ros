@@ -549,7 +549,7 @@ class KalmanNode:
         joy_msg = self.get_joy_msg()
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
         for i in range(1):
-            for j in range(2): #10
+            for _ in range(10): #10
                 # move forward 0.1m
                 self.move_front_new(0.1) # front in direction of x axis (world coordinate)
                 time.sleep(1)
@@ -630,7 +630,7 @@ class KalmanNode:
 
                         print("self.P: ")
                         print(self.P)
-                        raise                                
+
                     if unseen_IDs:
                         # new tags found and they are not in the state
                         print(" -------- UNSEEN IDs ----------")
