@@ -396,7 +396,9 @@ class KalmanNode:
 
     def turn_90(self):
         joy_msg = self.get_joy_msg()
-        time_per_rad = 2.3/ (math.pi/2)
+        # time_per_rad = 2.3/ (math.pi/2)
+        time_per_rad = 2.4/ (math.pi/2)
+
         t_start = time.time()
         joy_msg.axes[THETA] = 0.9
         while time.time() < t_start + time_per_rad*np.pi/2:
