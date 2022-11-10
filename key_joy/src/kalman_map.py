@@ -363,8 +363,7 @@ class KalmanNode:
 
     def stop(self):
         restore_terminal_settings(self.settings)
-
-    
+  
     def run_rotation_calibration(self):
         joy_msg = Joy()
         joy_msg.axes = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0]
@@ -548,7 +547,8 @@ class KalmanNode:
 
         joy_msg = self.get_joy_msg()
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for i in range(1):
+        for i in range(2):
+            print('================================= i: {} ========================'.format(i))
             for _ in range(10): #10
                 # move forward 0.1m
                 self.move_front_new(0.1) # front in direction of x axis (world coordinate)
@@ -558,7 +558,7 @@ class KalmanNode:
                 '''
 
                 # first update state
-                self.control_matrix_G = np.zeros((33,1))
+                self.control_matrix_G = np.zeros((3,1))
                 if i==0:
                     self.control_matrix_G[0] = 0.1
                 elif i==1:
