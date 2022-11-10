@@ -669,17 +669,15 @@ class KalmanNode:
                             # Add marker to seen markers and to tagsId map
                             self.tagId_to_idx.append(marker)
                             self.seen_tags.add(marker)
-                    else:
-                        print("Unexpected ")
-                        raise
 
-                    print("Robot state:")
-                    for i in range(len(self.state)):
-                        print(i , " --> ", self.state[i][0])
-
-            
                     # RESET CURRENT SEEN TAGS
                     self.current_seen_tags = {} # NOTE: It will populate at the backend by the self.tag_information which reads info from TF tags
+                
+                print("Robot state:")
+                for i in range(len(self.state)):
+                    print(i , " --> ", self.state[i][0])
+
+        
 
                 # Save State and Covariance Data
                 self.save_data()
