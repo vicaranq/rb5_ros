@@ -633,8 +633,8 @@ class KalmanNode:
                         # update covariance
                         local_P = np.dot( (np.identity(num*3+3)- np.dot(K,self.H) ) , local_P )
                         
-                        print("local_P:")
-                        print(local_P)
+                        #print("local_P:")
+                        #print(local_P)
 
                         self.update_global_P(local_P, idxs_seen)
 
@@ -703,10 +703,6 @@ class KalmanNode:
                 self.save_data()
             if exit_early:
                 break
-
-        
-
-                
 
             self.turn_90()
             time.sleep(1)
