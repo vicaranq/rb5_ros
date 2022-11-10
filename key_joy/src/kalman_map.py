@@ -328,8 +328,9 @@ class KalmanNode:
         '''
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
-        time_per_m = 2.0408   # [seconds to get to a meter]
-        
+        # time_per_m = 2.0408   # [seconds to get to a meter]
+        time_per_m = 4
+
         t_start = time.time()
 
         #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
