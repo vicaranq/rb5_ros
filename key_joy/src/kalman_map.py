@@ -556,7 +556,7 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for i in range(2):
+        for i in range(4):
             print('================================= i: {} ========================'.format(i))
             for _ in range(10): #10
                 # move forward 0.1m
@@ -638,8 +638,8 @@ class KalmanNode:
 
                         self.update_global_P(local_P, idxs_seen)
 
-                        print("self.P: ")
-                        print(self.P)
+                        # print("self.P: ")
+                        # print(self.P)
 
                     if unseen_IDs:
                         # new tags found and they are not in the state
