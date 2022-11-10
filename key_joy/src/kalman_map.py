@@ -488,8 +488,13 @@ class KalmanNode:
     def get_sliced_state(self, num, idxs_seen):        
         local_state = np.zeros((num*3+3,1)) # num of seen tags (x,y,theta) plus robot's (x,y,theta)
         local_state[:3] = self.state[:3] # robot
+        print("local_state: ")
+        print(local_state)
+        print(local_state.shape)
+
         for idx in range(len(idxs_seen)):
             assert idxs_seen[idx] >= 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
+            assert idx*3+6 <= local_state.shape[0], "Unexpected idx on local_state: {} for local_state shape:{}".format(idx*3+6, local_state.shape)
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
