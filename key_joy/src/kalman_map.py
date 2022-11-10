@@ -410,6 +410,8 @@ class KalmanNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
+        self.seen_tags = {}
+        time.sleep(1)
 
     def turn_45(self, joy_msg):
         time_per_rad = 2.3/ (math.pi/2)
