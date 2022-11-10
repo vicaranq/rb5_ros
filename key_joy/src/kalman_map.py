@@ -495,6 +495,9 @@ class KalmanNode:
         for idx in range(len(idxs_seen)):
             assert idxs_seen[idx] >= 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
             assert idx*3+6 <= local_state.shape[0], "Unexpected idx on local_state: {} for local_state shape:{}".format(idx*3+6, local_state.shape)
+            print("---")
+            print("idxs_seen[idx]*3+3: ", idxs_seen[idx]*3+3)
+            print(self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6])
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
