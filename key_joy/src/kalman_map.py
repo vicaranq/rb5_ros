@@ -108,9 +108,15 @@ class KalmanNode:
                 (roll, pitch, yaw) = euler_from_quaternion(qr) 
 
                 # self.tags will have the HISTORICAL information of all targs seen before 
-                self.tags[tag_id] = {"x" : self.get_translation(message)[2] , \
-                                        "y":self.get_translation(message)[0], \
-                                            "theta": pitch}
+                self.tags[tag_id] = {
+                                    "x" : self.get_translation(message)[2] , 
+                                    "y":self.get_translation(message)[0], 
+                                    "theta": pitch, 
+                                    "pos": np.array([[self.get_translation(message)[2]], 
+                                                     [self.get_translation(message)[0]],                                                                                                                                 
+                                                     [pitch ]
+                                                    ])
+                                    }
                 # self.current_seen_tags will act similarly as self.tags, however it cleared every iteration (step in the experiment e.g. every 0.1m or turn)
                 self.current_seen_tags[tag_id] = {"x" : self.get_translation(message)[2] , \
                                         "y":self.get_translation(message)[0], \
@@ -488,17 +494,14 @@ class KalmanNode:
     def get_sliced_state(self, num, idxs_seen):        
         local_state = np.zeros((num*3+3,1)) # num of seen tags (x,y,theta) plus robot's (x,y,theta)
         local_state[:3] = self.state[:3] # robot
-        print("local_state: ")
-        print(local_state)
-        print(local_state.shape)
-
+       
         for idx in range(len(idxs_seen)):
             assert idxs_seen[idx] >= 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
             assert idx*3+6 <= local_state.shape[0], "Unexpected idx on local_state: {} for local_state shape:{}".format(idx*3+6, local_state.shape)
-            print("---")
-            print("idxs_seen[idx]*3+3: ", idxs_seen[idx]*3+3)
-            print(self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6])
-            print("self.state: ", self.state.shape)
+            #print("---")
+            #print("idxs_seen[idx]*3+3: ", idxs_seen[idx]*3+3)
+            #print(self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6])
+            #print("self.state: ", self.state.shape)
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
@@ -510,6 +513,20 @@ class KalmanNode:
     def update_global_P(self, local_P, idxs_seen):
         for idx in range(len(idxs_seen)):
             self.P[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6, idxs_seen[idx]*3+3:idxs_seen[idx]*3+6] = local_P[idx*3+3:idx*3+6, idx*3+3:idx*3+6]
+
+    def get_f(self, idxs_seen):
+        ''' gets f vector with measurements from current seen tags (x,y,theta,x,y,theta,...)'''
+        res = np.array([])
+        print('---')
+        for i in idxs_seen:
+            marker = self.tagId_to_idx[i]            
+            print("Finding info for marker: ", marker)
+            marker_pos = self.tags[marker]["pos"] # (3,1)
+            print("Marker's pos", marker_pos)
+            res = np.concatenate(res,marker_pos)
+        print('---')
+        return res
+
 
     def run(self, robot_pos = (0.0,0.0,0.0)):
         '''
@@ -588,8 +605,11 @@ class KalmanNode:
                         S = np.dot(np.dot(self.H,local_P) , np.transpose(self.H) ) + R
                         K = np.dot( np.dot(local_P, np.transpose(self.H)) ,  np.linalg.inv(S) )
 
+                        f = self.get_f(idxs_seen)
+                        print("f:")
+                        print(f)
                         # update state
-                        local_state = local_state + np.dot(K, (self.tags- np.dot(self.H, local_state) ))
+                        local_state = local_state + np.dot(K, (f - np.dot(self.H, local_state) ))
 
                         print("updated local_state: ")
                         print(local_state)
