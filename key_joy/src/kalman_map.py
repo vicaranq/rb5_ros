@@ -394,7 +394,8 @@ class KalmanNode:
         self.stop()
       
 
-    def turn_90(self, joy_msg):
+    def turn_90(self):
+        joy_msg = self.get_joy_msg()
         time_per_rad = 2.3/ (math.pi/2)
         t_start = time.time()
         joy_msg.axes[THETA] = 0.9
@@ -545,7 +546,6 @@ class KalmanNode:
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         time.sleep(3)
 
-        joy_msg = self.get_joy_msg()
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
         for i in range(2):
             print('================================= i: {} ========================'.format(i))
@@ -682,7 +682,7 @@ class KalmanNode:
                 # Save State and Covariance Data
                 self.save_data()
 
-            self.turn_90(joy_msg)
+            self.turn_90()
             time.sleep(1)
             print("Updating theta to: ")
             print(self.state[2]+np.pi/2)
@@ -822,4 +822,6 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    kalman_node.run()
+    # kalman_node.run()
+    kalman_node.turn_90()
+
