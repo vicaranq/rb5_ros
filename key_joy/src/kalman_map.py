@@ -525,6 +525,7 @@ class KalmanNode:
             print("Finding info for marker: ", marker)
             marker_pos = self.tags[marker]["pos"] # (3,1)
             print("Marker's pos", marker_pos)
+            print("res:", res)
             if type(res) == int:
                 res = marker_pos
             else: 
