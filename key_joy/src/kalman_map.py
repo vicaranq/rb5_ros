@@ -529,7 +529,7 @@ class KalmanNode:
             if type(res) == int:
                 res = marker_pos
             else: 
-                res = np.concatenate(res,marker_pos)
+                res = np.concatenate((res,marker_pos))
         print('---')
         return res
 
@@ -683,14 +683,14 @@ class KalmanNode:
 
                 if exit_early:
                     break
-            
+                # Save State and Covariance Data
+                self.save_data()
             if exit_early:
                 break
 
         
 
-                # Save State and Covariance Data
-                self.save_data()
+                
 
             self.turn_90()
             time.sleep(1)
