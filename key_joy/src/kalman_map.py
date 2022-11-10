@@ -549,7 +549,7 @@ class KalmanNode:
                     
                     idxs_seen, unseen_IDs = self.get_idxs_of_seen_tags()                    
                     if idxs_seen:
-
+                        print(" -------- SEEN IDs ----------")
                         ''' UPDATE '''
                         # calculate H
                         print("idxs_seen: ",idxs_seen)
@@ -601,7 +601,7 @@ class KalmanNode:
                         raise                                
                     if unseen_IDs:
                         # new tags found and they are not in the state
-                        new_state_info = []
+                        print(" -------- UNSEEN IDs ----------")
 
                         for marker in unseen_IDs:
 
@@ -618,8 +618,8 @@ class KalmanNode:
                             ])
 
                             XY_map = np.dot(H_, np.array([ [x_r],[y_r],[1]]))
-
-                            S_to_add = np.array( [ XY_map[0]  , XY_map[1], theta_r + theta_map ] )
+                            # NOTE: XY_map[0] gives an array like array([ 0.99263714])
+                            S_to_add = np.array( [ XY_map[0][0]  , XY_map[1][0], theta_r + theta_map ] )
                             S_to_add = S_to_add[:,np.newaxis]
                             
                             print('New state to add for Tag {}:'.format(marker))
@@ -643,7 +643,7 @@ class KalmanNode:
 
                     print("Robot state:")
                     for i in range(len(self.state)):
-                        print(i , " --> ", self.state[i])
+                        print(i , " --> ", self.state[i][0])
 
             
                     # RESET CURRENT SEEN TAGS
