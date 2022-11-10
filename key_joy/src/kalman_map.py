@@ -332,7 +332,8 @@ class KalmanNode:
         
         t_start = time.time()
 
-        joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
+        #joy_msg.axes[X] = 1.2 if d >=0 or y_axis else -1.2 # >0.1         
+        joy_msg.axes[X] = 0.6 if d >=0 or y_axis else -0.6 # >0.1         
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
 
@@ -525,12 +526,12 @@ class KalmanNode:
             print("Finding info for marker: ", marker)
             marker_pos = self.tags[marker]["pos"] # (3,1)
             print("Marker's pos", marker_pos)
-            print("res:", res)
+            # print("res:", res)
             if type(res) == int:
                 res = marker_pos
             else: 
                 res = np.concatenate((res,marker_pos))
-        print('---')
+        # print('---')
         return res
 
 
@@ -832,6 +833,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    kalman_node.run()
+    # kalman_node.run()
+    kalman_node.move_front_new(1)
     # kalman_node.turn_90()
 
