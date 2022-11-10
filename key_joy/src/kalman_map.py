@@ -39,6 +39,7 @@ class KalmanNode:
         self.H = np.zeros((30,33)) 
         # covariance matrix, initialized to 0.01
         self.P = np.identity(3)/100 # Victor: This might be too low (this numbers kind of assumes a system that is around 0.6deg and 1cm accurate, may affect the update)
+        self.P[2:2] = 0.0003
         # noise at 0.01^2
         self.R = np.identity(30)/10000
 
@@ -670,6 +671,7 @@ class KalmanNode:
                             self.state = np.concatenate( (self.state, S_to_add) )
                             # Extend Covariance Matrix
                             temp_P = np.identity(len(self.P)+3)/100
+                            temp_P[-1,-1] = 0.00001
                             temp_P[:len(self.P), :len(self.P)] = self.P
                             self.P = temp_P
                             
