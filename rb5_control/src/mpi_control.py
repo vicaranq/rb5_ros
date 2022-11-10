@@ -66,10 +66,10 @@ class MegaPiController:
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.85, speed*0.9) # need more left
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*1, speed*0.9) # need more on the right or less on left
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.9, speed*0.9) # need more on left 
-        
+
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.95, speed*0.9) # decently straight  
 
-        self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.8)
+        self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.8, speed*0.85)
 
 
     def carRotate(self, speed):
