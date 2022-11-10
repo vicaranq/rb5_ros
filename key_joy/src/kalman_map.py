@@ -46,7 +46,7 @@ class KalmanNode:
         self.cache_states = [] # update state cache every time step
 
         self.tagId_to_idx = []
-        self.seen_tags = {} # Set containing tags from tagId_to_idx
+        self.seen_tags = set() # Set containing tags from tagId_to_idx
 
         self.prev_seen_tags = {} # dictcontaining previously seen tag and its 'x', 'y', and 'theta' in the map frame
         self.current_seen_tags = {} # dictcontaining previously seen tag and its 'x', 'y', and 'theta' in the map frame
@@ -598,8 +598,7 @@ class KalmanNode:
 
                         print("self.P: ")
                         print(self.P)
-                        raise        
-                                            
+                        raise                                
                     if unseen_IDs:
                         # new tags found and they are not in the state
                         new_state_info = []
