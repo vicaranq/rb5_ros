@@ -38,8 +38,9 @@ class KalmanNode:
         # calculated every time
         self.H = np.zeros((30,33)) 
         # covariance matrix, initialized to 0.01
-        self.P = np.identity(3)/100 # Victor: This might be too low (this numbers kind of assumes a system that is around 0.6deg and 1cm accurate, may affect the update)
-        self.P[2:2] = 0.0003
+        # self.P = np.identity(3)/100 # Victor: This might be too low (this numbers kind of assumes a system that is around 0.6deg and 1cm accurate, may affect the update)
+        # self.P[2:2] = 0.0003
+        self.P = np.zeros((3,3))
         # noise at 0.01^2
         self.R = np.identity(30)/10000
 
@@ -411,6 +412,13 @@ class KalmanNode:
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
         self.current_seen_tags = {}
+
+        # maybe we need to increase uncertainty of theta by a lot here
+        Q = np.zeros((3,3))
+        Q[0,0] = 0.01**2
+        Q[1,1] = 0.01**2
+        Q[2,2] = 0.03**2
+        self.P[:3,:3] = self.P[:3,:3]+Q
         time.sleep(1)
 
     def turn_45(self, joy_msg):
@@ -556,7 +564,7 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for i in range(4):
+        for i in range(2):
             print('================================= i: {} ========================'.format(i))
             for _ in range(10): #10
                 # move forward 0.1m
@@ -577,6 +585,12 @@ class KalmanNode:
                     self.control_matrix_G[0] = -0.1
                 elif i==3:
                     self.control_matrix_G[1] = -0.1
+                
+                Q = np.zeros((3,3))
+                Q[0,0] = 0.02**2
+                Q[1,1] = 0.005**2
+                Q[2,2] = 0.01**2
+                self.P[:3, :3] = self.P[:3, :3] + Q
                 # self.update_G(i)
 
                 # Update robot state, future label states are expected not to move so G is 0 for tags
