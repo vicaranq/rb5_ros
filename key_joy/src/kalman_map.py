@@ -572,7 +572,7 @@ class KalmanNode:
                     self.control_matrix_G[0] = 0.1
                 elif i==1:
                     self.control_matrix_G[1] = 0.1
-                    exit_early = True
+                    #exit_early = True
                 elif i==2:
                     self.control_matrix_G[0] = -0.1
                 elif i==3:
@@ -844,7 +844,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    # kalman_node.run()
+    kalman_node.run()
     # kalman_node.move_front_new(1)
-    kalman_node.turn_90()
+    # kalman_node.turn_90()
 
