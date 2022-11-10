@@ -69,7 +69,7 @@ class MegaPiController:
 
         # self.setFourMotors(-speed*0.8, speed*0.8, -speed*0.95, speed*0.9) # decently straight  
 
-        self.setFourMotors(-speed*0.8, speed*0.85, -speed*0.8, speed*0.87)
+        self.setFourMotors(-speed*0.8, speed*0.83, -speed*0.8, speed*0.87)
 
 
     def carRotate(self, speed):
