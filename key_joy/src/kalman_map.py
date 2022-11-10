@@ -465,8 +465,8 @@ class KalmanNode:
             self.control_matrix_G[1] = -0.1  
 
     def get_idxs_of_seen_tags(self):
-
-        markers = self.tags.keys()
+        
+        markers = self.current_seen_tags.keys()
         result = []
         unseen = []
         for marker in markers:
@@ -684,6 +684,8 @@ class KalmanNode:
 
             self.turn_90(joy_msg)
             time.sleep(1)
+            print("Updating theta to: ")
+            print(self.state[2]+np.pi/2)
             self.state[2] = self.state[2]+np.pi/2 # Victor: mod 2pi if we do more loops in other experiments 
         '''
         for i in range(len(self.state)):
