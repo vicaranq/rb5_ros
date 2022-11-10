@@ -681,8 +681,17 @@ class KalmanNode:
                     self.current_seen_tags = {} # NOTE: It will populate at the backend by the self.tag_information which reads info from TF tags
                 
                 print("Robot state:")
-                for i in range(len(self.state)):
-                    print(i , " --> ", self.state[i][0])
+                for i in range(0,len(self.state),3):
+
+                    tag_idx = i // 3 
+                    if tag_idx == 0:
+                        # robot
+                        marker_name = 'ROBOT'
+                    else:
+                        assert tag_idx-1 >= 0 and tag_idx-1 < len(self.tagId_to_idx), "Wrong tag_idx! "
+                        marker_name = self.tagId_to_idx[tag_idx-1]
+                    
+                    print(marker_name , " -->  ({},{},{})".format(self.state[i][0], self.state[i+1],self.state[i+2] ) )
 
                 if exit_early:
                     break
