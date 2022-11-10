@@ -522,7 +522,7 @@ class KalmanNode:
             print("Finding info for marker: ", marker)
             marker_pos = self.tags[marker]["pos"] # (3,1)
             print("Marker's pos", marker_pos)
-            if not res:
+            if res == False:
                 res = marker_pos
             else: 
                 res = np.concatenate(res,marker_pos)
