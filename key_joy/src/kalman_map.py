@@ -516,14 +516,17 @@ class KalmanNode:
 
     def get_f(self, idxs_seen):
         ''' gets f vector with measurements from current seen tags (x,y,theta,x,y,theta,...)'''
-        res = np.array([])
+        res = False
         print('---')
         for i in idxs_seen:
             marker = self.tagId_to_idx[i]            
             print("Finding info for marker: ", marker)
             marker_pos = self.tags[marker]["pos"] # (3,1)
             print("Marker's pos", marker_pos)
-            res = np.concatenate(res,marker_pos)
+            if not res:
+                res = marker_pos
+            else: 
+                res = np.concatenate(res,marker_pos)
         print('---')
         return res
 
