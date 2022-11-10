@@ -49,7 +49,7 @@ class KalmanNode:
         self.tagId_to_idx = []
         self.seen_tags = set() # Set containing tags from tagId_to_idx
 
-        self.prev_seen_tags = {} # dictcontaining previously seen tag and its 'x', 'y', and 'theta' in the map frame
+        # self.prev_seen_tags = {} # dictcontaining previously seen tag and its 'x', 'y', and 'theta' in the map frame
         self.current_seen_tags = {} # dictcontaining previously seen tag and its 'x', 'y', and 'theta' in the map frame
 
 
@@ -410,7 +410,7 @@ class KalmanNode:
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        self.seen_tags = {}
+        self.current_seen_tags = {}
         time.sleep(1)
 
     def turn_45(self, joy_msg):
