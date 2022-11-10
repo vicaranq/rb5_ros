@@ -498,6 +498,7 @@ class KalmanNode:
             print("---")
             print("idxs_seen[idx]*3+3: ", idxs_seen[idx]*3+3)
             print(self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6])
+            print("self.state: ", self.state.shape)
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
