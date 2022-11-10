@@ -481,14 +481,15 @@ class KalmanNode:
         local_P[:3,:3]=self.P[:3,:3] 
         # Get the sliced diagonal from self.P corresponding to the local_P based on the seen indices (e.g. tag with index 0 would mean the first tag we ever saw)
         for idx in range(len(idxs_seen)):
+            assert idxs_seen[idx] > 0 and idxs_seen[idx] < len(self.P), " Unexpected index: {}, for P shape: {}".format(idxs_seen[idx], self.P.shape )
             local_P[idx*3+3:idx*3+6, idx*3+3:idx*3+6] = self.P[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6, idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
-
         return  local_P   
 
     def get_sliced_state(self, num, idxs_seen):        
         local_state = np.zeros((num*3+3,1)) # num of seen tags (x,y,theta) plus robot's (x,y,theta)
         local_state[:3] = self.state[:3] # robot
         for idx in range(len(idxs_seen)):
+            assert idxs_seen[idx] > 0 and idxs_seen[idx] < len(self.state), " Unexpected index: {}, for state length: {}".format(idxs_seen[idx], len(self.state) )
             local_state[idx*3+3:idx*3+6] = self.state[idxs_seen[idx]*3+3:idxs_seen[idx]*3+6]
         return local_state
 
@@ -551,14 +552,26 @@ class KalmanNode:
 
                         ''' UPDATE '''
                         # calculate H
+                        print("idxs_seen: ",idxs_seen)
                         num = len(idxs_seen)        # number of tags to update                        
                         self.update_H(num)
+                        print("self.H: ")
+                        print(self.H)
 
                         # construct covariance matrix P for this update
                         local_P = self.get_sliced_cov(num, idxs_seen)
-                        
+                        print("self.P:")
+                        print(self.P)
+                        print("local_P:")
+                        print(local_P)
+
+
                         # local state construction
                         local_state = self.get_sliced_state(num, idxs_seen)
+
+                        print("Sliced local_state: ")
+                        print(local_state)
+                        print(type(local_state))
 
                         # calculate Kalman filter gain
                         R = np.identity(num*3)/10000
@@ -567,21 +580,26 @@ class KalmanNode:
                         K = np.dot( np.dot(local_P, np.transpose(self.H)) ,  np.linalg.inv(S) )
 
                         # update state
-                        #temp = local_state + np.dot(K, (self.tags- np.dot(self.H, local_state) ))
-                        updated_local_state = local_state + np.dot(K, (self.tags- np.dot(self.H, local_state) ))
+                        local_state = local_state + np.dot(K, (self.tags- np.dot(self.H, local_state) ))
 
-                        self.update_state(updated_local_state, idxs_seen)
-                                        
-                        #print("temp: ")
-                        #print(temp[:3])
-                        #self.state = self.state + np.dot(K, (self.tags- np.dot(self.H, self.state) ))
+                        print("updated local_state: ")
+                        print(local_state)
+                        print(type(local_state))
+
+                        self.update_state(local_state, idxs_seen)                                    
                         
                         # update covariance
                         local_P = np.dot( (np.identity(num*3+3)- np.dot(K,self.H) ) , local_P )
+                        
+                        print("local_P:")
+                        print(local_P)
 
                         self.update_global_P(local_P, idxs_seen)
-                        
 
+                        print("self.P: ")
+                        print(self.P)
+                        raise        
+                                            
                     if unseen_IDs:
                         # new tags found and they are not in the state
                         new_state_info = []
@@ -604,14 +622,20 @@ class KalmanNode:
 
                             S_to_add = np.array( [ XY_map[0]  , XY_map[1], theta_r + theta_map ] )
                             S_to_add = S_to_add[:,np.newaxis]
-                            print('S_to_add:',S_to_add, S_to_add.shape)
-                            self.state = np.concatenate( (self.state, S_to_add) )
                             
-
+                            print('New state to add for Tag {}:'.format(marker))
+                            print(S_to_add)
+                            print('Tag info from sensor:')
+                            print(self.tags[marker])
+                            
+                            # Extend State
+                            self.state = np.concatenate( (self.state, S_to_add) )
+                            # Extend Covariance Matrix
                             temp_P = np.identity(len(self.P)+3)/100
                             temp_P[:len(self.P), :len(self.P)] = self.P
                             self.P = temp_P
-
+                            
+                            # Add marker to seen markers and to tagsId map
                             self.tagId_to_idx.append(marker)
                             self.seen_tags.add(marker)
                     else:
@@ -619,7 +643,8 @@ class KalmanNode:
                         raise
 
                     print("Robot state:")
-                    print(self.state)
+                    for i in range(len(self.state)):
+                        print(i , " --> ", self.state[i])
 
             
                     # RESET CURRENT SEEN TAGS
@@ -637,7 +662,7 @@ class KalmanNode:
         '''
 
         # right saved states and covariances to file
-        self.write_saved_data()
+        #self.write_saved_data()
         '''
         8 point motion
         '''
