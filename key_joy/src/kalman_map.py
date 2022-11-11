@@ -398,7 +398,7 @@ class KalmanNode:
         self.stop()
       
 
-    def turn_90(self, angle):
+    def turn_90(self):
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
@@ -407,8 +407,8 @@ class KalmanNode:
         t_start = time.time()
         # joy_msg.axes[THETA] = 0.8
         joy_msg.axes[THETA] = -0.7
-        #while time.time() < t_start + time_per_rad*np.pi/2:
-        while time.time() < t_start + time_per_rad*angle:
+        while time.time() < t_start + time_per_rad*np.pi/2:
+        # while time.time() < t_start + time_per_rad*angle:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
@@ -723,13 +723,14 @@ class KalmanNode:
             if exit_early:
                 break
 
-            self.turn_90((iteration+1)*np.pi/2-self.state[2])
+            # self.turn_90((iteration+1)*np.pi/2-self.state[2])
+            self.turn_90()
             time.sleep(1)
             print("Updating theta to: ")
-            # print((self.state[2]+np.pi/2)*180/np.pi)
-            print((i+1)*np.pi/2*180/np.pi)
-            #self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
-            self.state[2] = (i+1)*np.pi/2
+            print((self.state[2]+np.pi/2)*180/np.pi)
+            # print((i+1)*np.pi/2*180/np.pi)
+            self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
+            # self.state[2] = (i+1)*np.pi/2
         '''
         for i in range(len(self.state)):
             print(i , " --> ", self.state[i])
@@ -737,7 +738,7 @@ class KalmanNode:
 
         # right saved states and covariances to file
         # self.save_data()
-        self.write_saved_data()
+        # self.write_saved_data()
         '''
         8 point motion
         '''
@@ -866,7 +867,9 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    kalman_node.run()
+    for _ in range(2):
+        kalman_node.run()
+    kalman_node.write_saved_data()
     # kalman_node.move_front_new(1)
     # kalman_node.turn_90()
 
