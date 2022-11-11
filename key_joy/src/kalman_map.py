@@ -722,7 +722,7 @@ class KalmanNode:
             time.sleep(1)
             print("Updating theta to: ")
             print(self.state[2]+np.pi/2)
-            self.state[2] = self.state[2]+np.pi/2 # Victor: mod 2pi if we do more loops in other experiments 
+            self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
         '''
         for i in range(len(self.state)):
             print(i , " --> ", self.state[i])
