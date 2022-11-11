@@ -589,7 +589,7 @@ class KalmanNode:
                 Q = np.zeros((3,3))
                 Q[0,0] = 0.005**2 # first try: 0.02**2
                 Q[1,1] = 0.005**2
-                #Q[2,2] = 0.01**2
+                Q[2,2] = 0.0001**2
                 self.P[:3, :3] = self.P[:3, :3] + Q
                 # self.update_G(i)
 
