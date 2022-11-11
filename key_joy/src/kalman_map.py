@@ -12,6 +12,8 @@ from geometry_msgs.msg import Quaternion
 import tf 
 import re
 
+import copy
+
 X = 1
 Y = 0 
 THETA = 2
@@ -405,8 +407,8 @@ class KalmanNode:
         time_per_rad = 2.8/ (math.pi/2)
 
         t_start = time.time()
-        # joy_msg.axes[THETA] = 0.8
-        joy_msg.axes[THETA] = -0.7
+        joy_msg.axes[THETA] = -0.8
+        # joy_msg.axes[THETA] = -0.7
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
             self.pub_joy.publish(joy_msg)
@@ -719,7 +721,7 @@ class KalmanNode:
                     break
                 # Save State and Covariance Data
                 # self.save_data()
-                self.cache_states.append(self.state)
+                self.cache_states.append(copy.deepcopy(self.state) )
             if exit_early:
                 break
 
@@ -738,7 +740,7 @@ class KalmanNode:
 
         # right saved states and covariances to file
         # self.save_data()
-        # self.write_saved_data()
+        self.write_saved_data()
         '''
         8 point motion
         '''
