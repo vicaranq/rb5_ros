@@ -596,39 +596,39 @@ class KalmanNode:
                 self.control_matrix_G = np.zeros((3,1))
                 if iteration==0:
                     self.control_matrix_G[0] = 0.05
-                    self.state = self.state+self.control_matrix_G
+
 
                 elif iteration==1:
                     self.control_matrix_G[0] = 0.05/np.sqrt(2)
                     self.control_matrix_G[1] = 0.05/np.sqrt(2)
-                    self.state = self.state+self.control_matrix_G
+
 
                 elif iteration==2:
                     self.control_matrix_G[1] = 0.05
-                    self.state = self.state+self.control_matrix_G
+
 
                 elif iteration==3:
                     self.control_matrix_G[0] = -0.05/np.sqrt(2)
                     self.control_matrix_G[1] = 0.05/np.sqrt(2)
-                    self.state = self.state+self.control_matrix_G
+
 
                 elif iteration==4:
                     self.control_matrix_G[0] = -0.05
-                    self.state = self.state+self.control_matrix_G
+
 
                 elif iteration==5:
                     self.control_matrix_G[0] = -0.05/np.sqrt(2)
                     self.control_matrix_G[1] = -0.05/np.sqrt(2)
-                    self.state = self.state+self.control_matrix_G
+
  
                 elif iteration==6:
                     self.control_matrix_G[1] = -0.05/np.sqrt(2)
-                    self.state = self.state+self.control_matrix_G
+
      
                 elif iteration==7:
                     self.control_matrix_G[0] = 0.05/np.sqrt(2)
                     self.control_matrix_G[1] = -0.05/np.sqrt(2)
-                    self.state = self.state+self.control_matrix_G
+
 
                 '''
 
