@@ -564,8 +564,8 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for i in range(2):
-            print('================================= i: {} ========================'.format(i))
+        for iteration in range(2):
+            print('================================= i: {} ========================'.format(iteration))
             for _ in range(10): #10
                 # move forward 0.1m
                 self.move_front_new(0.1) # front in direction of x axis (world coordinate)
@@ -576,14 +576,14 @@ class KalmanNode:
                 exit_early = False
                 # first update state
                 self.control_matrix_G = np.zeros((3,1))
-                if i==0:
+                if iteration==0:
                     self.control_matrix_G[0] = 0.1
-                elif i==1:
+                elif iteration==1:
                     self.control_matrix_G[1] = 0.1
                     #exit_early = True
-                elif i==2:
+                elif iteration==2:
                     self.control_matrix_G[0] = -0.1
-                elif i==3:
+                elif iteration==3:
                     self.control_matrix_G[1] = -0.1
                 
                 Q = np.zeros((3,3))
