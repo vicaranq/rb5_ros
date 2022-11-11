@@ -723,7 +723,7 @@ class KalmanNode:
             if exit_early:
                 break
 
-            self.turn_90((i+1)*np.pi/2-self.state[2])
+            self.turn_90((iteration+1)*np.pi/2-self.state[2])
             time.sleep(1)
             print("Updating theta to: ")
             # print((self.state[2]+np.pi/2)*180/np.pi)
