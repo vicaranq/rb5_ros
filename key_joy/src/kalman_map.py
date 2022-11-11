@@ -442,8 +442,8 @@ class KalmanNode:
         #    np.array(self.cache_states),
         #    delimiter =", "
         #    )
-        np.save("states_cache.csv", self.state)
-        np.save("P_cache.csv", self.P)
+        np.save("states_cache.npy", self.state)
+        np.save("P_cache.npy", self.P)
         # save covariances samplesx33x33
         # covs_cache = np.array(self.cache_states)
         # covsReshaped = covs_cache.reshape(covs_cache.shape[0], -1) 
@@ -730,7 +730,7 @@ class KalmanNode:
         '''
 
         # right saved states and covariances to file
-        self.save_data()
+        # self.save_data()
         self.write_saved_data()
         '''
         8 point motion
@@ -860,7 +860,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    # kalman_node.run()
+    kalman_node.run()
     # kalman_node.move_front_new(1)
-    kalman_node.turn_90()
+    # kalman_node.turn_90()
 
