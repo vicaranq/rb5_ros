@@ -401,7 +401,7 @@ class KalmanNode:
     def turn_90(self):
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
-        time_per_rad = 2.7/ (math.pi/2)
+        time_per_rad = 2.8/ (math.pi/2)
 
         t_start = time.time()
         # joy_msg.axes[THETA] = 0.8
@@ -438,19 +438,21 @@ class KalmanNode:
     def write_saved_data(self):
 
         # save states -> hardcoding 33 dims so -> 33xsamples
-        np.savetxt("states_cache.csv", 
-           np.array(self.cache_states),
-           delimiter =", "
-           )
+        # np.savetxt("states_cache.csv", 
+        #    np.array(self.cache_states),
+        #    delimiter =", "
+        #    )
+        np.save("states_cache.csv", self.state)
+        np.save("P_cache.csv", self.P)
         # save covariances samplesx33x33
-        covs_cache = np.array(self.cache_states)
-        covsReshaped = covs_cache.reshape(covs_cache.shape[0], -1) 
-        np.savetxt("covs_cache.csv", 
-           covsReshaped,
-           delimiter =", "
-           )
-        with open('cov_original_shape.txt', 'w') as f:
-            f.write(str(covs_cache.shape))
+        # covs_cache = np.array(self.cache_states)
+        # covsReshaped = covs_cache.reshape(covs_cache.shape[0], -1) 
+        # np.savetxt("covs_cache.csv", 
+        #    covsReshaped,
+        #    delimiter =", "
+        #    )
+        # with open('cov_original_shape.txt', 'w') as f:
+        #     f.write(str(covs_cache.shape))
         # NOTE: 
         # To load: 
         # loadedArr = np.loadtxt(filename)
@@ -713,7 +715,7 @@ class KalmanNode:
                 if exit_early:
                     break
                 # Save State and Covariance Data
-                self.save_data()
+                # self.save_data()
             if exit_early:
                 break
 
@@ -728,6 +730,7 @@ class KalmanNode:
         '''
 
         # right saved states and covariances to file
+        self.save_data()
         self.write_saved_data()
         '''
         8 point motion
@@ -857,7 +860,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    kalman_node.run()
+    # kalman_node.run()
     # kalman_node.move_front_new(1)
-    # kalman_node.turn_90()
+    kalman_node.turn_90()
 
