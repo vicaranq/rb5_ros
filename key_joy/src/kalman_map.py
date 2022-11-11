@@ -425,7 +425,7 @@ class KalmanNode:
         self.P[:3,:3] = self.P[:3,:3]+Q
         time.sleep(1)
 
-    def turn_45(self, joy_msg):
+    def turn_45(self):
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
