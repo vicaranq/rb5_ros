@@ -780,13 +780,11 @@ class KalmanNode:
                         marker_name = self.tagId_to_idx[tag_idx-1]
                     print(marker_name , " -->  ({},{},{})".format(self.state[i][0], self.state[i+1][0],self.state[i+2][0] *180/np.pi ) )
 
-                if exit_early:
-                    break
+
                 # Save State and Covariance Data
                 # self.save_data()
                 self.cache_states.append(copy.deepcopy(self.state) )
-            if exit_early:
-                break
+
 
             # self.turn_90((iteration+1)*np.pi/2-self.state[2])
             #self.turn_90()
