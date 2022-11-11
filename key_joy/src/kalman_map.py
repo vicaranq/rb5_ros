@@ -587,7 +587,7 @@ class KalmanNode:
                     self.control_matrix_G[1] = -0.1
                 
                 Q = np.zeros((3,3))
-                Q[0,0] = 0.02**2
+                Q[0,0] = 0.005**2 # first try: 0.02**2
                 Q[1,1] = 0.005**2
                 #Q[2,2] = 0.01**2
                 self.P[:3, :3] = self.P[:3, :3] + Q
@@ -686,8 +686,9 @@ class KalmanNode:
                             # Extend State
                             self.state = np.concatenate( (self.state, S_to_add) )
                             # Extend Covariance Matrix
-                            temp_P = np.identity(len(self.P)+3)/100
-                            temp_P[-1,-1] = 0.00001
+                            # temp_P = np.identity(len(self.P)+3)/100
+                            # temp_P[-1,-1] = 0.00001
+                            temp_P = np.zeros((len(self.P)+3,len(self.P)+3))
                             temp_P[:len(self.P), :len(self.P)] = self.P
                             self.P = temp_P
                             
