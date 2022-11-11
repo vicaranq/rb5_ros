@@ -564,7 +564,7 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for iteration in range(4):
+        for iteration in range(2):
             print('================================= i: {} ========================'.format(iteration))
             for _ in range(10): #10
                 # move forward 0.1m
@@ -613,10 +613,10 @@ class KalmanNode:
 
                         # construct covariance matrix P for this update
                         local_P = self.get_sliced_cov(num, idxs_seen)
-                        print("self.P:")
-                        print(self.P)
-                        print("local_P:")
-                        print(local_P)
+                        # print("self.P:")
+                        # print(self.P)
+                        # print("local_P:")
+                        # print(local_P)
 
 
                         # local state construction
@@ -721,7 +721,7 @@ class KalmanNode:
             self.turn_90()
             time.sleep(1)
             print("Updating theta to: ")
-            print(self.state[2]+np.pi/2)
+            print((self.state[2]+np.pi/2)*180/np.pi)
             self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
         '''
         for i in range(len(self.state)):
