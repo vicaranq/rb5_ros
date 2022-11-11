@@ -564,7 +564,7 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for iteration in range(2):
+        for iteration in range(4):
             print('================================= i: {} ========================'.format(iteration))
             for _ in range(10): #10
                 # move forward 0.1m
