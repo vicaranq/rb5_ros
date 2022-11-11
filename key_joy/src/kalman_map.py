@@ -404,11 +404,11 @@ class KalmanNode:
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
-        time_per_rad = 2.8/ (math.pi/2)
+        time_per_rad = 3/ (math.pi/2)
 
         t_start = time.time()
-        joy_msg.axes[THETA] = -0.8
-        # joy_msg.axes[THETA] = -0.7
+        # joy_msg.axes[THETA] = -0.8
+        joy_msg.axes[THETA] = -0.7
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
             self.pub_joy.publish(joy_msg)
