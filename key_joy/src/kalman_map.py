@@ -564,7 +564,7 @@ class KalmanNode:
         time.sleep(3)
 
         # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for iteration in range(2):
+        for iteration in range(4):
             print('================================= i: {} ========================'.format(iteration))
             for _ in range(10): #10
                 # move forward 0.1m
@@ -700,7 +700,6 @@ class KalmanNode:
                 
                 print("Robot state:")
                 for i in range(0,len(self.state),3):
-
                     tag_idx = i // 3 
                     if tag_idx == 0:
                         # robot
@@ -708,8 +707,7 @@ class KalmanNode:
                     else:
                         assert tag_idx-1 >= 0 and tag_idx-1 < len(self.tagId_to_idx), "Wrong tag_idx! "
                         marker_name = self.tagId_to_idx[tag_idx-1]
-                    
-                    print(marker_name , " -->  ({},{},{})".format(self.state[i][0], self.state[i+1],self.state[i+2] ) )
+                    print(marker_name , " -->  ({},{},{})".format(self.state[i][0], self.state[i+1][0],self.state[i+2][0] *180/np.pi ) )
 
                 if exit_early:
                     break
