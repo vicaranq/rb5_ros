@@ -398,7 +398,7 @@ class KalmanNode:
         self.stop()
       
 
-    def turn_90(self):
+    def turn_90(self, angle):
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
@@ -407,7 +407,8 @@ class KalmanNode:
         t_start = time.time()
         # joy_msg.axes[THETA] = 0.8
         joy_msg.axes[THETA] = -0.7
-        while time.time() < t_start + time_per_rad*np.pi/2:
+        #while time.time() < t_start + time_per_rad*np.pi/2:
+        while time.time() < t_start + time_per_rad*angle:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
@@ -722,11 +723,13 @@ class KalmanNode:
             if exit_early:
                 break
 
-            self.turn_90()
+            self.turn_90((i+1)*np.pi/2-self.state[2])
             time.sleep(1)
             print("Updating theta to: ")
-            print((self.state[2]+np.pi/2)*180/np.pi)
-            self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
+            # print((self.state[2]+np.pi/2)*180/np.pi)
+            print((i+1)*np.pi/2*180/np.pi)
+            #self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
+            self.state[2] = (i+1)*np.pi/2
         '''
         for i in range(len(self.state)):
             print(i , " --> ", self.state[i])
