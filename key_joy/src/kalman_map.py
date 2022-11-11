@@ -444,6 +444,7 @@ class KalmanNode:
         #    )
         np.save("states_cache.npy", self.state)
         np.save("P_cache.npy", self.P)
+        np.save("trajectory.npy", np.array(self.cache_states))
         # save covariances samplesx33x33
         # covs_cache = np.array(self.cache_states)
         # covsReshaped = covs_cache.reshape(covs_cache.shape[0], -1) 
@@ -589,8 +590,8 @@ class KalmanNode:
                     self.control_matrix_G[1] = -0.1
                 
                 Q = np.zeros((3,3))
-                Q[0,0] = 0.005**2 # first try: 0.02**2
-                Q[1,1] = 0.005**2
+                Q[0,0] = 0.001**2 # first try: 0.02**2
+                Q[1,1] = 0.001**2
                 Q[2,2] = 0.0001**2
                 self.P[:3, :3] = self.P[:3, :3] + Q
                 # self.update_G(i)
@@ -716,6 +717,7 @@ class KalmanNode:
                     break
                 # Save State and Covariance Data
                 # self.save_data()
+                self.cache_states.append(self.state)
             if exit_early:
                 break
 
