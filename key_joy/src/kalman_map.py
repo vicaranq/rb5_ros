@@ -863,7 +863,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    # kalman_node.run()
+    kalman_node.run()
     # kalman_node.move_front_new(1)
-    kalman_node.turn_90()
+    # kalman_node.turn_90()
 
