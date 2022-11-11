@@ -417,7 +417,7 @@ class KalmanNode:
         Q = np.zeros((3,3))
         Q[0,0] = 0.01**2
         Q[1,1] = 0.01**2
-        Q[2,2] = 0.03**2
+        # Q[2,2] = 0.01**2
         self.P[:3,:3] = self.P[:3,:3]+Q
         time.sleep(1)
 
