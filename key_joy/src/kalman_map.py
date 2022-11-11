@@ -728,7 +728,7 @@ class KalmanNode:
         '''
 
         # right saved states and covariances to file
-        #self.write_saved_data()
+        self.write_saved_data()
         '''
         8 point motion
         '''
