@@ -426,14 +426,29 @@ class KalmanNode:
         time.sleep(1)
 
     def turn_45(self, joy_msg):
-        time_per_rad = 2.3/ (math.pi/2)
+        joy_msg = self.get_joy_msg()
+        # time_per_rad = 2.3/ (math.pi/2)
+        #time_per_rad = 2.8/ (math.pi/2)
+        time_per_rad = 3/ (math.pi/2)
+
         t_start = time.time()
-        joy_msg.axes[THETA] = 0.9
+        # joy_msg.axes[THETA] = -0.8
+        joy_msg.axes[THETA] = -0.7
         while time.time() < t_start + time_per_rad*np.pi/4:
+        # while time.time() < t_start + time_per_rad*angle:
             self.pub_joy.publish(joy_msg)
             # just wait for target_time          
         joy_msg.axes[THETA] = 0 # reset 
         self.pub_joy.publish(joy_msg)
+        self.current_seen_tags = {}
+
+        # maybe we need to increase uncertainty of theta by a lot here
+        Q = np.zeros((3,3))
+        Q[0,0] = 0.01**2
+        Q[1,1] = 0.01**2
+        # Q[2,2] = 0.01**2
+        self.P[:3,:3] = self.P[:3,:3]+Q
+        time.sleep(1)
 
     def save_data(self):
         self.cache_P.append(self.P)
@@ -570,28 +585,76 @@ class KalmanNode:
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         time.sleep(3)
 
-        # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
-        for iteration in range(4):
-            print('================================= i: {} ========================'.format(iteration))
-            for _ in range(10): #10
+        for iteration in range(8):
+            for _ in range(10):
+                print('================================= i: {} ========================'.format(iteration))
                 # move forward 0.1m
-                self.move_front_new(0.1) # front in direction of x axis (world coordinate)
+                self.move_front_new(0.05) # front in direction of x axis (world coordinate)
                 time.sleep(1)
-                '''
-                Kalman update for distance
-                '''
-                exit_early = False
+
                 # first update state
                 self.control_matrix_G = np.zeros((3,1))
                 if iteration==0:
-                    self.control_matrix_G[0] = 0.1
+                    self.control_matrix_G[0] = 0.05
+                    self.state = self.state+self.control_matrix_G
+
                 elif iteration==1:
-                    self.control_matrix_G[1] = 0.1
-                    #exit_early = True
+                    self.control_matrix_G[0] = 0.05/np.sqrt(2)
+                    self.control_matrix_G[1] = 0.05/np.sqrt(2)
+                    self.state = self.state+self.control_matrix_G
+
                 elif iteration==2:
-                    self.control_matrix_G[0] = -0.1
+                    self.control_matrix_G[1] = 0.05
+                    self.state = self.state+self.control_matrix_G
+
                 elif iteration==3:
-                    self.control_matrix_G[1] = -0.1
+                    self.control_matrix_G[0] = -0.05/np.sqrt(2)
+                    self.control_matrix_G[1] = 0.05/np.sqrt(2)
+                    self.state = self.state+self.control_matrix_G
+
+                elif iteration==4:
+                    self.control_matrix_G[0] = -0.05
+                    self.state = self.state+self.control_matrix_G
+
+                elif iteration==5:
+                    self.control_matrix_G[0] = -0.05/np.sqrt(2)
+                    self.control_matrix_G[1] = -0.05/np.sqrt(2)
+                    self.state = self.state+self.control_matrix_G
+ 
+                elif iteration==6:
+                    self.control_matrix_G[1] = -0.05/np.sqrt(2)
+                    self.state = self.state+self.control_matrix_G
+     
+                elif iteration==7:
+                    self.control_matrix_G[0] = 0.05/np.sqrt(2)
+                    self.control_matrix_G[1] = -0.05/np.sqrt(2)
+                    self.state = self.state+self.control_matrix_G
+
+                '''
+
+                # NOTE: Move front 0.1m 10 times, at each step predict and update using Kalman's filter, then turn 90deg and do the same 
+                for iteration in range(4):
+                    print('================================= i: {} ========================'.format(iteration))
+                    for _ in range(10): #10
+                        # move forward 0.1m
+                        self.move_front_new(0.1) # front in direction of x axis (world coordinate)
+                        time.sleep(1)
+                        
+                        #Kalman update for distance
+                        
+                        exit_early = False
+                        # first update state
+                        self.control_matrix_G = np.zeros((3,1))
+                        if iteration==0:
+                            self.control_matrix_G[0] = 0.1
+                        elif iteration==1:
+                            self.control_matrix_G[1] = 0.1
+                            #exit_early = True
+                        elif iteration==2:
+                            self.control_matrix_G[0] = -0.1
+                        elif iteration==3:
+                            self.control_matrix_G[1] = -0.1
+                '''                
                 
                 Q = np.zeros((3,3))
                 Q[0,0] = 0.001**2 # first try: 0.02**2
@@ -726,12 +789,13 @@ class KalmanNode:
                 break
 
             # self.turn_90((iteration+1)*np.pi/2-self.state[2])
-            self.turn_90()
+            #self.turn_90()
+            self.turn_45()
             time.sleep(1)
             print("Updating theta to: ")
-            print((self.state[2]+np.pi/2)*180/np.pi)
+            print((self.state[2]+np.pi/4)*180/np.pi)
             # print((i+1)*np.pi/2*180/np.pi)
-            self.state[2] = (self.state[2]+np.pi/2 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
+            self.state[2] = (self.state[2]+np.pi/4 ) % (2*np.pi)# Victor: mod 2pi if we do more loops in other experiments 
             # self.state[2] = (i+1)*np.pi/2
         '''
         for i in range(len(self.state)):
@@ -869,7 +933,7 @@ if __name__ == "__main__":
         print("Starting navigation to target point: ", p)        
         feedback_node.run(p)
     '''
-    for _ in range(2):
+    for _ in range(1):
         kalman_node.run()
     kalman_node.write_saved_data()
     # kalman_node.move_front_new(1)
