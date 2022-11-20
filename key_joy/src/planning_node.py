@@ -239,16 +239,16 @@ class PlanningNode:
             ## MOVE INTERVALS OF 0.1s, CHECK DANGER ZONE, RESET SEEN TAGS
             self.current_seen_tags = {}
             time.sleep(0.1) # self.current_seen_tags must be populated during this movement
-            self.check_danger_zone() 
+            self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}                         
             time.sleep(0.1)
-            self.check_danger_zone() 
+            self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
             time.sleep(0.1)
-            self.check_danger_zone() 
+            self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
             time.sleep(0.1)
-            self.check_danger_zone() 
+            self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
                                   
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])  # update tag_pos_x_r
@@ -258,7 +258,7 @@ class PlanningNode:
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
 
 
-    def move_front(self, d,tag_id, y_axis=False, moving_diag=False, diag_update=(0,0)):
+    def move_front(self, d, tag_id, y_axis=False, moving_diag=False, diag_update=(0,0)):
         '''
         Args:
         d -> float type represeting meters
@@ -279,6 +279,29 @@ class PlanningNode:
         else:
             self.x_w += d
        
+    def move_front_no_tag(self, d, y_axis = False):
+        '''
+        Args:
+        d -> int type represeting meters
+        '''
+        joy_msg = self.get_joy_msg()
+        print("[move_front] Moving forward for {}m".format(d))
+        time_per_m = 2.0408   # [seconds to get to a meter]
+        
+        t_start = time.time()
+
+        joy_msg.axes[X] = 0.8
+        while time.time() < t_start + time_per_m*abs(d):
+            self.pub_joy.publish(joy_msg)
+        #time.sleep(0.5)
+        joy_msg.axes[X] = 0 # reset 
+        self.pub_joy.publish(joy_msg)
+        #update
+        if not y_axis:
+            self.x_pos += d
+        else:
+            self.y_pos += d        
+
     def get_rads(self, theta):
         return theta - self.theta_w
 
@@ -348,31 +371,41 @@ class PlanningNode:
         time.sleep(1)
 
 
-    def check_danger_zone(self):
+    def check_danger_zone(self, moving_on_y_flag):
         '''
         This function checks each tag seen so far in self.tags, if any of the tags are too close, move away from it.
         Possible issues, what if tag is close and then not seen anymore? tag will not be updated
+
+        moving_on_y_flag : True if the robot is aligned with y-axis, otherwise False indicating that is moving on x-axis when check if performed
+
         '''
 
         for tag_i in self.current_seen_tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.current_seen_tags[tag_i]) 
             if abs(tag_pos_x_r) <= 0.4 and abs(tag_pos_y_r) <= 0.4:
                 print("{} in Danger Zone!".format(tag_i))
-
+                print("Stopping vehicle!")
+                joy_msg = self.get_joy_msg()
+                joy_msg.axes[X] = 0 # reset 
+                self.pub_joy.publish(joy_msg)
                 # if object to the left, then move to the right
                 # Y positive means that object is to the right (given robot y-axis points to the left)
                 if tag_pos_y_r > 0: 
                     # move to the left
+                    print("!!! MOVE TO THE LEFT !!!")
                     self.turn_90(left=True)
-                    # move front a bit 
+                    # move front a bit # but how to know if it's moving on x or y axis on world coordinate?
+                    d = 0.4 - tag_pos_y_r + 0.05 # Move away to avoid obstacle plus 5cm to be safe
+                    self.move_front_no_tag(d , not moving_on_y_flag)
                     self.turn_90()
-                    pass
                 else:
+                    print("!!! MOVE TO THE RIGHT !!!")
                     # move to the right 
                     self.turn_90()
                     # move front a bit 
+                    d = 0.4 - abs(tag_pos_y_r) + 0.05 # Move away to avoid obstacle plus 5cm to be safe
+                    self.move_front_no_tag(d , not moving_on_y_flag)
                     self.turn_90(left=True)
-                    pass
 
             
 
