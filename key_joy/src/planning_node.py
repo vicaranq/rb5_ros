@@ -28,7 +28,7 @@ class PlanningNode:
         self.x_w = 0
         self.y_w = 0
         self.theta_w = 0
-
+        self.grid_unit = 0.05 # 5x5cm grid size
         self.tags = {}
 
 
@@ -380,9 +380,11 @@ class PlanningNode:
 
         '''
 
+        THRESHOLD = 5*self.grid_unit # meters
+
         for tag_i in self.current_seen_tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.current_seen_tags[tag_i]) 
-            if abs(tag_pos_x_r) <= 0.4 and abs(tag_pos_y_r) <= 0.4:
+            if abs(tag_pos_x_r) <= THRESHOLD and abs(tag_pos_y_r) <= THRESHOLD:
                 print("{} in Danger Zone!".format(tag_i))
                 print("Stopping vehicle!")
                 joy_msg = self.get_joy_msg()
@@ -552,7 +554,7 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # feedback_node.run_rotation_calibration()
     ''' -----'''
-    points = [(1.5, 0.0), (1.5, 1.5)]     # no angle required to get to these positions
+    points = [(1.0, 0.0), (1.0, 1.0)]     # no angle required to get to these positions
     '''
     marker_1: LM4 in the map
     marker_4: LM8 in the map
@@ -564,7 +566,7 @@ if __name__ == "__main__":
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    # feedback_node.print_TAG_info( tags[2])
+    planning_node.print_TAG_info( "marker_1")
     '''
     Running Experiment
     '''
@@ -574,8 +576,8 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:], tags[:]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        planning_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:], tags[:]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     planning_node.run(p, tag_id)
 
