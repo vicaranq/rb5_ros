@@ -134,10 +134,12 @@ class PlanningNode:
         if y > 0:
             print("Turning 90deg")
             self.turn(math.pi/2) # turn left 90deg
+            time.sleep(1)
             self.readjust_angle_with_quaternions(tag_id) 
         elif y < 0:
             print("Turning -90deg")
             self.turn(-math.pi/2) # turn right 90 deg
+            time.sleep(1)
             self.readjust_angle_with_quaternions(tag_id)  
         time.sleep(1)
         print("Move front for {}m".format(abs(y)))            
