@@ -243,21 +243,17 @@ class PlanningNode:
             ## MOVE INTERVALS OF 0.1s, CHECK DANGER ZONE, RESET SEEN TAGS
             self.current_seen_tags = {}
             time.sleep(0.1) # self.current_seen_tags must be populated during this movement
-            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
             self.check_danger_zone(y_axis) 
-            self.current_seen_tags = {}                         
-            time.sleep(0.1)
-            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
-            self.check_danger_zone(y_axis) 
-            self.current_seen_tags = {}
-            time.sleep(0.1)
-            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
-            self.check_danger_zone(y_axis) 
-            self.current_seen_tags = {}
-            time.sleep(0.1)
-            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
-            self.check_danger_zone(y_axis) 
-            self.current_seen_tags = {}
+            # self.current_seen_tags = {}                         
+            # time.sleep(0.1)
+            # self.check_danger_zone(y_axis) 
+            # self.current_seen_tags = {}
+            # time.sleep(0.1)
+            # self.check_danger_zone(y_axis) 
+            # self.current_seen_tags = {}
+            # time.sleep(0.1)
+            # self.check_danger_zone(y_axis) 
+            # self.current_seen_tags = {}
                                   
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.tags[tag_id])  # update tag_pos_x_r
         # stop robot
