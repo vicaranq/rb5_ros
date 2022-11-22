@@ -242,7 +242,7 @@ class PlanningNode:
             print("Pitch value: ", pitch)
             # readjust angle only if pitch is greater than 0.01 
             if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
-                heuristic_pitch = pitch*0.8
+                heuristic_pitch = pitch #*0.8
                 self.turn(heuristic_pitch + self.theta_w) # readjusting to angle coordinates +CW and -CCC
                 time.sleep(0.2)   
 
