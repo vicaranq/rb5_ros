@@ -93,6 +93,7 @@ class PlanningNode:
         self.theta_w = 0
 
         self.tags = {}
+        self.current_seen_tags = {}
 
 
     def get_current_pos(self):
