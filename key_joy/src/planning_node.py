@@ -134,9 +134,11 @@ class PlanningNode:
         if y > 0:
             print("Turning 90deg")
             self.turn(math.pi/2) # turn left 90deg
+            self.readjust_angle_with_quaternions(tag_id) 
         elif y < 0:
             print("Turning -90deg")
             self.turn(-math.pi/2) # turn right 90 deg
+            self.readjust_angle_with_quaternions(tag_id)  
         time.sleep(1)
         print("Move front for {}m".format(abs(y)))            
         self.move_front(y, tag_id, y_axis=True)
@@ -242,7 +244,7 @@ class PlanningNode:
             self.pub_joy.publish(joy_msg)  # Start moving                        
             ## MOVE INTERVALS OF 0.1s, CHECK DANGER ZONE, RESET SEEN TAGS
             self.current_seen_tags = {}
-            time.sleep(0.1) # self.current_seen_tags must be populated during this movement
+            time.sleep(0.2) # self.current_seen_tags must be populated during this movement
             self.check_danger_zone(y_axis) 
             # self.current_seen_tags = {}                         
             # time.sleep(0.1)
