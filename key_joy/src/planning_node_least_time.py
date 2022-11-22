@@ -580,6 +580,7 @@ class PlanningNode:
             # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
             print("Found it! ")    
             self.readjust_angle_with_quaternions(tag_id)
+            time.sleep(1)
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
             self.move_front(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
