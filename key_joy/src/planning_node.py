@@ -243,15 +243,19 @@ class PlanningNode:
             ## MOVE INTERVALS OF 0.1s, CHECK DANGER ZONE, RESET SEEN TAGS
             self.current_seen_tags = {}
             time.sleep(0.1) # self.current_seen_tags must be populated during this movement
+            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
             self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}                         
             time.sleep(0.1)
+            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
             self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
             time.sleep(0.1)
+            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
             self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
             time.sleep(0.1)
+            print("----- Seen tags: ", len(self.current_seen_tags.keys()))
             self.check_danger_zone(y_axis) 
             self.current_seen_tags = {}
                                   
@@ -389,7 +393,7 @@ class PlanningNode:
         for tag_i in self.current_seen_tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.current_seen_tags[tag_i]) 
             if abs(tag_pos_x_r) <= THRESHOLD and abs(tag_pos_y_r) <= THRESHOLD:
-                print("{} in Danger Zone!".format(tag_i))
+                print("!!!! {} in Danger Zone!!!!!!".format(tag_i))
                 print("Stopping vehicle!")
                 joy_msg = self.get_joy_msg()
                 joy_msg.axes[X] = 0 # reset 
