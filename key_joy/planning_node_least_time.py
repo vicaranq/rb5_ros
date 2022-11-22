@@ -158,6 +158,7 @@ class PlanningNode:
                                                  }                
             except:
                 print("something fail")
+                raise
                 pass   
 
     def stop_robot(self):
