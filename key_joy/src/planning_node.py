@@ -559,14 +559,14 @@ if __name__ == "__main__":
     marker_1: LM4 in the map
     marker_4: LM8 in the map
     '''
-    tags = ["marker_1","marker_4"] # tag ids associated to each position
+    tags = ["marker_1","marker_7"] # tag ids associated to each position
 
     # p, tag_id = (points[2], tags[2])
     '''
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    planning_node.print_TAG_info( "marker_1")
+    planning_node.print_TAG_info( "marker_7")
     '''
     Running Experiment
     '''
