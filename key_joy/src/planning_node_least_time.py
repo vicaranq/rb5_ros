@@ -310,17 +310,10 @@ class PlanningNode:
 
 
     def check_danger_zone2(self, moving_on_y_flag):
-        '''
-        This function checks each tag seen so far in self.tags, if any of the tags are too close, move away from it.
-        Possible issues, what if tag is close and then not seen anymore? tag will not be updated
-
-        moving_on_y_flag : True if the robot is aligned with y-axis, otherwise False indicating that is moving on x-axis when check if performed
-
-        '''
 
         for tag_i in self.current_seen_tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.current_seen_tags[tag_i]) 
-            if abs(tag_pos_x_r) <= 0.1 or abs(tag_pos_y_r) <= 0.1:
+            if abs(tag_pos_x_r) <= 0.1 and abs(tag_pos_y_r) <= 0.1:
                 print("{} in Danger Zone!".format(tag_i))
                 print("Stopping vehicle!")
                 joy_msg = self.get_joy_msg()
