@@ -292,7 +292,7 @@ class PlanningNode:
         # rads_to_turn = sign*rads_to_turn
 
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
-        joy_msg.axes[THETA] = 0.9 if rads_to_turn >= 0 else -0.9# >0.1
+        joy_msg.axes[THETA] = 0.8 if rads_to_turn >= 0 else -0.8# >0.1
         # if scale:
         #     # used for angle readdjustment
         #     joy_msg.axes[THETA] = 0.5 if rads_to_turn >= 0 else -0.5# >0.1
