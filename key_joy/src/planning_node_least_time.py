@@ -93,6 +93,7 @@ class PlanningNode:
         self.theta_w = 0
 
         self.tags = {}
+        self.current_seen_tags = {}
 
 
     def get_current_pos(self):
@@ -145,15 +146,20 @@ class PlanningNode:
                 assert type(tag_id) == str, "Unexpected tag type"
                 self.tags[tag_id]={"id": tag_id, \
                     "translation" : self.get_translation(message), \
-                        "rotation" : self.get_rotation(message)}
+                    "rotation" : self.get_rotation(message)}
                 # print("tags updated!")
 
                 # self.current_seen_tags will act similarly as self.tags, however it clears every iteration (step in the experiment e.g. every 0.1m or turn)
                 self.current_seen_tags[tag_id] = {"x" : self.get_translation(message)[2] , \
-                                                  "y":self.get_translation(message)[0]
+                                                  "y":self.get_translation(message)[0], \
+                                                  "id": tag_id, \
+                                                  "translation" : self.get_translation(message), \
+                                                  "rotation" : self.get_rotation(message)
                                                  }                
             except:
                 print("something fail")
+                print(tag_id)
+                raise
                 pass   
 
     def stop_robot(self):
