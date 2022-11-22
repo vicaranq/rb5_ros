@@ -30,6 +30,7 @@ class PlanningNode:
         self.theta_w = 0
         self.grid_unit = 0.05 # 5x5cm grid size
         self.tags = {}
+        self.current_seen_tags = {}
 
 
     def get_current_pos(self):
