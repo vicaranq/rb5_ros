@@ -695,7 +695,7 @@ if __name__ == "__main__":
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    # feedback_node.print_TAG_info( tags[2])
+    planning_node.print_TAG_info( tags[1])
     '''
     Running Experiment
     '''
@@ -705,10 +705,10 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    for p,tag_id in zip(points[:], tags[:]):        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-        if p == midpoint[:2]:
-            planning_node.run(p, tag_id, angle_for_short=midpoint[2])
-        else:
-            planning_node.run(p, tag_id)
+    # for p,tag_id in zip(points[:], tags[:]):        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+    #     if p == midpoint[:2]:
+    #         planning_node.run(p, tag_id, angle_for_short=midpoint[2])
+    #     else:
+    #         planning_node.run(p, tag_id)
