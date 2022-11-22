@@ -561,7 +561,7 @@ if __name__ == "__main__":
     '''
     tags = ["marker_1","marker_4"] # tag ids associated to each position
 
-    p, tag_id = (points[2], tags[2])
+    # p, tag_id = (points[2], tags[2])
     '''
     Getting Tag info
     '''
