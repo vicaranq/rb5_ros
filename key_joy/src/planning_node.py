@@ -150,12 +150,12 @@ class PlanningNode:
         print("Readusting with quaternions....")
 
         # find quaternion of reference
-        # Q for landmark 4
-        tagLM4_q = [-0.07681572469557221, 0.030113621272255503, -0.010630514604218507, 0.9965337457470342]
-        # Q for landmark 8
-        tagLM8_q = [-0.031684626256729034, 0.05936072671254348, 0.6980881821665746, 0.7128430952899086]
+        # Q for landmark 4 --> 'marker_1'
+        tagLM4_q = [-0.05788680893984566, 0.03995771047955379, 0.6919213818811771, 0.718538307969475]
+        # Q for landmark 8 --> 'marker_7'
+        tagLM8_q = [0.022206495547235545, 0.11227388669211188, 0.9933441174357323, -0.01299654871046849]
         
-        tag_q_dict = {'marker_LM4': tagLM4_q, 'marker_LM8':tagLM8_q} # NOTE: NEED TO CHANGE KEYS TO ACTUAL MARKER NAMES
+        tag_q_dict = {'marker_1': tagLM4_q, 'marker_7':tagLM8_q} 
         assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
 
         q2 = tag_q_dict[tag_id]
@@ -566,18 +566,18 @@ if __name__ == "__main__":
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    planning_node.print_TAG_info( "marker_7")
+    #planning_node.print_TAG_info( "marker_7")
     '''
     Running Experiment
     '''
     # print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    # feedback_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
+    # planning_node.run(p, tag_id, robot_pos= (0.7,1.4,np.pi) )
     
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:], tags[:]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     planning_node.run(p, tag_id)
+    for p,tag_id in zip(points[:], tags[:]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        planning_node.run(p, tag_id)
 
