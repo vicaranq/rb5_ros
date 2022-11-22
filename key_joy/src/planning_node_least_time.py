@@ -325,13 +325,13 @@ class PlanningNode:
                 if tag_pos_y_r > 0: 
                     # move to the left
                     print("!!! MOVE TO THE LEFT !!!")
-                    self.turn_10(left=True)
+                    self.turn_10(left=False)
 
 
                 else:
                     print("!!! MOVE TO THE RIGHT !!!")
                     # move to the right 
-                    self.turn_10()
+                    self.turn_10(left=True)
 
     def move_with_tag(self, d, tag_id, y_axis=False, moving_diag=False):
         
