@@ -226,23 +226,25 @@ class PlanningNode:
         # Q for landmark 8 --> 'marker_7'
         tagLM8_q = [-0.11650380279464587, 0.03710365722695598, 0.992326616226908, -0.018386660447882553]
         
-        tag_q_dict = { 'marker_7':tagLM8_q} 
-        assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
+        tag_q_dict = { 'marker_7': tagLM8_q} 
 
-        q2 = tag_q_dict[tag_id]
-        print("Using q2: ", q2)
-        q1 = list(self.tags[tag_id]['rotation'])
-        q1_inv = q1
-        q1_inv[3] = -q1_inv[3] 
-        qr = tf.transformations.quaternion_multiply(q2, q1_inv)
-        (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
-        
-        print("Pitch value: ", pitch)
-        # readjust angle only if pitch is greater than 0.01 
-        if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
-            heuristic_pitch = pitch*0.8
-            self.turn(heuristic_pitch + self.theta_w) # readjusting to angle coordinates +CW and -CCC
-            time.sleep(0.2)   
+        if tag_id in tag_q_dict:
+        #assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
+
+            q2 = tag_q_dict[tag_id]
+            print("Using q2: ", q2)
+            q1 = list(self.tags[tag_id]['rotation'])
+            q1_inv = q1
+            q1_inv[3] = -q1_inv[3] 
+            qr = tf.transformations.quaternion_multiply(q2, q1_inv)
+            (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations       
+            
+            print("Pitch value: ", pitch)
+            # readjust angle only if pitch is greater than 0.01 
+            if abs(pitch) > 0.01 and abs(pitch) < math.pi/2.0: # ~ off by 2deg is fine, and also offset angle shouldn't be greater than 90deg
+                heuristic_pitch = pitch*0.8
+                self.turn(heuristic_pitch + self.theta_w) # readjusting to angle coordinates +CW and -CCC
+                time.sleep(0.2)   
 
 
     def turn_10(self, left=False):
@@ -576,7 +578,7 @@ class PlanningNode:
                 time.sleep(0.2)
             # Now we see tag
             # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
-            print("Found it! ")
+            print("Found it! ")    
             self.readjust_angle_with_quaternions(tag_id)
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
