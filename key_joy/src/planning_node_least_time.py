@@ -222,11 +222,11 @@ class PlanningNode:
 
         # find quaternion of reference
         # Q for landmark 4 --> 'marker_1'
-        tagLM4_q = [-0.05788680893984566, 0.03995771047955379, 0.6919213818811771, 0.718538307969475]
+        # tagLM4_q = [-0.05788680893984566, 0.03995771047955379, 0.6919213818811771, 0.718538307969475]
         # Q for landmark 8 --> 'marker_7'
-        tagLM8_q = [0.022206495547235545, 0.11227388669211188, 0.9933441174357323, -0.01299654871046849]
+        tagLM8_q = [-0.11650380279464587, 0.03710365722695598, 0.992326616226908, -0.018386660447882553]
         
-        tag_q_dict = {'marker_1': tagLM4_q, 'marker_7':tagLM8_q} 
+        tag_q_dict = { 'marker_7':tagLM8_q} 
         assert tag_id in tag_q_dict, "Unexpected marker in quatrernion dict"
 
         q2 = tag_q_dict[tag_id]
@@ -577,6 +577,7 @@ class PlanningNode:
             # Now we see tag
             # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
             print("Found it! ")
+            self.readjust_angle_with_quaternions(tag_id)
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
             self.move_front(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
@@ -695,7 +696,7 @@ if __name__ == "__main__":
     Getting Tag info
     '''
     # feedback_node.print_rot_ang_from_tag(tags[2])
-    planning_node.print_TAG_info( tags[1])
+    # planning_node.print_TAG_info( tags[1])
     '''
     Running Experiment
     '''
@@ -705,10 +706,10 @@ if __name__ == "__main__":
     '''
     Try this next    
     '''
-    # for p,tag_id in zip(points[:], tags[:]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     if p == midpoint[:2]:
-    #         planning_node.run(p, tag_id, angle_for_short=midpoint[2])
-    #     else:
-    #         planning_node.run(p, tag_id)
+    for p,tag_id in zip(points[:], tags[:]):        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p, " tag: ", tag_id)        
+        if p == midpoint[:2]:
+            planning_node.run(p, tag_id, angle_for_short=midpoint[2])
+        else:
+            planning_node.run(p, tag_id)
