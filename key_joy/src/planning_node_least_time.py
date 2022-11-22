@@ -683,7 +683,7 @@ if __name__ == "__main__":
     ''' -----'''
 
     midpoint = mapping_shortest_dist()
-    points = [midpoint[:2], (1.5, 1.5)]
+    points = [midpoint[:2], (1.0, 1.0)]
     #points = [(1.5, 0.0), (1.5, 1.5)]     # no angle required to get to these positions
     '''
     marker_1: LM4 in the map
