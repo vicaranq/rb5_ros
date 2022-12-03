@@ -534,19 +534,11 @@ class RoombaNode:
     ''' NEW FUNCTIONS '''
     def get_H(self):
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
-        H = np.zeros((3,3))
-        transformation_matrix = np.zeros((3,3))
-        transformation_matrix[0][0] = np.cos(self.theta_w)
-        transformation_matrix[0][1] = 1.0*np.sin(self.theta_w)  
-        transformation_matrix[1][0] = -1.0*np.sin(self.theta_w) 
-        transformation_matrix[1][1] = np.cos(self.theta_w)
-        transformation_matrix[2][2] = 1
-        # self.x_w -> X translation of Robot frame compared to Map frame (0,0)
-        # self.x_w -> X translation of Robot frame compared to Map frame (0,0)
-        transformation_matrix = [ [np.cos(self.theta_w), -1.0*np.sin(self.theta_w) , self.x_w], 
-                                  [np.sin(self.theta_w),  np.cos(self.theta_w)     , self.y_w], 
-                                  [0                   ,  0                        , 1], 
-                                ]       
+
+        H = [   [np.cos(self.theta_w), -1.0*np.sin(self.theta_w) , self.x_w], 
+                [np.sin(self.theta_w),  np.cos(self.theta_w)     , self.y_w], 
+                [0                   ,  0                        , 1], 
+            ]       
         return H
 
     def transform_from_R_to_M(self, robot_coord):
