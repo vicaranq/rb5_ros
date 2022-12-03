@@ -549,6 +549,45 @@ class RoombaNode:
                                 ]       
         return H
 
+    def transform_from_R_to_M(self, robot_coord):
+        ''' Transform from Robot frame to Map frame'
+        robot_coord: Expected to be a 2D homogeneous coordinate in  Robot frame (np array of shape (3,1))
+        '''
+        assert robot_coord.shape == (3,1), " Expecting shape of (3,1) "
+        
+        H = self.get_H()
+        map_coord = np.dot(H,robot_coord)
+        map_coord = map_coord/map_coord[2,0]
+        
+        assert map_coord.shape == (3,1) and map_coord[2,0] == 1
+
+        return map_coord
+
+    def adjust_xy(self, LM_coord_reading, LM_ground_truth):
+        '''
+        Args:
+            LM_coord_reading: np array of shape (3,1)  in map frame
+            LM_ground_truth:  np array of shape (3,1)  in map frame
+        Adjusts X and Y coordinates of the robot (self.x_w and self.y_w) based on the error from the tag reading and groundtruth         
+        '''        
+        assert LM_coord_reading.shape == (3,1) and  LM_ground_truth.shape == (3,1), "Wrong Shape"
+        if LM_coord_reading[2,0] != 1:
+            LM_coord_reading = LM_coord_reading/LM_coord_reading[2,0] 
+        if LM_ground_truth[2,0] != 1:
+            LM_ground_truth = LM_ground_truth/LM_ground_truth[2,0]             
+        ''' Assuming +X axis points upwards and +Y points to the right ''' 
+        delta_x =  LM_coord_reading[0] - LM_ground_truth[0]
+        delta_y =  LM_coord_reading[1] - LM_ground_truth[1]
+
+        
+        self.x_w += int(delta_x)
+        self.y_w += int(delta_y)
+
+        self.mark_map()
+
+    def mark_map(self):
+        '''' To be developed .... '''
+        self.MATRIX[self.x_w, self.y_w]
 
 
     def run(self):
