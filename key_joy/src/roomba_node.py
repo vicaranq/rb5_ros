@@ -19,81 +19,96 @@ THETA = 2
 
 MAP = np.zeros((int(2/0.05),int(2/0.05)))
 # define obstacle
-for i in range(len(MAP)//2-3,len(MAP)//2+3):
-    for j in range(len(MAP)//2-3,len(MAP)//2+3):
-        MAP[i][j] = -1
+# for i in range(len(MAP)//2-3,len(MAP)//2+3):
+#     for j in range(len(MAP)//2-3,len(MAP)//2+3):
+#         MAP[i][j] = -1
+
+
 
 # define start and end position
-START = (30,9)
-END = (9,30)
+START = (2,2)
 
 
-def mapping_shortest_dist():
-    nodes = []
-    # padding by 10 cm
+#result need to *0.05
+def plan_path():
+    path = []
+    # assume 10cm boundary for safety
     map_augment = copy.deepcopy(MAP)
-    for i in range(len(map_augment)//2-5,len(map_augment)//2+5):
-        for j in range(len(map_augment)//2-5,len(map_augment)//2+5):
-            map_augment[i][j] = -1    
-    vertices = []
-    # get vertices
-    for i in range(len(map_augment)-1):
-        for j in range(len(map_augment)-1):
-            count = np.sum(map_augment[i:i+2,j:j+2])
-            if count == -1:
-                nodes.append((i,j))
+    for i in range(0,len(map_augment)):
+        for j in range(0,len(map_augment)):
+            map_augment[i][j] = 1
+    for i in range(2,len(map_augment)-2):
+        for j in range(2,len(map_augment)-2):
+            map_augment[i][j] = 0
+    
+    #main idea: assume rectangular shape, and account for unvisited later
+    # s = (START[0], START[1], 0)
+    # path.append(s)
+    # assume (2,2), facing up,
+    curr_index_x = 2
+    curr_index_y = 2
+    for iteration in range(0,len(map_augment)//2):
 
-    # quick bfs from start to end
-    # in our case, we only have one intermediate step, so simplify the algorithm to find accessible intermediate points
-    # first, build access matrix
-    block_start = len(map_augment)//2-5
-    block_end = len(map_augment)//2+5
+        if 0 in map_augment:
+            for ind in range(curr_index_x,len(map_augment)):
+                if map_augment[curr_index_x][ind]==0:
+                    map_augment[curr_index_x][ind]=1
+                else:
+                    curr_index_y = ind-1
+                    path.append((curr_index_x, curr_index_y,math.pi/2))
+                    break
+            for ind in range(curr_index_x+1,len(map_augment)):
+                if map_augment[ind][curr_index_y]==0:
+                    map_augment[ind][curr_index_y]=1
+                else:
+                    curr_index_x = ind-1
+                    path.append((curr_index_x, curr_index_y,math.pi))
+                    break
+            for ind in range(curr_index_x-1,0,-1):
+                if map_augment[curr_index_x][ind]==0:
+                    map_augment[curr_index_x][ind]=1
+                else:
+                    curr_index_y = ind+1
+                    path.append((curr_index_x, curr_index_y,math.pi/2*3))
+                    break        
+            for ind in range(curr_index_x-1,0,-1):
+                if map_augment[ind][curr_index_y]==0:
+                    map_augment[ind][curr_index_y]=1
+                else:
+                    curr_index_x = ind+1
+                    path.append((curr_index_x-1, curr_index_y,math.pi/4))
+                    break
+            curr_index_y = curr_index_y+1
+            path.append((curr_index_x, curr_index_y,0))
 
-    dirX = np.sign(END[0]-START[0])
-    dirY = np.sign(END[1]-START[1])
-    available = []
-    for i in nodes:
-        if np.sign(block_start-i[0])==dirX or np.sign(block_start-i[1])==dirY:
-            available.append(i)
-        # this is not the correct vertex
-        if np.sign(block_start-i[0])==dirX and np.sign(block_start-i[1])==dirY:
-            available.remove(i)
+        else:
 
-    print(available)
-    '''
-    find best vertex
-    time is distance+rotation
-    '''
-    least = 9999
-    least_node=None
-    for i in available:
-        tmp = np.sqrt((i[0]-START[0])**2+(i[1]-START[1])**2) + np.arctan2(-1.0*(i[0]-START[0]),(i[1]-START[1]))*5
-        #print(np.arctan2((i[0]-START[0]),(i[1]-START[1]))*5)
-        if tmp < least:
-            least=tmp
-            least_node=i
-    print(least_node)
-
-    return ((least_node[1]-START[1])*0.05, -1.0*(least_node[0]-START[0])*0.05, np.arctan2(-1.0*(least_node[0]-START[0]), (least_node[1]-START[1])) ) 
-    #return ((least_node[1]-START[1])*0.05, -1.0*(least_node[0]-START[0])*0.05)
-    #return least_node
-
-
+            break
+    left_spaces = np.where(map_augment==0)
+    x_list = left_spaces[0]
+    y_list = left_spaces[1]
+    points = zip(x_list,y_list)
+    for i in points:
+        path.append((i[0],i[1],0))
+    
+    for point in path:
+        point[0] = point[0]*0.05
+        point[1] = point[1]*0.05
+    return path
+    
 class RoombaNode:
     def __init__(self):
         self.pub_joy = rospy.Publisher("/joy", Joy, queue_size=1)
         self.settings = save_terminal_settings()
 
         # Initialize position of robot 
-        # (assuming -x to front, +y to the left, theta opening from -x towards y axis)
-        # self.x_pos = 0
-        # self.y_pos = 0
-        self.x_w = 0
-        self.y_w = 0
+        # (assuming -x to front, +y to the left, theta opening from -x towards y axis
+        self.x_w = 0.1
+        self.y_w = 0.1
         self.theta_w = 0
 
         self.tags = {}
-        self.current_seen_tags = {}
+        self.current_seen_tags = tuple()
 
 
     def get_current_pos(self):
@@ -150,12 +165,8 @@ class RoombaNode:
                 # print("tags updated!")
 
                 # self.current_seen_tags will act similarly as self.tags, however it clears every iteration (step in the experiment e.g. every 0.1m or turn)
-                self.current_seen_tags[tag_id] = {"x" : self.get_translation(message)[2] , \
-                                                  "y":self.get_translation(message)[0], \
-                                                  "id": tag_id, \
-                                                  "translation" : self.get_translation(message), \
-                                                  "rotation" : self.get_rotation(message)
-                                                 }                
+                self.current_seen_tags = (self.get_translation(message)[2] , \
+                                                  self.get_translation(message)[0])
             except:
                 print("something fail")
                 print(tag_id)
@@ -381,26 +392,29 @@ class RoombaNode:
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
 
 
-    def move_front(self, d, tag_id, y_axis=False, moving_diag=False, diag_update=(0,0)):
+    def move_front(self, d, y_axis=False, moving_diag=False, diag_update=(0,0)):
         '''
         Args:
         d -> float type represeting meters
         '''
-        if tag_id in self.tags:
-            #time.sleep(1) 
-            self.move_with_tag( d, tag_id, y_axis=False, moving_diag=moving_diag)
 
-        else: 
-            raise "Expected tag id: {} not found in self.tags: {} ".format(tag_id, self.tags)
+        self.move_front_no_tag(d,y_axis)
+
+        # if tag_id in self.tags:
+        #     #time.sleep(1) 
+        #     self.move_with_tag( d, tag_id, y_axis=False, moving_diag=moving_diag)
+
+        # else: 
+        #     raise "Expected tag id: {} not found in self.tags: {} ".format(tag_id, self.tags)
 
         #update
-        if moving_diag:
-            assert diag_update != (0,0), " Unexpected diag update"
-            self.x_w, self.y_w = diag_update
-        elif y_axis:
-            self.y_w += d
-        else:
-            self.x_w += d
+        # if moving_diag:
+        #     assert diag_update != (0,0), " Unexpected diag update"
+        #     self.x_w, self.y_w = diag_update
+        # elif y_axis:
+        #     self.y_w += d
+        # else:
+        #     self.x_w += d
        
     def move_front_no_tag(self, d, y_axis = False):
         '''
@@ -416,12 +430,20 @@ class RoombaNode:
         joy_msg.axes[X] = 0.8
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
+            
+            x_tag = self.transform_from_R_to_M( self.current_seen_tags )
+            x_tag_GT = match_tag(x_tag)
+            self.adjust_xy(x_tag, x_tag_GT)
+            
+            print( (self.x_w,self.y_w ) )
+            time.sleep(0.3)
+
         #time.sleep(0.5)
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        #update
+        # #update
         if not y_axis:
-            self.x_pos += d
+            self.xf_pos += d
         else:
             self.y_pos += d        
 
@@ -532,6 +554,20 @@ class RoombaNode:
 
             
     ''' NEW FUNCTIONS '''
+
+    def match_tag(input_tag):
+        '''
+        input_tag: coordinate of tag in Map frame 
+        '''
+        distance = 99999
+        index = -1
+        for i in range(len(self.tags)):
+            curr_distance = (self.tags[i][0]-input_tag[0])**2 + (self.tags[i][1]-input_tag[1])**2
+            if curr_distance<distance:
+                distance=curr_distance
+                index=i
+        return self.tags[index]
+
     def get_H(self):
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
 
@@ -575,14 +611,14 @@ class RoombaNode:
         self.x_w += int(delta_x)
         self.y_w += int(delta_y)
 
-        self.mark_map()
+        #self.mark_map()
 
     def mark_map(self):
         '''' To be developed .... '''
-        self.MATRIX[self.x_w, self.y_w]
+        MAP[self.x_w, self.y_w] = 1
 
 
-    def run(self):
+    def run(self, target_position_w):
         # previous arguments: target_position_w, tag_id, robot_pos = (0.0,0.0), angle_for_short=0)
         '''
         Args:
@@ -599,12 +635,12 @@ class RoombaNode:
 
 
 
+        # x_tag = self.transform_from_R_to_M( self.current_seen_tags )
+        # x_tag_GT = match_tag(x_tag)
+        # self.adjust_xy(x_tag, x_tag_GT)
+
         # do a prior turn
         # self.turn(angle_for_short)
-
-        ''' GET target_position_w '''
-        target_position_w = ? 
-
         
         delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)
         print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
@@ -754,13 +790,12 @@ if __name__ == "__main__":
     
     # '''
     # Try this next    
-    # '''
-    # for p,tag_id in zip(points[:], tags[:]):        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p, " tag: ", tag_id)        
-    #     if p == midpoint[:2]:
-    #         roomba_node.run(p, tag_id, angle_for_short=midpoint[2])
-    #     else:
-    #         roomba_node.run(p, tag_id)
+    
+    for p in plan_path():        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p)               
+        roomba_node.run(p)
+        break
+
 
     roomba_node.run()
