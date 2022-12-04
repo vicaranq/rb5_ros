@@ -293,7 +293,7 @@ class RoombaNode:
 
 
         # From calibration tests:
-        time_per_rad = 2.3/ (math.pi/2) if rads_to_turn >=0 else 2.1/ (math.pi/2)
+        time_per_rad = 2.4/ (math.pi/2) if rads_to_turn >=0 else 2.1/ (math.pi/2)
 
         # rads_to_turn has to be within 2pi range
         # sign = -1 if rads_to_turn >=0 else 1
