@@ -424,7 +424,7 @@ class RoombaNode:
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         #time_per_m = 2.0408   # [seconds to get to a meter]
-        time_per_m = 4
+        time_per_m = 5
         t_start = time.time()
 
         joy_msg.axes[X] = 0.5 if d> 0 else -0.5
