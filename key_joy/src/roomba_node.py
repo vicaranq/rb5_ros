@@ -616,7 +616,7 @@ class RoombaNode:
         if delta_y > 0:
             self.turn_90()
             self.move_front_no_tag(delta_y)
-            self.turn_90(self, left=True)
+            self.turn_90( left=False)
         else:
             self.turn_90(self, left=True)
             self.move_front_no_tag(delta_y)
