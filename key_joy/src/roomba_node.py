@@ -149,7 +149,7 @@ class RoombaNode:
         if message:
             # expecting message from /tf topic
             try: 
-                print("message:\n", message)
+                # print("message:\n", message)
                 # print("message_type:\n", type(message))
                 # print("message.transforms_type:\n", type(message.transforms))
 
@@ -166,7 +166,7 @@ class RoombaNode:
 
                 # self.current_seen_tags will act similarly as self.tags, however it clears every iteration (step in the experiment e.g. every 0.1m or turn)
                 self.current_seen_tags = (self.get_translation(message)[2] , \
-                                                  self.get_translation(message)[0])
+                                                  -1.0*self.get_translation(message)[0])
             except:
                 print("something fail")
                 print(tag_id)
