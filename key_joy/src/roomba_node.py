@@ -432,7 +432,7 @@ class RoombaNode:
             self.pub_joy.publish(joy_msg)
             
             if self.current_seen_tags:
-                print(self.current_seen_tags)
+                # print(self.current_seen_tags)
                 vec = np.array([ [self.current_seen_tags[0]], 
                                  [self.current_seen_tags[1] ], 
                                 [1]
