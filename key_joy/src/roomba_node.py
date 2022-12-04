@@ -313,7 +313,7 @@ class RoombaNode:
         self.pub_joy.publish(joy_msg)
         
         # theta_w has to be within 2pi range   
-        sign = -1 if theta >=0 else 1    
+        sign = 1 if theta >=0 else -1    
         theta_mod =  abs(theta) %  (2*math.pi)
         self.theta_w =  sign*theta_mod
         print("[turn] theta updated to {} and turned {}rads".format(self.theta_w, rads_to_turn))
