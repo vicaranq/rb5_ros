@@ -576,8 +576,8 @@ class RoombaNode:
     def get_H(self):
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
 
-        H = [   [np.cos(self.theta_w), -1.0*np.sin(self.theta_w) , self.x_w], 
-                [np.sin(self.theta_w),  np.cos(self.theta_w)     , self.y_w], 
+        H = [   [np.cos(self.theta_w), 1.0*np.sin(self.theta_w) , self.x_w], 
+                [-1.0*np.sin(self.theta_w),  np.cos(self.theta_w)     , self.y_w], 
                 [0                   ,  0                        , 1], 
             ]       
         return H
