@@ -437,7 +437,7 @@ class RoombaNode:
                                 [1]
                                 ])
                 x_tag = self.transform_from_R_to_M( vec )
-                x_tag_GT = match_tag(x_tag)
+                x_tag_GT = self.match_tag(x_tag)
                 self.adjust_xy(x_tag, x_tag_GT)
             
             print( (self.x_w,self.y_w ) )
@@ -560,7 +560,7 @@ class RoombaNode:
             
     ''' NEW FUNCTIONS '''
 
-    def match_tag(input_tag):
+    def match_tag(self, input_tag):
         '''
         input_tag: coordinate of tag in Map frame 
         '''
