@@ -401,7 +401,7 @@ class RoombaNode:
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
 
 
-    def move_front(self, target_position_w, y_axis=False):
+    def move_front_or_back(self, target_position_w):
         '''
         Args:
         target_position_w -> (x,y) target on Map frame to where we want to move 
@@ -411,19 +411,26 @@ class RoombaNode:
             target_position_w: Expecting (x,y) in map coordinate
             '''
             delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)
-
+            y_axis=False
             if abs(delta_x) > 0.01:
                 distance = delta_x
             elif abs(delta_y) > 0.01:        
                 distance = delta_y
+                y_axis=True
             else:
                 raise "delta_x and delta_y are less than 1cm: {} , {}".format(delta_x, delta_y)               
             
-            return distance
+            return distance, y_axis
 
 
-        distance = get_distance(target_position_w)
-        self.move_front_no_tag(distance ,y_axis)
+        distance, y_axis = get_distance(target_position_w)
+        if distance > 0:
+            print("--------------------------")
+            print("Moving forward")
+        else:
+            print("--------------------------")
+            print("Moving backwards")
+        self.move_front_no_tag(distance)
 
         #update
         if y_axis:
@@ -431,7 +438,7 @@ class RoombaNode:
         else:
             self.x_w += distance
        
-    def move_front_no_tag(self, d, y_axis = False):
+    def move_front_no_tag(self, d):
         '''
         Args:
         d -> int type represeting meters
@@ -449,10 +456,8 @@ class RoombaNode:
             ''' CHECK DANGER ZONE'''
             self.current_seen_tags = {}
             time.sleep(0.1) # self.current_seen_tags must be populated during this movement
-            if self.check_danger_zone(y_axis):
+            if self.check_danger_zone():
                 break
-
-
 
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
@@ -527,13 +532,9 @@ class RoombaNode:
         time.sleep(1)
 
 
-    def check_danger_zone(self, moving_on_y_flag):
+    def check_danger_zone(self):
         '''
-        This function checks each tag seen so far in self.tags, if any of the tags are too close, move away from it.
-        Possible issues, what if tag is close and then not seen anymore? tag will not be updated
-
-        moving_on_y_flag : True if the robot is aligned with y-axis, otherwise False indicating that is moving on x-axis when check if performed
-
+        This function checks each tag seen so far in self.current_seen_tags, if any of the tags are too close (within THRESOLD), then return True.
         '''
 
         for tag_i in self.current_seen_tags:
@@ -629,19 +630,16 @@ class RoombaNode:
         print("--------------------------")
         print("--------------------------")
         print(" Next Action : ", next_action )
-        if state == "F":
+        if state == "F" or state == "B":
             ''' Move forward '''
             print("--------------------------")
             print("Moving forward")
+            self.move_front_or_back(target_position_w)
 
-            self.move_front(target_position_w)
-        elif state == "B":
-            print("--------------------------")
-            print("Moving backwards")
-            pass
         elif state == "R":
             print("--------------------------")
             print("Rotating")
+            
 
 
 
