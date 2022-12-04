@@ -615,11 +615,15 @@ class RoombaNode:
         # y_axis=True
         if delta_y > 0:
             self.turn_90()
+            time.sleep(0.2)
             self.move_front_no_tag(delta_y)
+            time.sleep(0.2)
             self.turn_90( left=False)
         else:
             self.turn_90(self, left=False)
+            time.sleep(0.2)
             self.move_front_no_tag(delta_y)
+            time.sleep(0.2)
             self.turn_90()
         #update        
         self.y_w += delta_y
@@ -660,6 +664,7 @@ class RoombaNode:
             print("--------------------------")
             print("Rotating")
             self.rotate_and_adjust(target_position_w)
+            
 
         print("State: ", (self.x_w, self.y_w, self.theta_w))
         self.stop()
