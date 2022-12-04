@@ -427,7 +427,7 @@ class RoombaNode:
         
         t_start = time.time()
 
-        joy_msg.axes[X] = 0.8 if d> 0 else -0.8
+        joy_msg.axes[X] = 0.9 if d> 0 else -0.9
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
@@ -577,8 +577,8 @@ class RoombaNode:
     def get_H(self):
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
 
-        H = [   [1.0*np.cos(self.theta_w), 1.0*np.sin(self.theta_w) , self.x_w], 
-                [1.0*np.sin(self.theta_w),  1.0*np.cos(self.theta_w)     , self.y_w], 
+        H = [   [1.0*np.cos(self.theta_w), -1.0*np.sin(self.theta_w) , self.x_w], 
+                [1.0*np.sin(self.theta_w),  -1.0*np.cos(self.theta_w)     , self.y_w], 
                 [0                   ,  0                        , 1], 
             ]       
         return H
