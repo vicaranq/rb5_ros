@@ -438,6 +438,7 @@ class RoombaNode:
                                 [1]
                                 ])
                 x_tag = self.transform_from_R_to_M( vec )
+                
                 x_tag_GT = self.match_tag(x_tag)
                 self.adjust_xy(x_tag, x_tag_GT)
 
@@ -579,7 +580,7 @@ class RoombaNode:
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
 
         H = [   [1.0*np.cos(self.theta_w), 1.0*np.sin(self.theta_w) , self.x_w], 
-                [-1.0*np.sin(self.theta_w),  1.0*np.cos(self.theta_w)     , self.y_w], 
+                [1.0*np.sin(self.theta_w),  1.0*np.cos(self.theta_w)     , self.y_w], 
                 [0                   ,  0                        , 1], 
             ]       
         return H
@@ -613,8 +614,8 @@ class RoombaNode:
         delta_y =  LM_coord_reading[1,0] - LM_ground_truth[1]
 
         
-        self.x_w -= delta_x
-        self.y_w -= delta_y
+        self.x_w += delta_x
+        self.y_w += delta_y
 
         #self.mark_map()
 
