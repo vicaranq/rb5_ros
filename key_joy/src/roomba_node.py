@@ -614,8 +614,8 @@ class RoombaNode:
         delta_y =  LM_coord_reading[1,0] - LM_ground_truth[1]
 
         
-        self.x_w += delta_x
-        self.y_w += delta_y
+        self.x_w -= delta_x
+        self.y_w -= delta_y
 
         #self.mark_map()
 
