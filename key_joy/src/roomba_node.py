@@ -599,17 +599,16 @@ class RoombaNode:
         '''
         Args:
             LM_coord_reading: np array of shape (3,1)  in map frame
-            LM_ground_truth:  np array of shape (3,1)  in map frame
+            LM_ground_truth:  np array of shape (3,)  in map frame
         Adjusts X and Y coordinates of the robot (self.x_w and self.y_w) based on the error from the tag reading and groundtruth         
         '''        
-        assert LM_coord_reading.shape == (3,1) and  LM_ground_truth.shape == (3,1), "Wrong Shape"
+        assert LM_coord_reading.shape == (3,1) and  LM_ground_truth.shape == (3,), "Wrong Shape"
         if LM_coord_reading[2,0] != 1:
             LM_coord_reading = LM_coord_reading/LM_coord_reading[2,0] 
-        if LM_ground_truth[2,0] != 1:
-            LM_ground_truth = LM_ground_truth/LM_ground_truth[2,0]             
+           
         ''' Assuming +X axis points upwards and +Y points to the right ''' 
-        delta_x =  LM_coord_reading[0] - LM_ground_truth[0]
-        delta_y =  LM_coord_reading[1] - LM_ground_truth[1]
+        delta_x =  LM_coord_reading[0,0] - LM_ground_truth[0]
+        delta_y =  LM_coord_reading[1,0] - LM_ground_truth[1]
 
         
         self.x_w += int(delta_x)
