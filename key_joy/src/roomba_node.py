@@ -91,9 +91,9 @@ def plan_path():
     for i in points:
         path.append((i[0],i[1],0))
     
-    for point in path:
-        point[0] = point[0]*0.05
-        point[1] = point[1]*0.05
+    for point in range(len(path)):
+        path[point] = (path[point][0]*0.05, path[point][1]*0.05, path[point][2])
+
     return path
     
 class RoombaNode:
