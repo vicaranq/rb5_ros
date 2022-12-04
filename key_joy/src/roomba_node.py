@@ -159,9 +159,9 @@ class RoombaNode:
 
                 tag_id = message.transforms[0].child_frame_id
                 assert type(tag_id) == str, "Unexpected tag type"
-                self.tags[tag_id]={"id": tag_id, \
-                    "translation" : self.get_translation(message), \
-                    "rotation" : self.get_rotation(message)}
+                # self.tags[tag_id]={"id": tag_id, \
+                #     "translation" : self.get_translation(message), \
+                #     "rotation" : self.get_rotation(message)}
                 # print("tags updated!")
 
                 # self.current_seen_tags will act similarly as self.tags, however it clears every iteration (step in the experiment e.g. every 0.1m or turn)
@@ -444,10 +444,10 @@ class RoombaNode:
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
         # #update
-        if not y_axis:
-            self.xf_pos += d
-        else:
-            self.y_pos += d        
+        # if not y_axis:
+        #     self.xf_pos += d
+        # else:
+        #     self.y_pos += d        
 
     def get_rads(self, theta):
         return theta - self.theta_w
