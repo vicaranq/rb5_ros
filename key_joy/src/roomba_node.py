@@ -636,7 +636,6 @@ class RoombaNode:
         '''              
 
         print("Robot's World Position: ", self.get_current_pos())
-        print("Target Position: ", target_position_w)
 
         rospy.Subscriber("/tf", TFMessage, self.tag_information)
         time.sleep(2)
