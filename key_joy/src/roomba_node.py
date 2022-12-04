@@ -203,21 +203,21 @@ class RoombaNode:
         # NOTE: change this depending on the tag! 
         return (tag_pos_T['translation'][Z], tag_pos_T['translation'][X]) # distance to x location in world coord.
 
-    def move_sideways_no_slide(self, y, tag_id):
+    def move_sideways_no_slide(self, y):
         ''' function to move robot on the y-axis world frame using rotation instead of sliding'''
         print("[move_sideways_no_slide] Movign sideways for {}m".format(y))
         # If moving to the left, first turn depending of sign of y then move for abs(y) meters to the front
         if y > 0:
             print("Turning 90deg")
             self.turn(math.pi/2) # turn left 90deg
-            self.readjust_angle_with_quaternions(tag_id) 
+            #self.readjust_angle_with_quaternions(tag_id) 
         elif y < 0:
             print("Turning -90deg")
             self.turn(-math.pi/2) # turn right 90 deg
-            self.readjust_angle_with_quaternions(tag_id) 
+            #self.readjust_angle_with_quaternions(tag_id) 
         time.sleep(1)
         print("Move front for {}m".format(abs(y)))            
-        self.move_front(y, tag_id, y_axis=True)
+        self.move_front(y, y_axis=True)
         self.stop()
     
     def reduce_speed(self, d, speed):
@@ -652,34 +652,28 @@ class RoombaNode:
             print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
 
             # first find tag associated to target
-            time.sleep(0.2)
-            while tag_id not in self.tags:
-                # rotate until findind the tag
-                print("Looking for tag: ", tag_id )
-                self.turn(self.theta_w + 10*(math.pi/180))
-                time.sleep(0.2)
+
             # Now we see tag
             # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
-            print("Found it! ")    
-            self.readjust_angle_with_quaternions(tag_id)
+            # self.readjust_angle_with_quaternions(tag_id)
             time.sleep(1)
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
-            self.move_front(d, tag_id, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
+            self.move_front(d, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
             time.sleep(1)                   
         elif abs(delta_x) > 0.1:
             ''' ----------------  MOVE ON X AXIS ----------------  ''' 
             # if the robot is not at zero degrees, then rotate to make it zero
             print("Turning to zero degrees...")
             self.turn(0)
-            self.move_front(delta_x, tag_id) # front in direction of x axis (world coordinate)
+            self.move_front(delta_x) # front in direction of x axis (world coordinate)
             time.sleep(1)            
             # _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X    
         elif abs(delta_y) > 0.1:        
             # move Y axis
             ''' ----------------  MOVE ON Y AXIS ----------------  '''        
             print("delta_y: ", delta_y)
-            self.move_sideways_no_slide(delta_y, tag_id)
+            self.move_sideways_no_slide(delta_y)
             time.sleep(1)
                         
         #_, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                                 
