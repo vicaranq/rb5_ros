@@ -149,7 +149,7 @@ class RoombaNode:
         if message:
             # expecting message from /tf topic
             try: 
-                # print("message:\n", message)
+                print("message:\n", message)
                 # print("message_type:\n", type(message))
                 # print("message.transforms_type:\n", type(message.transforms))
 
