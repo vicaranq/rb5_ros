@@ -816,7 +816,7 @@ if __name__ == "__main__":
 
     # roomba_node.turn_90()
     roomba_node.turn_90(left=True)
-    roomba_node.turn_90()
+    roomba_node.turn_90(left=False)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
