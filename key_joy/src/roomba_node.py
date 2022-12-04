@@ -19,21 +19,14 @@ THETA = 2
 GRID_UNIT = 0.05
 THRESHOLD = 2*GRID_UNIT
 
-MAP = np.zeros((int(2/0.05),int(2/0.05)))
-# define obstacle
-# for i in range(len(MAP)//2-3,len(MAP)//2+3):
-#     for j in range(len(MAP)//2-3,len(MAP)//2+3):
-#         MAP[i][j] = -1
-
-
+MAP = np.zeros((int(1.75/0.05),int(1.75/0.05)))
 
 # define start and end position
 START = (2,2)
 
-
-#result need to *0.05
 def plan_path():
     path = []
+    queue = []
     # assume 10cm boundary for safety
     map_augment = copy.deepcopy(MAP)
     for i in range(0,len(map_augment)):
@@ -42,62 +35,78 @@ def plan_path():
     for i in range(2,len(map_augment)-2):
         for j in range(2,len(map_augment)-2):
             map_augment[i][j] = 0
+
+    #spanning tree
+
+    #path.append(s)
+    queue.append((None,START))
+    #path.append((None,START))
+
+    map_augment = copy.deepcopy(MAP)
+    for i in range(0,len(map_augment)):
+        for j in range(0,len(map_augment)):
+            map_augment[i][j] = 1
+    for i in range(2,len(map_augment)-2):
+        for j in range(2,len(map_augment)-2):
+            map_augment[i][j] = 0
     
-    #main idea: assume rectangular shape, and account for unvisited later
-    # s = (START[0], START[1], 0)
-    # path.append(s)
-    # assume (2,2), facing up,
-    curr_index_x = 2
-    curr_index_y = 2
-    for iteration in range(0,len(map_augment)//2):
+    
+    while queue:
+        current = queue.pop(0)
 
-        if 0 in map_augment:
-            for ind in range(curr_index_x,len(map_augment)):
-                if map_augment[curr_index_x][ind]==0:
-                    map_augment[curr_index_x][ind]=1
-                else:
-                    curr_index_y = ind-1
-                    path.append((curr_index_x, curr_index_y,math.pi/2))
-                    break
-            for ind in range(curr_index_x+1,len(map_augment)):
-                if map_augment[ind][curr_index_y]==0:
-                    map_augment[ind][curr_index_y]=1
-                else:
-                    curr_index_x = ind-1
-                    path.append((curr_index_x, curr_index_y,math.pi))
-                    break
-            for ind in range(curr_index_x-1,0,-1):
-                if map_augment[curr_index_x][ind]==0:
-                    map_augment[curr_index_x][ind]=1
-                else:
-                    curr_index_y = ind+1
-                    path.append((curr_index_x, curr_index_y,math.pi/2*3))
-                    break        
-            for ind in range(curr_index_x-1,0,-1):
-                if map_augment[ind][curr_index_y]==0:
-                    map_augment[ind][curr_index_y]=1
-                else:
-                    curr_index_x = ind+1
-                    path.append((curr_index_x-1, curr_index_y,math.pi/4))
-                    break
-            curr_index_y = curr_index_y+1
-            path.append((curr_index_x, curr_index_y,0))
+        if map_augment[current[1]]==0:
+            map_augment[current[1]]=1
+            path.append(current)
+            # add everything in front to path
+            current2 = current
+            
+            tmp = []
+            for i in range(len(map_augment)):
+                
+                if map_augment[current2[1][0]][current2[1][1]+1]==0:
+                    tmp.append((current2[1],(current2[1][0], current2[1][1]+1)))
+                    path.append((current2[1],(current2[1][0], current2[1][1]+1)))
+                    map_augment[(current2[1][0], current2[1][1]+1)]=1
+                    current2 = (current2[1],(current2[1][0], current2[1][1]+1))
+            
+            # add adjancent into queue
 
+            #if map_augment[current[1][0]][current[1][1]+1]==0:
+            #    queue.append((current[1],(current[1][0], current[1][1]+1)))
+            
+            if map_augment[current[1][0]-1][current[1][1]]==0:
+                queue.append((current[1],(current[1][0]-1, current[1][1]))) 
+            if map_augment[current[1][0]+1][current[1][1]]==0:
+                queue.append((current[1],(current[1][0]+1, current[1][1])))
+            if map_augment[current[1][0]][current[1][1]-1]==0:
+                queue.append((current[1],(current[1][0], current[1][1]-1)))
+            
+            for i in tmp:
+
+                queue.append(i)
+            
+
+            # till now, path is MST
+            # !!!
+            # !!!
+            # !!!
+    path.append("END")
+    path_concise = []
+    curr_base = path[0][1]
+
+    for i in range(0,len(path)-1):
+        if path[i+1][0] == path[i][1]:
+            continue
+         
         else:
-
-            break
-    left_spaces = np.where(map_augment==0)
-    x_list = left_spaces[0]
-    y_list = left_spaces[1]
-    points = zip(x_list,y_list)
-    for i in points:
-        path.append((i[0],i[1],0))
+            path_concise.append(("F",(curr_base, path[i][1])))
+            path_concise.append(("B",(curr_base, path[i][1])))
+            if path[i+1]!="END":
+                path_concise.append(("R",(curr_base, path[i+1][1])))
+            curr_base = path[i+1][1]
+    return path_concise
     
-    for point in range(len(path)):
-        path[point] = (path[point][0]*0.05, path[point][1]*0.05, path[point][2])
 
-    return path
-    
 class RoombaNode:
     def __init__(self):
         self.pub_joy = rospy.Publisher("/joy", Joy, queue_size=1)
@@ -856,9 +865,16 @@ if __name__ == "__main__":
                     ("F", (25,4)), ("B", (2,4)), ("R", (2,6)),\
                     ("F", (25,6)), ("B", (2,6)), ("R", (2,8)) 
                     ]
-    for p in test_points:        
+
+    path =  plan_path()
+    path.pop(0)
+    path_recons = []
+    for i in path:
+        path_recons.append((path[0], (path[1][1][1], path[1][1][0])))
+    '''
+    for p in path:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)               
         roomba_node.run(p)
+    '''
 
-    roomba_node.run()
