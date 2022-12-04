@@ -432,7 +432,10 @@ class RoombaNode:
             self.pub_joy.publish(joy_msg)
             
             if self.current_seen_tags:
-                vec = np.array([self.current_seen_tags[0], self.current_seen_tags[1], 1])
+                vec = np.array([ [self.current_seen_tags[0]], 
+                                 [self.current_seen_tags[1] ], 
+                                [1]
+                                ])
                 x_tag = self.transform_from_R_to_M( vec )
                 x_tag_GT = match_tag(x_tag)
                 self.adjust_xy(x_tag, x_tag_GT)
