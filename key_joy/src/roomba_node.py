@@ -870,7 +870,7 @@ if __name__ == "__main__":
     path.pop(0)
     path_recons = []
     for i in path:
-        path_recons.append((path[0], (path[1][1][1], path[1][1][0])))
+        path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
     print(path_recons)
     '''
     for p in path:        
