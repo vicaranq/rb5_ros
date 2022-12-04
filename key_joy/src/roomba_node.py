@@ -450,6 +450,7 @@ class RoombaNode:
         t_start = time.time()
 
         joy_msg.axes[X] = 0.5 if d> 0 else -0.5
+
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
@@ -810,6 +811,8 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # roomba_node.run_rotation_calibration()
     ''' -----'''
+    roomba_node.move_front_no_tag(1)
+    roomba_node.move_front_no_tag(-1)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
@@ -839,13 +842,13 @@ if __name__ == "__main__":
     #     print("Starting navigation to target point: ", p)               
     #     roomba_node.run(p)
     
-    test_points = [("F", (37,2)), ("B", (2,2)), ("R", (2,4)),\
-                    ("F", (37,4)), ("B", (2,4)), ("R", (2,6)),\
-                    ("F", (37,6)), ("B", (2,6)), ("R", (2,8)) 
-                    ]
-    for p in test_points:        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p)               
-        roomba_node.run(p)
+    # test_points = [("F", (37,2)), ("B", (2,2)), ("R", (2,4)),\
+    #                 ("F", (37,4)), ("B", (2,4)), ("R", (2,6)),\
+    #                 ("F", (37,6)), ("B", (2,6)), ("R", (2,8)) 
+    #                 ]
+    # for p in test_points:        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p)               
+    #     roomba_node.run(p)
 
     # roomba_node.run()
