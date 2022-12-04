@@ -431,10 +431,11 @@ class RoombaNode:
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
-            vec = np.array([self.current_seen_tags[0], self.current_seen_tags[1], 1])
-            x_tag = self.transform_from_R_to_M( vec )
-            x_tag_GT = match_tag(x_tag)
-            self.adjust_xy(x_tag, x_tag_GT)
+            if self.current_seen_tags:
+                vec = np.array([self.current_seen_tags[0], self.current_seen_tags[1], 1])
+                x_tag = self.transform_from_R_to_M( vec )
+                x_tag_GT = match_tag(x_tag)
+                self.adjust_xy(x_tag, x_tag_GT)
             
             print( (self.x_w,self.y_w ) )
             time.sleep(0.3)
