@@ -608,6 +608,22 @@ class RoombaNode:
         '''' To be developed .... '''
         MAP[self.x_w, self.y_w] = 1
 
+    def rotate_and_adjust(self, target_position_w):
+
+        delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)        
+        # y_axis=True
+        if delta_y > 0:
+            self.turn_90()
+            self.move_front_no_tag(delta_y)
+            self.turn_90(self, left=True)
+        else:
+            self.turn_90(self, left=True)
+            self.move_front_no_tag(delta_y)
+            self.turn_90()
+        #update        
+        self.y_w += delta_y
+        
+
 
     def run(self, next_action):
         # previous arguments: target_position_w, tag_id, robot_pos = (0.0,0.0), angle_for_short=0)
@@ -627,6 +643,8 @@ class RoombaNode:
 
 
         state, target_position_w = next_action
+
+        print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
         print("--------------------------")
         print("--------------------------")
         print(" Next Action : ", next_action )
@@ -639,61 +657,8 @@ class RoombaNode:
         elif state == "R":
             print("--------------------------")
             print("Rotating")
-            
+            self.rotate_and_adjust(target_position_w)
 
-
-
-
-        
-        delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)
-        print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
-        print("delta_x: ", delta_x, "delta_y: ", delta_y)
-
-        if abs(delta_x) > 0.1 and abs(delta_y) > 0.1:
-            ''' ----------------  MOVE DIAG ----------------  '''            
-            print("Move Diag!")
-            print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
-
-            # first find tag associated to target
-
-            # Now we see tag
-            # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
-            # self.readjust_angle_with_quaternions(tag_id)
-            time.sleep(1)
-            d = math.sqrt(delta_x**2 + delta_y**2)
-            print("Distance to travel: ", d)            
-            self.turn(self.theta_w - np.arctan2(delta_x, delta_y ))
-            if delta_x < 0 and delta_y < 0 and self.theta_w < np.pi:
-                print("moving backwards!!!")
-                self.move_front(-1.0*d, moving_diag=True, diag_update=(delta_x, delta_y))
-            else:
-                self.move_front(d, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
-            time.sleep(1)                   
-        elif abs(delta_x) > 0.1:
-            ''' ----------------  MOVE ON X AXIS ----------------  ''' 
-            # if the robot is not at zero degrees, then rotate to make it zero
-            print("Turning to zero degrees...")
-            self.turn(0)
-            self.move_front(delta_x) # front in direction of x axis (world coordinate)
-            time.sleep(1)            
-            # _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X    
-        elif abs(delta_y) > 0.1:        
-            # move Y axis
-            ''' ----------------  MOVE ON Y AXIS ----------------  '''        
-            print("delta_y: ", delta_y)
-            self.move_sideways_no_slide(delta_y)
-            time.sleep(1)
-                        
-        #_, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                                 
-        # move angle
-        # if abs(delta_theta)  > 0.1:
-        #     print("delta_theta: ", delta_theta)
-        #     ''' MOVE ON THETA '''                    
-        #     self.turn(target_position_w[2])
-        #     # We can use pitch angle at this point to readjust turn 
-        #     # Robot should be 90deg with respect the coordinate frame of tag 2
-        #     time.sleep(1)
-        ''' ----------------------------------------------------------------'''
         print("State: ", (self.x_w, self.y_w, self.theta_w))
         self.stop()
 
