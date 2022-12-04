@@ -107,7 +107,7 @@ class RoombaNode:
         self.y_w = 0.1
         self.theta_w = 0
 
-        self.tags = [np.array([0,2,1]), np.array([.75,2,1])]
+        self.tags = [np.array([0,2,1]), np.array([.75,2,1]), np.array([1.45,1.65,1]), np.array([1.45,0.65,1]), np.array([0.8, 0,1])]
         self.current_seen_tags = tuple()
 
 
