@@ -107,7 +107,7 @@ class RoombaNode:
         self.y_w = 0.1
         self.theta_w = 0
 
-        self.tags = {}
+        self.tags = [np.array([0,2,1]), np.array([.75,2,1])]
         self.current_seen_tags = tuple()
 
 
@@ -301,7 +301,7 @@ class RoombaNode:
         # rads_to_turn = sign*rads_to_turn
 
         # joy_msg.axes[THETA] = 1.1 if rads_to_turn >= 0 else -1.1# >0.1
-        joy_msg.axes[THETA] = 0.85 if rads_to_turn >= 0 else -0.85# >0.1
+        joy_msg.axes[THETA] = -0.85 if rads_to_turn >= 0 else 0.85# >0.1
         # if scale:
         #     # used for angle readdjustment
         #     joy_msg.axes[THETA] = 0.5 if rads_to_turn >= 0 else -0.5# >0.1
@@ -431,7 +431,8 @@ class RoombaNode:
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
-            x_tag = self.transform_from_R_to_M( self.current_seen_tags )
+            vec = np.array([self.current_seen_tags[0], self.current_seen_tags[1], 1])
+            x_tag = self.transform_from_R_to_M( vec )
             x_tag_GT = match_tag(x_tag)
             self.adjust_xy(x_tag, x_tag_GT)
             
@@ -582,7 +583,6 @@ class RoombaNode:
         robot_coord: Expected to be a 2D homogeneous coordinate in  Robot frame (np array of shape (3,1))
         '''
         assert robot_coord.shape == (3,1), " Expecting shape of (3,1) "
-        
         H = self.get_H()
         map_coord = np.dot(H,robot_coord)
         map_coord = map_coord/map_coord[2,0]
