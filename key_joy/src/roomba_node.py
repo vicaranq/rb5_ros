@@ -513,7 +513,7 @@ class RoombaNode:
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
-        time_per_rad = 2.5/ (math.pi/2)
+        time_per_rad = 2.3/ (math.pi/2)
 
         t_start = time.time()
         
