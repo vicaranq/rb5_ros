@@ -664,7 +664,11 @@ class RoombaNode:
             d = math.sqrt(delta_x**2 + delta_y**2)
             print("Distance to travel: ", d)            
             self.turn(self.theta_w - np.arctan2(delta_x, delta_y ))
-            self.move_front(d, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
+            if delta_x < 0 and delta_y < 0 and self.theta_w < np.pi:
+                print("moving backwards!!!")
+                self.move_front(-1.0*d, moving_diag=True, diag_update=(delta_x, delta_y))
+            else:
+                self.move_front(d, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
             time.sleep(1)                   
         elif abs(delta_x) > 0.1:
             ''' ----------------  MOVE ON X AXIS ----------------  ''' 
