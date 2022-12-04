@@ -439,6 +439,7 @@ class RoombaNode:
                 x_tag = self.transform_from_R_to_M( vec )
                 x_tag_GT = self.match_tag(x_tag)
                 self.adjust_xy(x_tag, x_tag_GT)
+
             
             print( (self.x_w,self.y_w ) )
             time.sleep(0.3)
@@ -611,8 +612,8 @@ class RoombaNode:
         delta_y =  LM_coord_reading[1,0] - LM_ground_truth[1]
 
         
-        self.x_w += int(delta_x)
-        self.y_w += int(delta_y)
+        self.x_w += delta_x
+        self.y_w += delta_y
 
         #self.mark_map()
 
