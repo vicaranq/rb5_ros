@@ -449,7 +449,7 @@ class RoombaNode:
         time_per_m = 5
         t_start = time.time()
 
-        joy_msg.axes[X] = 0.5 if d> 0 else -0.5
+        joy_msg.axes[X] = 0.6 if d> 0 else -0.6
 
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
@@ -812,7 +812,7 @@ if __name__ == "__main__":
     # roomba_node.run_rotation_calibration()
     ''' -----'''
     roomba_node.move_front_no_tag(1)
-    roomba_node.move_front_no_tag(-1)
+    # roomba_node.move_front_no_tag(-1)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
