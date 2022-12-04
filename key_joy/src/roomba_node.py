@@ -871,6 +871,7 @@ if __name__ == "__main__":
     path_recons = []
     for i in path:
         path_recons.append((path[0], (path[1][1][1], path[1][1][0])))
+    print(path_recons)
     '''
     for p in path:        
         print("======================================================================")
