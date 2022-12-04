@@ -789,11 +789,11 @@ if __name__ == "__main__":
     # '''
     # Try this next    
     
-    for p in plan_path():        
+    for p in plan_path()[:4]:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)               
         roomba_node.run(p)
-        break
+        
 
 
     # roomba_node.run()
