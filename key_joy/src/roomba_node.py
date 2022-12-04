@@ -811,8 +811,10 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # roomba_node.run_rotation_calibration()
     ''' -----'''
-    roomba_node.move_front_no_tag(1)
-    roomba_node.move_front_no_tag(-1)
+    # roomba_node.move_front_no_tag(1)
+    # roomba_node.move_front_no_tag(-1)
+
+    roomba_node.turn_90()
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
