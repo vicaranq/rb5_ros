@@ -16,6 +16,8 @@ X = 1
 Y = 0 
 THETA = 2
 
+GRID_UNIT = 0.05
+THRESHOLD = 2*GRID_UNIT
 
 MAP = np.zeros((int(2/0.05),int(2/0.05)))
 # define obstacle
@@ -108,7 +110,7 @@ class RoombaNode:
         self.theta_w = 0
 
         self.tags = [np.array([0,2,1]), np.array([.75,2,1]), np.array([1.45,1.65,1]), np.array([1.45,0.65,1]), np.array([0.8, 0,1])]
-        self.current_seen_tags = tuple()
+        self.current_seen_tags = {}
 
 
     def get_current_pos(self):
@@ -165,8 +167,15 @@ class RoombaNode:
                 # print("tags updated!")
 
                 # self.current_seen_tags will act similarly as self.tags, however it clears every iteration (step in the experiment e.g. every 0.1m or turn)
-                self.current_seen_tags = (self.get_translation(message)[2] , \
-                                                  -1.0*self.get_translation(message)[0])
+                # self.current_seen_tags = (self.get_translation(message)[2] , \
+                #                                   -1.0*self.get_translation(message)[0])
+
+                self.current_seen_tags[tag_id] = {"x" : self.get_translation(message)[2] , \
+                                                  "y":self.get_translation(message)[0], \
+                                                  "id": tag_id, \
+                                                  "translation" : self.get_translation(message), \
+                                                  "rotation" : self.get_rotation(message)
+                                                 }                                                    
             except:
                 print("something fail")
                 print(tag_id)
@@ -392,29 +401,35 @@ class RoombaNode:
         print("Arrived!! d: ", tag_pos_x_r-target_pos_x)
 
 
-    def move_front(self, d, y_axis=False, moving_diag=False, diag_update=(0,0)):
+    def move_front(self, target_position_w, y_axis=False):
         '''
         Args:
-        d -> float type represeting meters
+        target_position_w -> (x,y) target on Map frame to where we want to move 
         '''
+        def get_distance(target_position_w):            
+            ''' Assuming no diag movements
+            target_position_w: Expecting (x,y) in map coordinate
+            '''
+            delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)
 
-        self.move_front_no_tag(d,y_axis)
+            if abs(delta_x) > 0.01:
+                distance = delta_x
+            elif abs(delta_y) > 0.01:        
+                distance = delta_y
+            else:
+                raise "delta_x and delta_y are less than 1cm: {} , {}".format(delta_x, delta_y)               
+            
+            return distance
 
-        # if tag_id in self.tags:
-        #     #time.sleep(1) 
-        #     self.move_with_tag( d, tag_id, y_axis=False, moving_diag=moving_diag)
 
-        # else: 
-        #     raise "Expected tag id: {} not found in self.tags: {} ".format(tag_id, self.tags)
+        distance = get_distance(target_position_w)
+        self.move_front_no_tag(distance ,y_axis)
 
         #update
-        # if moving_diag:
-        #     assert diag_update != (0,0), " Unexpected diag update"
-        #     self.x_w, self.y_w = diag_update
-        # elif y_axis:
-        #     self.y_w += d
-        # else:
-        #     self.x_w += d
+        if y_axis:
+            self.y_w += distance
+        else:
+            self.x_w += distance
        
     def move_front_no_tag(self, d, y_axis = False):
         '''
@@ -423,7 +438,7 @@ class RoombaNode:
         '''
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
-        #time_per_m = 2.0408   # [seconds to get to a meter]
+        #time_per_m = 2.0408   # [seconds to get to a meter] ---> TODO: Calibrate velocity moving front and moving backwards
         time_per_m = 5
         t_start = time.time()
 
@@ -431,29 +446,17 @@ class RoombaNode:
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
-            if self.current_seen_tags:
-                # print(self.current_seen_tags)
-                vec = np.array([ [self.current_seen_tags[0]], 
-                                 [self.current_seen_tags[1] ], 
-                                [1]
-                                ])
-                x_tag = self.transform_from_R_to_M( vec )
-                
-                x_tag_GT = self.match_tag(x_tag)
-                self.adjust_xy(x_tag, x_tag_GT)
+            ''' CHECK DANGER ZONE'''
+            self.current_seen_tags = {}
+            time.sleep(0.1) # self.current_seen_tags must be populated during this movement
+            if self.check_danger_zone(y_axis):
+                break
 
-            
-            print( (self.x_w,self.y_w ) )
-            time.sleep(0.3)
 
-        #time.sleep(0.5)
+
         joy_msg.axes[X] = 0 # reset 
         self.pub_joy.publish(joy_msg)
-        # #update
-        # if not y_axis:
-        #     self.xf_pos += d
-        # else:
-        #     self.y_pos += d        
+         
 
     def get_rads(self, theta):
         return theta - self.theta_w
@@ -535,30 +538,11 @@ class RoombaNode:
 
         for tag_i in self.current_seen_tags:
             tag_pos_x_r, tag_pos_y_r  = self.get_w_cord_for_tag(self.current_seen_tags[tag_i]) 
-            if abs(tag_pos_x_r) <= 0.4 and abs(tag_pos_y_r) <= 0.4:
+            if abs(tag_pos_x_r) <= THRESHOLD and abs(tag_pos_y_r) <= THRESHOLD:
                 print("{} in Danger Zone!".format(tag_i))
-                print("Stopping vehicle!")
-                joy_msg = self.get_joy_msg()
-                joy_msg.axes[X] = 0 # reset 
-                self.pub_joy.publish(joy_msg)
-                # if object to the left, then move to the right
-                # Y positive means that object is to the right (given robot y-axis points to the left)
-                if tag_pos_y_r > 0: 
-                    # move to the left
-                    print("!!! MOVE TO THE LEFT !!!")
-                    self.turn_90(left=True)
-                    # move front a bit # but how to know if it's moving on x or y axis on world coordinate?
-                    d = 0.4 - tag_pos_y_r + 0.05 # Move away to avoid obstacle plus 5cm to be safe
-                    self.move_front_no_tag(d , not moving_on_y_flag)
-                    self.turn_90()
-                else:
-                    print("!!! MOVE TO THE RIGHT !!!")
-                    # move to the right 
-                    self.turn_90()
-                    # move front a bit 
-                    d = 0.4 - abs(tag_pos_y_r) + 0.05 # Move away to avoid obstacle plus 5cm to be safe
-                    self.move_front_no_tag(d , not moving_on_y_flag)
-                    self.turn_90(left=True)
+                return True
+            
+        return False
 
             
     ''' NEW FUNCTIONS '''
@@ -624,7 +608,98 @@ class RoombaNode:
         MAP[self.x_w, self.y_w] = 1
 
 
-    def run(self, target_position_w):
+    def run(self, next_action):
+        # previous arguments: target_position_w, tag_id, robot_pos = (0.0,0.0), angle_for_short=0)
+        '''
+        Args:
+        target_position_w -> Target position in world coordinates ("F", (37,2)) --> First postion is F, B, or R. Second position is point to where we are moving (x,y). 
+        tag_id -> unique identifier for tag associaetd to the target position 
+        
+        '''              
+
+        print("Robot's World Position: ", self.get_current_pos())
+        print("Target Position: ", target_position_w)
+
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+        time.sleep(2)
+
+
+
+        state, target_position_w = next_action
+        print("--------------------------")
+        print("--------------------------")
+        print(" Next Action : ", next_action )
+        if state == "F":
+            ''' Move forward '''
+            print("--------------------------")
+            print("Moving forward")
+
+            self.move_front(target_position_w)
+        elif state == "B":
+            print("--------------------------")
+            print("Moving backwards")
+            pass
+        elif state == "R":
+            print("--------------------------")
+            print("Rotating")
+
+
+
+
+        
+        delta_x, delta_y = self.get_deltas(self.get_current_pos(), target_position_w)
+        print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
+        print("delta_x: ", delta_x, "delta_y: ", delta_y)
+
+        if abs(delta_x) > 0.1 and abs(delta_y) > 0.1:
+            ''' ----------------  MOVE DIAG ----------------  '''            
+            print("Move Diag!")
+            print("Move on x: {} and move on y: {}".format(delta_x, delta_y))
+
+            # first find tag associated to target
+
+            # Now we see tag
+            # assming robot will readjust angle before moving forward, the distance to move forward ideally is: 
+            # self.readjust_angle_with_quaternions(tag_id)
+            time.sleep(1)
+            d = math.sqrt(delta_x**2 + delta_y**2)
+            print("Distance to travel: ", d)            
+            self.turn(self.theta_w - np.arctan2(delta_x, delta_y ))
+            if delta_x < 0 and delta_y < 0 and self.theta_w < np.pi:
+                print("moving backwards!!!")
+                self.move_front(-1.0*d, moving_diag=True, diag_update=(delta_x, delta_y))
+            else:
+                self.move_front(d, moving_diag=True, diag_update=(delta_x, delta_y)) # front in direction of x axis (world coordinate)
+            time.sleep(1)                   
+        elif abs(delta_x) > 0.1:
+            ''' ----------------  MOVE ON X AXIS ----------------  ''' 
+            # if the robot is not at zero degrees, then rotate to make it zero
+            print("Turning to zero degrees...")
+            self.turn(0)
+            self.move_front(delta_x) # front in direction of x axis (world coordinate)
+            time.sleep(1)            
+            # _, delta_y, _ = self.get_deltas(self.get_current_pos(), target_position_w) #  UPDATED VALUE AFTER MOVING ON X    
+        elif abs(delta_y) > 0.1:        
+            # move Y axis
+            ''' ----------------  MOVE ON Y AXIS ----------------  '''        
+            print("delta_y: ", delta_y)
+            self.move_sideways_no_slide(delta_y)
+            time.sleep(1)
+                        
+        #_, _, delta_theta = self.get_deltas(self.get_current_pos(), target_position_w) # UPDATED VALUE AFTER MOVING ON X AND Y                                 
+        # move angle
+        # if abs(delta_theta)  > 0.1:
+        #     print("delta_theta: ", delta_theta)
+        #     ''' MOVE ON THETA '''                    
+        #     self.turn(target_position_w[2])
+        #     # We can use pitch angle at this point to readjust turn 
+        #     # Robot should be 90deg with respect the coordinate frame of tag 2
+        #     time.sleep(1)
+        ''' ----------------------------------------------------------------'''
+        print("State: ", (self.x_w, self.y_w, self.theta_w))
+        self.stop()
+
+    def run_bakup(self, target_position_w):
         # previous arguments: target_position_w, tag_id, robot_pos = (0.0,0.0), angle_for_short=0)
         '''
         Args:
@@ -796,11 +871,18 @@ if __name__ == "__main__":
     # '''
     # Try this next    
     
-    for p in plan_path()[:4]:        
+    # for p in plan_path()[:4]:        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p)               
+    #     roomba_node.run(p)
+    
+    test_points = [("F", (37,2)), ("B", (2,2)), ("R", (2,4)),\
+                    ("F", (37,4)), ("B", (2,4)), ("R", (2,6)),\
+                    ("F", (37,6)), ("B", (2,6)), ("R", (2,8)) 
+                    ]
+    for p in test_points:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)               
         roomba_node.run(p)
-        
-
 
     # roomba_node.run()
