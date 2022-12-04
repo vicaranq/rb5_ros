@@ -446,7 +446,7 @@ class RoombaNode:
         joy_msg = self.get_joy_msg()
         print("[move_front] Moving forward for {}m".format(d))
         #time_per_m = 2.0408   # [seconds to get to a meter] ---> TODO: Calibrate velocity moving front and moving backwards
-        time_per_m = 5
+        time_per_m = 6
         t_start = time.time()
 
         joy_msg.axes[X] = 0.6 if d> 0 else -0.6
