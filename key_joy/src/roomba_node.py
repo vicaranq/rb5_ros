@@ -427,7 +427,7 @@ class RoombaNode:
         
         t_start = time.time()
 
-        joy_msg.axes[X] = 0.8
+        joy_msg.axes[X] = 0.8 if d> 0 else -0.8
         while time.time() < t_start + time_per_m*abs(d):
             self.pub_joy.publish(joy_msg)
             
