@@ -518,9 +518,9 @@ class RoombaNode:
         t_start = time.time()
         
         if left:
-            joy_msg.axes[THETA] = 0.8
-        else:    
             joy_msg.axes[THETA] = -0.8
+        else:    
+            joy_msg.axes[THETA] = 0.8
 
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
@@ -814,6 +814,8 @@ if __name__ == "__main__":
     # roomba_node.move_front_no_tag(1)
     # roomba_node.move_front_no_tag(-1)
 
+    # roomba_node.turn_90()
+    roomba_node.turn_90(left=True)
     roomba_node.turn_90()
 
     # midpoint = mapping_shortest_dist()
