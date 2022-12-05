@@ -115,6 +115,7 @@ class RoombaNode:
         self.current_seen_tags = {}
 
 
+
     def get_current_pos(self):
         return ( self.x_w, self.y_w)
 
@@ -177,7 +178,11 @@ class RoombaNode:
                                                   "id": tag_id, \
                                                   "translation" : self.get_translation(message), \
                                                   "rotation" : self.get_rotation(message)
-                                                 }                                                    
+                                                 }
+
+                
+
+                                                                                    
             except:
                 print("something fail")
                 print(tag_id)
@@ -564,6 +569,9 @@ class RoombaNode:
                 index=i
         return self.tags[index]
 
+
+
+
     def get_H(self):
         ''' Get Homography matrix that maps 2D homogeneous coordinates in Robot frame to Map frame '''
 
@@ -850,15 +858,15 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # roomba_node.run_rotation_calibration()
     ''' -----'''
-    roomba_node.print_rot_ang_from_tag_v2( 'marker_7')
+    # roomba_node.print_rot_ang_from_tag_v2( 'marker_7')
 
 
     # roomba_node.move_front_no_tag(1)
     # roomba_node.move_front_no_tag(-1)
 
     # roomba_node.turn_90()
-    #roomba_node.turn_90(left=True)
-    #roomba_node.turn_90(left=False)
+    roomba_node.turn_90(left=True)
+    roomba_node.turn_90(left=False)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
