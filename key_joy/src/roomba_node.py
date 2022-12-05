@@ -515,7 +515,7 @@ class RoombaNode:
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
-        time_per_rad = 2.3/ (math.pi/2)
+        time_per_rad = 2.32/ (math.pi/2)
 
         t_start = time.time()
         
@@ -786,7 +786,7 @@ class RoombaNode:
         t_start = time.time()
         t_experiment = 10 # [s]
         while time.time() < t_start + t_experiment:
-            if tag_id in self.tags:
+            if tag_id in self.current_seen_tags:
                 # print("Tag info: \n",self.tags[tag_id])
                 # print("tag2_q: ", tag2_q,  type(tag2_q))
 
@@ -796,11 +796,11 @@ class RoombaNode:
                 You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
                 q_r = q_2*q_1_inverse
                 '''
-                q1 = list(self.tags[tag_id]['rotation'])
+                q1 = list(self.current_seen_tags[tag_id]['rotation'])
                 q1_inv = q1
                 q1_inv[3] = -q1_inv[3] 
                 qr = tf.transformations.quaternion_multiply(q2, q1_inv)
-                (roll, pitch, yaw) = euler_from_quaternion (qr) # from tf.transformations
+                (roll, pitch, yaw) = euler_from_quaternion(qr) # from tf.transformations
         
                 print("(roll, pitch, yaw): ", (roll, pitch, yaw))
                 time.sleep(1)
@@ -808,6 +808,37 @@ class RoombaNode:
             elif self.tags:
                 print("Different Tags observed: ", list(self.tags.keys()) )   
          
+
+    def print_rot_ang_from_tag_v2(self,  tag_id):
+        from geometry_msgs.msg import Quaternion
+        import tf 
+        
+
+        # Obtain Tag information
+        rospy.Subscriber("/tf", TFMessage, self.tag_information)
+        
+        t_start = time.time()
+        t_experiment = 10 # [s]
+        while time.time() < t_start + t_experiment:
+            if tag_id in self.current_seen_tags:
+                # print("Tag info: \n",self.tags[tag_id])
+                # print("tag2_q: ", tag2_q,  type(tag2_q))
+
+                '''
+                Say you have two quaternions from the same frame, q_1 and q_2. You want to find the relative rotation, q_r, to go from q_1 to q_2:
+                q_2 = q_r*q_1
+                You can solve for q_r similarly to solving a matrix equation. Invert q_1 and right-multiply both sides. Again, the order of multiplication is important:
+                q_r = q_2*q_1_inverse
+                '''
+                qr = list(self.current_seen_tags[tag_id]['rotation'])
+
+                (roll, pitch, yaw) = euler_from_quaternion(qr) # from tf.transformations
+        
+                print("(roll, pitch, yaw): ", (roll, pitch, yaw))
+                time.sleep(1)
+
+            elif self.tags:
+                print("Different Tags observed: ", list(self.tags.keys()) )          
 
 if __name__ == "__main__":
     roomba_node = RoombaNode()
@@ -819,11 +850,14 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # roomba_node.run_rotation_calibration()
     ''' -----'''
+    roomba_node.print_rot_ang_from_tag_v2( 'marker_2')
+
+
     # roomba_node.move_front_no_tag(1)
     # roomba_node.move_front_no_tag(-1)
 
     # roomba_node.turn_90()
-    roomba_node.turn_90(left=True)
+    #roomba_node.turn_90(left=True)
     #roomba_node.turn_90(left=False)
 
     # midpoint = mapping_shortest_dist()
