@@ -520,14 +520,15 @@ class RoombaNode:
         joy_msg = self.get_joy_msg()
         # time_per_rad = 2.3/ (math.pi/2)
         #time_per_rad = 2.8/ (math.pi/2)
-        time_per_rad = 2.32/ (math.pi/2)
+        time_per_rad = 2.32/ (math.pi/2) 
 
         t_start = time.time()
         
         if left:
             joy_msg.axes[THETA] = -0.85
-        else:    
-            joy_msg.axes[THETA] = 0.878
+        else:
+            time_per_rad = 2.0/ (math.pi/2)     
+            joy_msg.axes[THETA] = 1
 
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
@@ -866,7 +867,7 @@ if __name__ == "__main__":
 
     # roomba_node.turn_90()
     # roomba_node.turn_90(left=True)
-    # roomba_node.turn_90(left=False)
+    roomba_node.turn_90(left=False)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
@@ -901,16 +902,16 @@ if __name__ == "__main__":
                     ("F", (25,6)), ("B", (2,6)), ("R", (2,8)) 
                     ]
 
-    path =  plan_path()
+    # path =  plan_path()
 
-    path_recons = []
-    for i in path:
-        path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
-    # print(path_recons)
+    # path_recons = []
+    # for i in path:
+    #     path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
+    # # print(path_recons)
     
-    for p in path_recons[:30]:        
-        print("======================================================================")
-        print("Starting navigation to target point: ", p)               
-        roomba_node.run(p)
+    # for p in path_recons[:30]:        
+    #     print("======================================================================")
+    #     print("Starting navigation to target point: ", p)               
+    #     roomba_node.run(p)
     
 
