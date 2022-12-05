@@ -864,11 +864,11 @@ if __name__ == "__main__":
     path_recons = []
     for i in path:
         path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
-    print(path_recons)
-    '''
+    # print(path_recons)
+    
     for p in path_recons[:30]:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)               
         roomba_node.run(p)
-    '''
+    
 
