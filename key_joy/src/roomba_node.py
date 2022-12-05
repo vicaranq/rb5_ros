@@ -838,7 +838,7 @@ class RoombaNode:
                 time.sleep(1)
 
             elif self.tags:
-                print("Different Tags observed: ", list(self.tags.keys()) )          
+                print("Different Tags observed: ", list(self.current_seen_tags.keys()) )          
 
 if __name__ == "__main__":
     roomba_node = RoombaNode()
