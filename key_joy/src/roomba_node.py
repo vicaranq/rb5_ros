@@ -525,7 +525,7 @@ class RoombaNode:
         t_start = time.time()
         
         if left:
-            joy_msg.axes[THETA] = -0.83
+            joy_msg.axes[THETA] = -0.85
         else:    
             joy_msg.axes[THETA] = 0.87
 
