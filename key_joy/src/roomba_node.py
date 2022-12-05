@@ -850,7 +850,7 @@ if __name__ == "__main__":
     ''' Calibrate'''
     # roomba_node.run_rotation_calibration()
     ''' -----'''
-    roomba_node.print_rot_ang_from_tag_v2( 'marker_2')
+    roomba_node.print_rot_ang_from_tag_v2( 'marker_7')
 
 
     # roomba_node.move_front_no_tag(1)
