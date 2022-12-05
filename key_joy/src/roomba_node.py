@@ -865,8 +865,8 @@ if __name__ == "__main__":
     # roomba_node.move_front_no_tag(-1)
 
     # roomba_node.turn_90()
-    roomba_node.turn_90(left=True)
-    roomba_node.turn_90(left=False)
+    # roomba_node.turn_90(left=True)
+    # roomba_node.turn_90(left=False)
 
     # midpoint = mapping_shortest_dist()
     # points = [midpoint[:2], (1.0, 1.0)]
@@ -901,16 +901,16 @@ if __name__ == "__main__":
                     ("F", (25,6)), ("B", (2,6)), ("R", (2,8)) 
                     ]
 
-    # path =  plan_path()
+    path =  plan_path()
 
-    # path_recons = []
-    # for i in path:
-    #     path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
-    # # print(path_recons)
+    path_recons = []
+    for i in path:
+        path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
+    # print(path_recons)
     
-    # for p in path_recons[:30]:        
-    #     print("======================================================================")
-    #     print("Starting navigation to target point: ", p)               
-    #     roomba_node.run(p)
+    for p in path_recons[:30]:        
+        print("======================================================================")
+        print("Starting navigation to target point: ", p)               
+        roomba_node.run(p)
     
 
