@@ -527,8 +527,8 @@ class RoombaNode:
         if left:
             joy_msg.axes[THETA] = -0.85
         else:
-            time_per_rad = 1.8/ (math.pi/2)     
-            joy_msg.axes[THETA] = 1
+            time_per_rad = 1.5/ (math.pi/2)     
+            joy_msg.axes[THETA] = 1.2
 
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
