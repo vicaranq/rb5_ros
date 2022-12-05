@@ -19,10 +19,10 @@ THETA = 2
 GRID_UNIT = 0.05
 THRESHOLD = 2*GRID_UNIT
 
-MAP = np.zeros((int(1.75/0.05),int(1.75/0.05)))
+MAP = np.zeros((int(1.7/0.1),int(1.7/0.1)))
 
 # define start and end position
-START = (2,2)
+START = (1,1)
 
 def plan_path():
     path = []
@@ -32,8 +32,8 @@ def plan_path():
     for i in range(0,len(map_augment)):
         for j in range(0,len(map_augment)):
             map_augment[i][j] = 1
-    for i in range(2,len(map_augment)-2):
-        for j in range(2,len(map_augment)-2):
+    for i in range(1,len(map_augment)-1):
+        for j in range(1,len(map_augment)-1):
             map_augment[i][j] = 0
 
     #spanning tree
@@ -42,14 +42,7 @@ def plan_path():
     queue.append((None,START))
     #path.append((None,START))
 
-    map_augment = copy.deepcopy(MAP)
-    for i in range(0,len(map_augment)):
-        for j in range(0,len(map_augment)):
-            map_augment[i][j] = 1
-    for i in range(2,len(map_augment)-2):
-        for j in range(2,len(map_augment)-2):
-            map_augment[i][j] = 0
-    
+
     
     while queue:
         current = queue.pop(0)
@@ -529,7 +522,7 @@ class RoombaNode:
         if left:
             joy_msg.axes[THETA] = -0.8
         else:    
-            joy_msg.axes[THETA] = 0.9
+            joy_msg.axes[THETA] = 0.85
 
         while time.time() < t_start + time_per_rad*np.pi/2:
         # while time.time() < t_start + time_per_rad*angle:
@@ -657,7 +650,7 @@ class RoombaNode:
 
         state, target_position_w = next_action
 
-        target_position_w = (target_position_w[0]*0.05, target_position_w[1]*0.05)
+        target_position_w = (target_position_w[0]*0.1, target_position_w[1]*0.1)
 
         print("Navigating from {} --> {}".format((self.x_w,self.y_w, self.theta_w), target_position_w))
         print("--------------------------")
@@ -871,11 +864,11 @@ if __name__ == "__main__":
     path_recons = []
     for i in path:
         path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
-    # print(path_recons)
-    
+    print(path_recons)
+    '''
     for p in path_recons[:30]:        
         print("======================================================================")
         print("Starting navigation to target point: ", p)               
         roomba_node.run(p)
-    
+    '''
 
