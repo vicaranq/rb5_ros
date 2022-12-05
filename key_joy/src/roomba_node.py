@@ -100,7 +100,7 @@ def plan_path():
          
         else:
             path_concise.append(("F",(curr_base, path[i][1])))
-            path_concise.append(("B",(curr_base, path[i][1])))
+            path_concise.append(("B",(path[i][1], curr_base)))
             if path[i+1]!="END":
                 path_concise.append(("R",(curr_base, path[i+1][1])))
             curr_base = path[i+1][1]
@@ -867,7 +867,7 @@ if __name__ == "__main__":
                     ]
 
     path =  plan_path()
-    path.pop(0)
+
     path_recons = []
     for i in path:
         path_recons.append((i[0], (i[1][1][1], i[1][1][0])))
